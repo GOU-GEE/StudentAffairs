@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #f7f9fb;
+  --color-on-surface: #191c1e;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container: #eceef0;
+  --color-surface-container-high: #e6e8ea;
+  --color-surface-container-highest: #e0e3e5;
+  --color-outline: #777777;
+  --color-outline-variant: #c6c6c6;
+  --color-primary: #000000;
+  --color-on-primary-fixed: #ffffff;
+  --color-primary-fixed: #5f5e5e;
+  --color-secondary: #505f76;
+  --color-tertiary-container: #316bf3;
+  --color-on-tertiary-container: #ffffff;
+  --color-error: #ba1a1a;
+  
+  /* Additional colors for AI / modern feel */
+  --color-ai-primary: #6366f1;
+  --color-ai-primary-light: #818cf8;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    background-image: radial-gradient(var(--color-outline-variant) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -12px -12px;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+/* Custom scrollbar for better gallery feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-container-highest);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}

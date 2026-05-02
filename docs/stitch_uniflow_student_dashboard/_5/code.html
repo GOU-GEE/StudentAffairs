@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>学研架构师 - 奖助与学业中心</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#c6c6c6",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c6c6c6",
+                        "secondary-fixed": "#b7c8e1",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "secondary-fixed-dim": "#9cacc5",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary-fixed-variant": "#2d3c51",
+                        "on-primary-fixed": "#ffffff",
+                        "tertiary-fixed": "#006c49",
+                        "primary-fixed-dim": "#474747",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#505f76",
+                        "tertiary-container": "#00855b",
+                        "outline": "#777777",
+                        "on-tertiary-fixed": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-secondary-container": "#0b1c30",
+                        "primary": "#000000",
+                        "on-error-container": "#410002",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#3b3b3b",
+                        "on-surface-variant": "#474747",
+                        "inverse-surface": "#2d3133",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9fb",
+                        "primary-fixed": "#5e5e5e",
+                        "on-surface": "#191c1e",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary": "#6ffbbe",
+                        "surface-variant": "#e0e3e5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d8dadc",
+                        "surface-tint": "#5e5e5e",
+                        "secondary-container": "#c5d6f0",
+                        "on-tertiary-container": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-background": "#191c1e",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#6ffbbe",
+                        "on-primary": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#00452d",
+                        "tertiary-fixed-dim": "#005236"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .blueprint-bg {
+            background-image: radial-gradient(rgba(198, 198, 198, 0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen blueprint-bg">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-screen w-64 border-r border-zinc-200/20 dark:border-zinc-800/20 bg-[#f7f9fb] dark:bg-zinc-950 flex flex-col py-8 px-4 shadow-none z-40 font-['Inter'] tracking-tight antialiased">
+<!-- Header -->
+<div class="flex items-center gap-3 px-4 mb-10">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden shrink-0">
+<img alt="学生头像" class="w-full h-full object-cover" data-alt="年轻专业学生的近距离肖像，表情自信，中性灰色背景，柔和影棚灯光" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc9p-XAFeWDeGuCG8QzIMJNgzq_5tqo6d2-jbY9LGTaeKlgAT0UsDrBMRfqJgrHw4etgvmOLifJ1BLwsqE9rJJ8L195Smnq7zBu8PDCguEbuuUzUAQq9NdOW1hn7G9RrDZZklbTqRx1Wf-735wbQB0OUYaO-WUuuncl62ZTR8dx0UnjLJV5jdpYf8ZamrAgfiHrsNp2o_z-wUftNWD9r8khkdk7-E1tlb80YvRzjUZhvzoZEkJZv-Ad5Z_OlAIV-PU5gs9JIfNJS--"/>
+</div>
+<div>
+<h1 class="text-lg font-semibold tracking-tighter text-zinc-900 dark:text-zinc-50 leading-tight">学研架构师</h1>
+<p class="text-xs text-zinc-500 dark:text-zinc-400">大学门户系统</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="mb-8 mx-2 py-2.5 px-4 bg-primary text-on-primary rounded-[1rem] text-sm font-medium hover:bg-primary-container transition-colors duration-200 flex items-center justify-center gap-2 scale-98 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'wght' 300, 'FILL' 0; font-size: 18px;">add</span>
+            预约咨询
+        </button>
+<!-- Main Navigation -->
+<div class="flex flex-col gap-1 flex-grow">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">dashboard</span>
+                仪表盘
+            </a>
+<!-- ACTIVE TAB: Academic Hub -->
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-900 dark:text-zinc-50 font-semibold border-r-2 border-zinc-900 dark:border-zinc-50 bg-zinc-100/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px; font-variation-settings: 'FILL' 1;">school</span>
+                奖助与学业中心
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">work</span>
+                职业发展
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">security</span>
+                安全与支持
+            </a>
+</div>
+<!-- Footer Navigation -->
+<div class="flex flex-col gap-1 mt-auto pt-4 border-t border-zinc-200/20 dark:border-zinc-800/20">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+                设置
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-[1rem] text-sm transition-colors duration-200 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+                退出登录
+            </a>
+</div>
+</nav>
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 z-50 w-full border-b border-zinc-200/20 dark:border-zinc-800/20 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl flex items-center justify-between h-16 px-8 ml-64 shadow-[0_1px_0_0_rgba(0,0,0,0.03)] dark:shadow-none font-['Inter'] text-sm font-medium text-zinc-900 dark:text-zinc-50 focus-within:ring-1 focus-within:ring-zinc-200 dark:focus-within:ring-zinc-800">
+<!-- Search Bar -->
+<div class="flex items-center w-96 relative">
+<span class="material-symbols-outlined absolute left-3 text-zinc-400" style="font-size: 18px;">search</span>
+<input class="w-full bg-surface-container-high hover:bg-surface-container-highest transition-colors text-on-surface text-sm rounded-[1rem] pl-10 pr-4 py-2 border-none focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest outline-none placeholder:text-zinc-500" placeholder="搜索资源、奖助学金..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors rounded-[1rem] hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
+</button>
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors rounded-[1rem] hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">keyboard_command_key</span>
+</button>
+<div class="h-4 w-[1px] bg-zinc-200/50 mx-1"></div>
+<button class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-[1rem] hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+<span class="font-semibold text-zinc-900 dark:text-zinc-50">个人资料</span>
+<img alt="用户头像" class="w-7 h-7 rounded-full object-cover" data-alt="年轻专业学生的近距离肖像，表情自信，中性灰色背景，柔和影棚灯光" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyfNMX9Zx3oKdkUPC4ij2T9V5evFWJwfI-pQ-riGLs57taLAHUvExXuP_5_biPZt4NUZWeJGUhwmRJvY5AcaNq2xUiSF9OP7Vz95Yk719fafYtltAL952qLgtrKuPiMtMNdcLMZNSVuZ6sZge6qFHl4Q3I8zn9Mks-tyA7Yq_eZCZdqVgzDCmjsI6h8k7ymuPpbNxUhhgpN-5RNdf2iIheA8Ay5yc9lbZsAt08DqvmfcJYkGIMz_M1YF3Cq5BA64tAJEjPTTAZHnUn"/>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-8 pt-12 max-w-[1400px]">
+<!-- Page Header -->
+<div class="mb-8 flex items-end justify-between">
+<div>
+<h2 class="text-3xl font-headline font-semibold tracking-[-0.04em] text-primary mb-2">奖助与学业中心</h2>
+<p class="text-on-surface-variant text-sm font-label">管理您的学业轨迹、经济资助以及官方记录。</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-low border border-outline-variant/20 text-primary text-sm font-medium rounded-[1rem] hover:bg-surface-container transition-colors">
+                    下载摘要 PDF
+                </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
+<!-- CELL 1: Scholarship & Grant Management -->
+<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-6 flex flex-col hover:shadow-[0_8px_40px_-12px_rgba(25,28,30,0.04)] transition-shadow duration-300">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-headline font-semibold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">account_balance</span>
+                        奖学金与助学金管理
+                    </h3>
+<button class="text-xs font-medium text-primary hover:text-outline transition-colors flex items-center">
+                        查看全部 <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-4 rounded-[1.5rem] bg-surface hover:bg-surface-container-low transition-colors group cursor-pointer border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">workspace_premium</span>
+</div>
+<div>
+<p class="text-sm font-medium text-primary mb-0.5 group-hover:text-primary transition-colors">国家优异资助金</p>
+<p class="text-xs text-on-surface-variant font-label">2024 秋季学期 • 编号: GR-8842</p>
+</div>
+</div>
+<div class="flex items-center gap-8 text-right">
+<div>
+<p class="text-sm font-semibold text-primary">¥12,500</p>
+<p class="text-xs text-on-surface-variant">已申报</p>
+</div>
+<div class="flex items-center gap-2 bg-tertiary-container/10 px-3 py-1.5 rounded-[1rem]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary block"></span>
+<span class="text-xs font-medium text-tertiary">已发放</span>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-4 rounded-[1.5rem] bg-surface hover:bg-surface-container-low transition-colors group cursor-pointer border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">biotech</span>
+</div>
+<div>
+<p class="text-sm font-medium text-primary mb-0.5 group-hover:text-primary transition-colors">STEM 研究补助金</p>
+<p class="text-xs text-on-surface-variant font-label">本科生级别 • 审核中</p>
+</div>
+</div>
+<div class="flex items-center gap-8 text-right">
+<div>
+<p class="text-sm font-semibold text-primary">¥4,000</p>
+<p class="text-xs text-on-surface-variant">申请中</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-highest px-3 py-1.5 rounded-[1rem]">
+<span class="w-1.5 h-1.5 rounded-full bg-outline block"></span>
+<span class="text-xs font-medium text-on-surface-variant">待审计</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CELL 2: Work-Study -->
+<div class="md:col-span-1 md:row-span-2 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-6 flex flex-col hover:shadow-[0_8px_40px_-12px_rgba(25,28,30,0.04)] transition-shadow duration-300 relative overflow-hidden">
+<div class="absolute -right-8 -top-8 opacity-5">
+<span class="material-symbols-outlined" style="font-size: 120px;">work</span>
+</div>
+<div class="flex items-center justify-between mb-6 relative z-10">
+<h3 class="text-lg font-headline font-semibold text-primary">勤工助学</h3>
+<button class="w-10 h-10 flex items-center justify-center bg-surface-container-low hover:bg-surface-container rounded-[1rem] transition-colors">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">open_in_new</span>
+</button>
+</div>
+<!-- Status Banner -->
+<div class="mb-6 p-4 rounded-[1.5rem] border border-outline-variant/20 bg-surface flex flex-col gap-2 relative z-10">
+<div class="flex items-center justify-between">
+<span class="text-xs font-label text-on-surface-variant uppercase tracking-wider">资格状态</span>
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+</div>
+<p class="text-sm font-medium text-primary">具备校园就业资格</p>
+<p class="text-xs text-on-surface-variant">已批准每周最高 20 小时。</p>
+</div>
+<h4 class="text-xs font-label text-on-surface-variant uppercase tracking-wider mb-3 relative z-10">当前申请</h4>
+<div class="flex flex-col gap-3 mb-6 relative z-10">
+<div class="border-l-2 border-tertiary pl-3 py-1">
+<p class="text-sm font-medium text-primary">图书馆二级助理</p>
+<p class="text-xs text-on-surface-variant">面试已预约 • 10月14日</p>
+</div>
+</div>
+<h4 class="text-xs font-label text-on-surface-variant uppercase tracking-wider mb-3 mt-auto relative z-10">推荐职位</h4>
+<div class="flex flex-col gap-4 relative z-10">
+<div class="flex items-start justify-between group cursor-pointer">
+<div>
+<p class="text-sm font-medium text-primary group-hover:underline decoration-outline-variant/50 underline-offset-2">物理实验室科研助手</p>
+<p class="text-xs text-on-surface-variant mt-0.5">¥18/小时 • 10 小时/周</p>
+</div>
+<button class="text-xs bg-surface-container-highest hover:bg-surface-variant text-primary px-3 py-1.5 rounded-lg transition-colors font-medium">申请</button>
+</div>
+<div class="flex items-start justify-between group cursor-pointer">
+<div>
+<p class="text-sm font-medium text-primary group-hover:underline decoration-outline-variant/50 underline-offset-2">数学朋辈导师</p>
+<p class="text-xs text-on-surface-variant mt-0.5">¥20/小时 • 时间灵活</p>
+</div>
+<button class="text-xs bg-surface-container-highest hover:bg-surface-variant text-primary px-3 py-1.5 rounded-lg transition-colors font-medium">申请</button>
+</div>
+</div>
+</div>
+<!-- CELL 3: Academic Record -->
+<div class="md:col-span-1 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-6 flex flex-col hover:shadow-[0_8px_40px_-12px_rgba(25,28,30,0.04)] transition-shadow duration-300">
+<h3 class="text-lg font-headline font-semibold text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">history_edu</span>
+                    学业成绩
+                </h3>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<p class="text-xs font-label text-on-surface-variant mb-1">累计平均绩点 (GPA)</p>
+<p class="text-3xl font-headline font-semibold tracking-tight text-primary">3.94</p>
+</div>
+<div>
+<p class="text-xs font-label text-on-surface-variant mb-1">已修学分</p>
+<p class="text-3xl font-headline font-semibold tracking-tight text-primary">92</p>
+</div>
+</div>
+<div class="border-t border-outline-variant/20 pt-4 mt-auto">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-primary">奖惩状态</span>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="text-xs text-on-surface-variant">记录良好</span>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">档案中无任何违纪或学业诚信复审记录。</p>
+</div>
+</div>
+<!-- CELL 4: Certifications -->
+<div class="md:col-span-1 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-6 flex flex-col hover:shadow-[0_8px_40px_-12px_rgba(25,28,30,0.04)] transition-shadow duration-300">
+<h3 class="text-lg font-headline font-semibold text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">military_tech</span>
+                    获得证书
+                </h3>
+<div class="flex flex-col gap-3 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px; font-variation-settings: 'wght' 300;">verified</span>
+<p class="text-sm text-primary">高级数据分析认证</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px; font-variation-settings: 'wght' 300;">verified</span>
+<p class="text-sm text-primary">区域黑客松 - 第一名</p>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-2">
+<button class="w-full py-2.5 bg-surface border border-outline-variant/20 text-primary text-sm font-medium rounded-lg hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                        录入比赛奖励
+                    </button>
+<button class="w-full py-2.5 bg-primary text-on-primary text-sm font-medium rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" style="font-size: 16px;">receipt_long</span>
+                        生成官方成绩单
+                    </button>
+</div>
+</div>
+<!-- CELL 5: Admin Panel -->
+<div class="md:col-span-3 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-6 hover:shadow-[0_8px_40px_-12px_rgba(25,28,30,0.04)] transition-shadow duration-300">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-error" style="font-size: 16px;">admin_panel_settings</span>
+<h3 class="text-sm font-headline font-semibold text-primary uppercase tracking-wider">管理工具</h3>
+</div>
+<div class="border border-dashed border-outline-variant/40 rounded-lg p-8 bg-surface/50 text-center flex flex-col items-center justify-center group hover:bg-surface transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">cloud_upload</span>
+</div>
+<p class="text-sm font-medium text-primary mb-1">批量数据导入区</p>
+<p class="text-xs text-on-surface-variant max-w-sm">拖拽 CSV 文件进行学生记录、资助状态或职位发布的批量更新。</p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

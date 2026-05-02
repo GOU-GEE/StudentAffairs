@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Architect - 学生个人档案中心</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#c6c6c6",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c6c6c6",
+                        "secondary-fixed": "#b7c8e1",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "secondary-fixed-dim": "#9cacc5",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary-fixed-variant": "#2d3c51",
+                        "on-primary-fixed": "#ffffff",
+                        "tertiary-fixed": "#006c49",
+                        "primary-fixed-dim": "#474747",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#505f76",
+                        "tertiary-container": "#00855b",
+                        "outline": "#777777",
+                        "on-tertiary-fixed": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-secondary-container": "#0b1c30",
+                        "primary": "#000000",
+                        "on-error-container": "#410002",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#3b3b3b",
+                        "on-surface-variant": "#474747",
+                        "inverse-surface": "#2d3133",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9fb",
+                        "primary-fixed": "#5e5e5e",
+                        "on-surface": "#191c1e",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary": "#6ffbbe",
+                        "surface-variant": "#e0e3e5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d8dadc",
+                        "surface-tint": "#5e5e5e",
+                        "secondary-container": "#c5d6f0",
+                        "on-tertiary-container": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-background": "#191c1e",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#6ffbbe",
+                        "on-primary": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#00452d",
+                        "tertiary-fixed-dim": "#005236"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "3xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Inter", "PingFang SC", "Microsoft YaHei", "sans-serif"],
+                        "body": ["Inter", "PingFang SC", "Microsoft YaHei", "sans-serif"],
+                        "label": ["Inter", "PingFang SC", "Microsoft YaHei", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: theme('colors.surface');
+            /* background-image: radial-gradient(theme('colors.outline-variant') 1px, transparent 0); */
+            /* background-size: 24px 24px; */
+            /* background-position: -19px -19px; */
+        }
+        
+        .bento-card {
+            background-color: theme('colors.surface-container-lowest');
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: theme('borderRadius.2xl');
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        .bento-card:hover {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+
+        .bento-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-flow: dense;
+        }
+
+        .text-tight {
+            letter-spacing: -0.02em;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .gradient-btn {
+            background: linear-gradient(to right, theme('colors.primary'), theme('colors.primary-container'));
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased min-h-screen flex">
+<!-- SideNavBar Component -->
+<nav class="fixed left-0 top-0 h-screen w-64 border-r border-zinc-200/50 bg-white flex flex-col py-8 px-4 z-40 hidden md:flex">
+<div class="mb-8 px-4">
+<h1 class="text-xl font-bold tracking-tight text-zinc-900">Academic Architect</h1>
+</div>
+<div class="flex-1 space-y-2 mt-4">
+<a class="flex items-center px-4 py-3 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200 rounded-2xl group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px] font-light">dashboard</span>
+<span class="font-medium text-[15px]">控制面板</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center px-4 py-3 text-zinc-900 font-semibold bg-zinc-100/80 rounded-2xl group shadow-sm" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]">school</span>
+<span class="font-semibold text-[15px]">学术中心</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200 rounded-2xl group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px] font-light">work</span>
+<span class="font-medium text-[15px]">职业发展</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200 rounded-2xl group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px] font-light">security</span>
+<span class="font-medium text-[15px]">安全与支持</span>
+</a>
+</div>
+<div class="mt-auto pt-6 space-y-2">
+<button class="w-full flex items-center justify-center px-4 py-3.5 mb-2 bg-zinc-900 text-white rounded-2xl text-[15px] font-semibold tracking-wide hover:bg-zinc-800 transition-colors shadow-md">
+<span class="material-symbols-outlined mr-2 text-[18px]">add</span>
+            预约咨询
+        </button>
+<a class="flex items-center px-4 py-3 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200 rounded-2xl group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px] font-light">settings</span>
+<span class="font-medium text-[15px]">系统设置</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200 rounded-2xl group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px] font-light">logout</span>
+<span class="font-medium text-[15px]">退出登录</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen relative bg-zinc-50/50">
+<!-- TopNavBar Component -->
+<header class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-zinc-200/50 flex items-center justify-between h-20 px-8 text-sm font-medium">
+<div class="flex items-center w-1/2">
+<div class="relative w-full max-w-xl hidden md:block group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 text-[20px] font-light group-focus-within:text-zinc-900 transition-colors">search</span>
+<input class="w-full bg-zinc-100/80 border-none rounded-2xl pl-12 pr-4 py-3.5 text-[15px] focus:ring-2 focus:ring-zinc-900/10 focus:bg-white transition-all text-zinc-900 placeholder:text-zinc-400 font-medium" placeholder="搜索资源、同学或快捷命令..." type="text"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-zinc-400">
+<span class="material-symbols-outlined text-[16px] font-light">keyboard_command_key</span>
+<span class="text-[13px] font-semibold">K</span>
+</div>
+</div>
+<!-- Mobile Logo -->
+<h1 class="text-xl font-bold tracking-tight text-zinc-900 md:hidden">Academic Architect</h1>
+</div>
+<div class="flex items-center justify-end gap-5 w-1/2">
+<button class="relative text-zinc-500 hover:text-zinc-900 transition-colors p-2.5 rounded-full hover:bg-zinc-100">
+<span class="material-symbols-outlined font-light text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<button class="flex items-center gap-3 pl-2 py-1 pr-1 hover:bg-zinc-100 rounded-full transition-colors">
+<img alt="用户头像" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnWh45abbx9qEBVvgm9Jx3Qbo4t9Dpe-VMORFb_bEKEyAKk8sCKl3XEPs_-MKjEY2Ifol0TiRXkkcMs8ElUX5vodZJZ08dEVAF7tG80hahhH-mgjfeX8zpm59PgO3COCzgRFIkGxgGe9M15yi3470hfvLv8VbJ_1GyIkWMGNr7FAjVsUMVzCbr-amfQOV78uhFzrMek6-lgkF8MmtqEN71-570Q3XHjLEg2Q04p9SMjSevmGzKUTMaliXzc6DNW_Teq_gTM7QVgXRW"/>
+</button>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-6 md:p-10 pb-24 max-w-[1600px] mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 mb-2">学生个人档案</h2>
+<p class="text-zinc-500 font-medium text-[15px]">查看完整的学术记录与个人资料。</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 bg-white text-zinc-700 border border-zinc-200/80 rounded-2xl text-[15px] font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    导出数据
+                </button>
+<button class="px-5 py-2.5 bg-zinc-900 text-white rounded-2xl text-[15px] font-semibold hover:bg-zinc-800 transition-colors shadow-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit_document</span>
+                    申请变更
+                </button>
+</div>
+</div>
+<!-- Bento Grid -->
+<div class="bento-grid">
+<!-- Personal Info (Col span 12 or 4 on lg) -->
+<div class="bento-card col-span-12 lg:col-span-4 p-8 flex flex-col h-full">
+<div class="flex items-start justify-between mb-8">
+<h3 class="text-[13px] font-bold text-zinc-400 uppercase tracking-widest">基本身份</h3>
+<span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[13px] font-bold rounded-full flex items-center gap-1.5 border border-emerald-100">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> 在籍
+                    </span>
+</div>
+<div class="flex items-center gap-6 mb-10">
+<div class="relative">
+<img alt="学生照片" class="w-24 h-24 rounded-2xl object-cover shadow-sm ring-1 ring-zinc-200/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBUa2hmRymZ98ycEFYdW6opNrSA5a4zfJWm4yVDirUVPnFqWjD0VL47Okc1Qwel4HcAmHhfebCLSvJ6sToXenWdNI9k9wFoi3xBiG5zowoIARQ_fPCeLO-3ewYdSPwz6VbkYo7Ej9zrhMNwjnDWHZj8Oe-nNIJn1Fu92AOrfgIK1ObE_3y35RwWYE3hVGl_j_PhQ2UjDY6hNya2i331H8CPGd5XvPSzY7mCOjJVaoQEeBx0dWdtlHw469paUlhyXIwPrSzu84zLh3g"/>
+<button class="absolute -bottom-2 -right-2 w-8 h-8 bg-white border border-zinc-200/80 rounded-full flex items-center justify-center text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[15px]">photo_camera</span>
+</button>
+</div>
+<div>
+<h4 class="text-2xl font-bold tracking-tight text-zinc-900 mb-1">埃莉诺·万斯</h4>
+<p class="text-[15px] text-zinc-500 font-medium mb-1">学号: 104859302</p>
+<p class="text-[13px] text-zinc-400">出生日期: 2002年10月12日</p>
+</div>
+</div>
+<div class="space-y-5 flex-1">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-3 -mx-3 rounded-2xl hover:bg-zinc-50 transition-colors">
+<span class="text-[14px] text-zinc-500 font-medium">电子邮箱</span>
+<span class="text-[15px] font-semibold text-zinc-900">e.vance@university.edu</span>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-3 -mx-3 rounded-2xl hover:bg-zinc-50 transition-colors">
+<span class="text-[14px] text-zinc-500 font-medium">联系电话</span>
+<span class="text-[15px] font-semibold text-zinc-900">+1 (555) 019-2834</span>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-3 -mx-3 rounded-2xl hover:bg-zinc-50 transition-colors">
+<span class="text-[14px] text-zinc-500 font-medium">证件号码</span>
+<span class="text-[15px] font-semibold text-zinc-900">***-**-8492</span>
+</div>
+</div>
+</div>
+<!-- Academic Info (Col span 12 or 8 on lg) -->
+<div class="bento-card col-span-12 lg:col-span-8 p-8 flex flex-col h-full bg-gradient-to-br from-white to-zinc-50/50">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-700 text-[20px]">account_balance</span>
+</div>
+<h3 class="text-[15px] font-bold text-zinc-900">学籍详情</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<!-- Group 1 -->
+<div class="space-y-1.5 p-4 rounded-2xl bg-white border border-zinc-100 shadow-sm">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">所属学院 / 系别</label>
+<p class="text-[16px] font-bold text-zinc-900">文理学院</p>
+</div>
+<div class="space-y-1.5 p-4 rounded-2xl bg-white border border-zinc-100 shadow-sm">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">主修专业</label>
+<p class="text-[16px] font-bold text-zinc-900">认知心理学 (理学士)</p>
+</div>
+<div class="space-y-1.5 p-4 rounded-2xl bg-white border border-zinc-100 shadow-sm">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">当前学年 &amp; 届别</label>
+<p class="text-[16px] font-semibold text-zinc-900">三年级 · 2025届</p>
+</div>
+<div class="space-y-1.5 p-4 rounded-2xl bg-white border border-zinc-100 shadow-sm">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">学籍状态</label>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+<p class="text-[15px] font-bold text-zinc-900">全日制在读</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-zinc-200/60 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+<div class="space-y-1.5">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">主校区</label>
+<p class="text-[15px] font-bold text-zinc-900 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">pin_drop</span>
+                            北校区
+                        </p>
+</div>
+<div class="space-y-1.5">
+<label class="text-[13px] text-zinc-500 font-semibold tracking-wide">非集中住宿地址</label>
+<p class="text-[15px] font-bold text-zinc-900 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">home_pin</span>
+                            林肯大街 402B室, 春田市
+                        </p>
+</div>
+</div>
+</div>
+<!-- Hardship / Financial Aid (Col span 12 or 5 on lg) -->
+<div class="bento-card col-span-12 lg:col-span-5 p-8 flex flex-col h-full bg-zinc-50/80">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-2xl bg-zinc-200/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-700 text-[20px]">payments</span>
+</div>
+<h3 class="text-[15px] font-bold text-zinc-900">资助申请状态</h3>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-zinc-200/50 flex items-center justify-center transition-colors text-zinc-400 hover:text-zinc-700" title="关于资助等级的相关信息">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</button>
+</div>
+<div class="mb-8">
+<p class="text-[13px] text-zinc-500 font-semibold mb-2">家庭经济困难认定级别</p>
+<div class="flex items-center justify-between p-4 border border-zinc-200/80 rounded-2xl bg-white shadow-sm">
+<span class="text-[16px] font-bold text-zinc-900">II 级 - 特别困难</span>
+<span class="px-3 py-1.5 bg-zinc-100 text-zinc-700 text-[13px] font-bold rounded-full">已审核</span>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-[13px] text-zinc-500 font-semibold tracking-wide">必要证明材料</p>
+<div class="flex items-center justify-between p-4 border border-zinc-200/80 rounded-2xl bg-white hover:border-zinc-300 transition-all cursor-pointer group shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center group-hover:bg-zinc-100 transition-colors">
+<span class="material-symbols-outlined text-zinc-500 group-hover:text-zinc-900 transition-colors text-[20px]">description</span>
+</div>
+<div>
+<p class="text-[15px] font-bold text-zinc-900 mb-0.5">税务申报副本</p>
+<p class="text-[13px] text-zinc-500 font-medium">提交日期: 2023年10月1日</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+</div>
+<button class="w-full py-4 border-2 border-dashed border-zinc-200 text-zinc-500 rounded-2xl text-[15px] font-bold hover:bg-zinc-50 hover:border-zinc-300 hover:text-zinc-900 transition-all flex items-center justify-center gap-2 mt-4 bg-white">
+<span class="material-symbols-outlined text-[20px]">upload_file</span>
+                        上传补充材料
+                    </button>
+</div>
+</div>
+<!-- Health & Interests (Col span 12 or 7 on lg) -->
+<div class="bento-card col-span-12 lg:col-span-7 p-8 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-700 text-[20px]">psychology</span>
+</div>
+<h3 class="text-[15px] font-bold text-zinc-900">健康与个人画像</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<!-- Health -->
+<div>
+<h4 class="text-[13px] text-zinc-500 font-semibold tracking-wide mb-4">医疗摘要</h4>
+<ul class="space-y-4 p-5 rounded-2xl bg-zinc-50/80 border border-zinc-100">
+<li class="flex flex-col gap-1 pb-3 border-b border-zinc-200/50 last:border-0 last:pb-0">
+<span class="text-[13px] font-semibold text-zinc-500">过敏史</span>
+<span class="text-[15px] font-bold text-zinc-900">青霉素 (严重)</span>
+</li>
+<li class="flex flex-col gap-1 pb-3 border-b border-zinc-200/50 last:border-0 last:pb-0">
+<span class="text-[13px] font-semibold text-zinc-500">血型</span>
+<span class="text-[15px] font-bold text-zinc-900">O型 (Rh阳性)</span>
+</li>
+<li class="flex flex-col gap-1 pb-3 border-b border-zinc-200/50 last:border-0 last:pb-0">
+<span class="text-[13px] font-semibold text-zinc-500">慢性病史 &amp; 病史</span>
+<span class="text-[15px] font-bold text-zinc-900">哮喘 (轻度), 2018年阑尾炎手术</span>
+</li>
+</ul>
+</div>
+<!-- Interests & Goals -->
+<div>
+<h4 class="text-[13px] text-zinc-500 font-semibold tracking-wide mb-4">发展规划</h4>
+<div class="mb-6 space-y-2 p-5 rounded-2xl bg-zinc-50/80 border border-zinc-100">
+<span class="text-[13px] font-semibold text-zinc-500 block">职业目标</span>
+<p class="text-[15px] font-medium text-zinc-900 leading-relaxed">致力于认知行为疗法领域的学术研究，重点关注青少年心理健康，目标成为临床心理学家。</p>
+</div>
+<div class="mb-6 space-y-2 p-5 rounded-2xl bg-zinc-50/80 border border-zinc-100">
+<span class="text-[13px] font-semibold text-zinc-500 block">性格特征</span>
+<p class="text-[15px] font-medium text-zinc-900 leading-relaxed">内向、沉思、富有同情心，倾向于深度一对一交流。</p>
+</div>
+<div>
+<span class="text-[13px] font-semibold text-zinc-500 block mb-3">课外活动与兴趣</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-white border border-zinc-200/80 rounded-full text-[13px] font-semibold text-zinc-700 shadow-sm hover:border-zinc-300 transition-colors cursor-default">辩论社</span>
+<span class="px-4 py-2 bg-white border border-zinc-200/80 rounded-full text-[13px] font-semibold text-zinc-700 shadow-sm hover:border-zinc-300 transition-colors cursor-default">攀岩</span>
+<span class="px-4 py-2 bg-white border border-zinc-200/80 rounded-full text-[13px] font-semibold text-zinc-700 shadow-sm hover:border-zinc-300 transition-colors cursor-default">神经科学实验室助理</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Family & Emergency (Col span 12) -->
+<div class="bento-card col-span-12 p-8 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-700 text-[20px]">family_restroom</span>
+</div>
+<h3 class="text-[15px] font-bold text-zinc-900">家庭与紧急联系人</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Parent 1 -->
+<div class="p-6 bg-zinc-50/80 rounded-3xl border border-zinc-100 hover:border-zinc-200 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-[16px] font-bold text-zinc-900">罗伯特·万斯</h4>
+<span class="px-2.5 py-1 bg-zinc-200/60 text-zinc-600 text-[11px] font-bold rounded-full uppercase tracking-wide">父亲</span>
+</div>
+<div class="space-y-3 mt-4">
+<p class="text-[14px] text-zinc-600 font-medium flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">call</span>
+                                +1 (555) 293-8472
+                            </p>
+<p class="text-[14px] text-zinc-600 font-medium flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">mail</span>
+                                r.vance@email.com
+                            </p>
+</div>
+</div>
+<!-- Parent 2 / Guardian -->
+<div class="p-6 bg-zinc-50/80 rounded-3xl border border-zinc-100 hover:border-zinc-200 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-[16px] font-bold text-zinc-900">莎拉·万斯</h4>
+<span class="px-2.5 py-1 bg-zinc-200/60 text-zinc-600 text-[11px] font-bold rounded-full uppercase tracking-wide">母亲</span>
+</div>
+<div class="space-y-3 mt-4">
+<p class="text-[14px] text-zinc-600 font-medium flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">call</span>
+                                +1 (555) 293-8473
+                            </p>
+<p class="text-[14px] text-zinc-600 font-medium flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">work</span>
+                                软件工程师
+                            </p>
+</div>
+</div>
+<!-- Emergency Contact (Non-Parent) -->
+<div class="p-6 bg-red-50/50 rounded-3xl border border-red-100 hover:border-red-200 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-[16px] font-bold text-zinc-900">陈大卫</h4>
+<span class="px-2.5 py-1 bg-red-100 text-red-700 text-[11px] font-bold rounded-full uppercase tracking-wide flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">warning</span> 第一紧急联系人
+                            </span>
+</div>
+<p class="text-[13px] text-zinc-500 font-medium mb-4">关系: 叔叔</p>
+<div class="space-y-3">
+<p class="text-[15px] font-bold text-zinc-900 flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-red-500">call</span>
+                                +1 (555) 992-1029
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

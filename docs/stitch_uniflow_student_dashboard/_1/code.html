@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Architect - 沟通互动模块</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary-fixed": "#ffffff",
+                        "on-primary-fixed-variant": "#e5e2e1",
+                        "outline-variant": "#c6c6c6",
+                        "tertiary-container": "#316bf3",
+                        "primary": "#000000",
+                        "secondary-container": "#c5d6f0",
+                        "error": "#ba1a1a",
+                        "outline": "#777777",
+                        "on-primary": "#e5e2e1",
+                        "surface-tint": "#5f5e5e",
+                        "on-tertiary-fixed-variant": "#dbe1ff",
+                        "on-tertiary": "#dbe1ff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-high": "#e6e8ea",
+                        "primary-fixed": "#5f5e5e",
+                        "primary-fixed-dim": "#474746",
+                        "tertiary-fixed-dim": "#003ea8",
+                        "surface": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#ffffff",
+                        "on-secondary-fixed-variant": "#2d3c51",
+                        "on-tertiary-container": "#ffffff",
+                        "tertiary": "#00348f",
+                        "on-primary-container": "#ffffff",
+                        "on-background": "#191c1e",
+                        "secondary-fixed": "#b7c8e1",
+                        "primary-container": "#3c3b3b",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary-fixed": "#0053db",
+                        "on-secondary-container": "#0b1c30",
+                        "surface-container": "#eceef0",
+                        "inverse-primary": "#c8c6c5",
+                        "background": "#f7f9fb",
+                        "on-error-container": "#410002",
+                        "secondary": "#505f76",
+                        "on-surface-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#9cacc5",
+                        "on-surface": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "surface-bright": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+            background-image: radial-gradient(theme('colors.outline-variant') 1px, transparent 1px);
+            background-size: 24px 24px;
+            background-position: -12px -12px;
+        }
+        /* Custom scrollbar for better gallery feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex text-on-surface">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 bg-[#f7f9fb] dark:bg-slate-950 border-r border-[#c6c6c6]/15 z-50">
+<div class="mb-12 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary-fixed flex items-center justify-center font-bold text-xl tracking-tighter">A</div>
+<div>
+<h1 class="text-xl font-bold tracking-tighter text-[#171717] dark:text-white leading-none">Architect</h1>
+<p class="text-[0.6875rem] uppercase tracking-wider text-outline mt-1 font-semibold">University Portal</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 font-['Inter'] font-medium tracking-tight text-[0.875rem]">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-[#ffffff]/50 dark:hover:bg-slate-900 transition-colors scale-98 active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-[#ffffff]/50 dark:hover:bg-slate-900 transition-colors scale-98 active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="school">school</span>
+                    Academic Hub
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-[#ffffff]/50 dark:hover:bg-slate-900 transition-colors scale-98 active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="work_outline">work_outline</span>
+                    Career Path
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-[#ffffff]/50 dark:hover:bg-slate-900 transition-colors scale-98 active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="security">security</span>
+                    Safety &amp; Support
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#171717] dark:text-white font-semibold border-r-2 border-[#171717] dark:border-white bg-[#ffffff]/50 transition-colors scale-98 active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="chat_bubble_outline" data-weight="fill" style="font-variation-settings: 'FILL' 1;">chat_bubble_outline</span>
+                    Communication
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 sticky top-0 z-40 h-16 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-[#c6c6c6]/15 font-['Inter'] text-sm tracking-tight w-full">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-64 focus-within:ring-1 ring-[#171717] transition-all rounded-md bg-surface-container-low hidden md:flex items-center px-3 py-1.5">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none text-sm w-full placeholder-outline text-on-surface p-0 focus:ring-0" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<div class="hidden md:flex items-center gap-2 text-xs font-semibold tracking-wider text-outline uppercase border border-outline-variant/30 rounded px-2 py-1 bg-surface-container-lowest">
+                    Command + K
+                </div>
+<button class="text-slate-400 dark:text-slate-500 hover:text-[#171717] dark:hover:text-white transition-opacity">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button class="text-slate-400 dark:text-slate-500 hover:text-[#171717] dark:hover:text-white transition-opacity">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden shadow-[0_4px_12px_rgba(25,28,30,0.06)] border border-outline-variant/15">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="professional headshot of a young male student with short hair, neutral background, soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE-42E_AjiSFko2yGHqhQqv6w9tXyRgSsoQNxAzcTIzPfd0JLoHt_0QjjPdUTQbR1IfpxAbpI0Lvy3ZhybJCM8qidRAt7YxxxgkhQpNYlTWm9UdFmvs8NaWlV9wdVga_fmFSqsiH3qs0nTdbL2VOkG2pilmajiqKAvsB94rG4UhaKRdpb2cl86OHGjf4jCyl4W9HvRIt-rFxQRt11vcPT0ki4eKg0Na5YLi9-GDA2oQDfZlKrVjLDZ9IqAXANsK5ISTWBDp62-QaJH"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-6 lg:p-10 max-w-[1600px] mx-auto w-full">
+<!-- Page Header -->
+<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">沟通互动</h2>
+<p class="text-[0.875rem] text-secondary font-medium">Communication &amp; Interaction Hub</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                        New Message
+                    </button>
+</div>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
+<!-- 1. Private Messaging (私信) -->
+<div class="md:col-span-8 lg:col-span-5 bg-surface-container-low rounded-xl p-6 relative overflow-hidden group flex flex-col h-[500px]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight">私信</h3>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-2">
+<!-- Message Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 cursor-pointer hover:bg-surface-bright transition-colors border border-outline-variant/15 flex gap-4 items-center shadow-[0_2px_8px_rgba(25,28,30,0.02)]">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant">
+<img alt="Prof. Wang" class="w-full h-full object-cover" data-alt="professional portrait of an asian female professor with glasses, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_njYs70nLBUEbJlfAY7LQwsmtRR50Dcdny-UgqU4fNA7BaYPwrutgN8bATs9gUF-8Ff3W3_hItsH5eCRJd8w48TpaSpHbuWKSi9CnTXFy3hQuEHdbCXwiAp3v1GZDChUO9vz24Jrs_Vxr3SSM2bybzLgNS-w-lSEyH-IW8ozwJG30sVaDXOlno7PO-Fp03ZhA1a46hd-Ro16KsAZwAsBJdn0aZNralS14gutLaymqGrnrKTkmpW0mPwpbbKjwMPdbsH5HFfWVtVqe"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-semibold text-[0.875rem] truncate">Prof. Wang</h4>
+<span class="text-[0.6875rem] text-secondary font-medium uppercase tracking-[0.05em]">10:42 AM</span>
+</div>
+<p class="text-[0.875rem] text-on-surface-variant truncate">Regarding your recent thesis submission, please review the notes...</p>
+</div>
+</div>
+<!-- Message Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 cursor-pointer hover:bg-surface-bright transition-colors border border-outline-variant/15 flex gap-4 items-center">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant">
+<img alt="Li Lei" class="w-full h-full object-cover" data-alt="casual portrait of a young asian male student outdoors, natural sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUDtSxSmlEueH-5JjGWEnu16eh0Xu3u7VVxoayQiD9uHAxWSZIYcPIPK7ofbsOLogwiBs_XUsYUleEXzJKFq69ELSwsGG2F1Qy7UEnoc5BVa4qDdipf0Cf_usl6QUOToZK-VzNLU0S_j_Lcq7gWdX1LYQ6C85nKHTPMKCTf2sRYsVDRLBX5aF7xhJZ9tMbajV11dJRxcEWjY6PNxlJGc-eDlal26MLop1e9wjCMDGbXwRs5GJiPU3-8SBWHfQXZr33t80Z3tbrYHw9"/>
+</div>
+<div class="absolute -top-1 -right-1 w-4 h-4 bg-tertiary-container text-on-tertiary-container text-[0.6rem] font-bold flex items-center justify-center rounded-full">2</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-semibold text-[0.875rem] truncate">Li Lei</h4>
+<span class="text-[0.6875rem] text-tertiary font-bold uppercase tracking-[0.05em]">Yesterday</span>
+</div>
+<p class="text-[0.875rem] font-medium text-on-surface truncate">Are we still meeting for the study group at the library?</p>
+</div>
+</div>
+<!-- Message Item 3 -->
+<div class="bg-transparent rounded-xl p-4 cursor-pointer hover:bg-surface-container-lowest transition-colors border border-transparent hover:border-outline-variant/15 flex gap-4 items-center">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex items-center justify-center text-secondary font-bold text-lg">
+                                    CS
+                                </div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-semibold text-[0.875rem] truncate text-secondary">CS Dept Admin</h4>
+<span class="text-[0.6875rem] text-outline font-medium uppercase tracking-[0.05em]">Mon</span>
+</div>
+<p class="text-[0.875rem] text-secondary truncate">Reminder: Registration opens next week.</p>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/15">
+<button class="w-full py-2 text-center text-[0.875rem] font-semibold text-secondary hover:text-primary transition-colors">View All Messages</button>
+</div>
+</div>
+<!-- Right Column Split -->
+<div class="md:col-span-4 lg:col-span-7 grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+<!-- 2. Class Announcements (班级公告) -->
+<div class="bg-surface-container-low rounded-xl p-6 lg:col-span-1 h-[240px] flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight">班级公告</h3>
+<span class="material-symbols-outlined text-secondary" data-icon="campaign">campaign</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4">
+<div class="relative pl-4 border-l-2 border-outline-variant">
+<div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-primary"></div>
+<span class="block text-[0.6875rem] text-secondary font-bold tracking-[0.05em] uppercase mb-1">Oct 24, 09:00 AM</span>
+<h4 class="text-[0.875rem] font-semibold leading-tight text-on-surface mb-1">Advanced Algorithms Midterm Changed</h4>
+<p class="text-[0.75rem] text-on-surface-variant leading-relaxed">The midterm exam has been moved to Room 402.</p>
+</div>
+<div class="relative pl-4 border-l-2 border-outline-variant/30">
+<div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-outline-variant"></div>
+<span class="block text-[0.6875rem] text-outline font-bold tracking-[0.05em] uppercase mb-1">Oct 20, 14:30 PM</span>
+<h4 class="text-[0.875rem] font-medium leading-tight text-secondary mb-1">Guest Lecture Cancelled</h4>
+</div>
+</div>
+</div>
+<!-- 3. Grade/School Notifications (年级通知) -->
+<div class="bg-primary text-on-primary-fixed rounded-xl p-6 lg:col-span-1 h-[240px] flex flex-col relative overflow-hidden">
+<div class="absolute -right-10 -top-10 text-primary-fixed-dim opacity-20">
+<span class="material-symbols-outlined text-[120px]" data-icon="account_balance">account_balance</span>
+</div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-6">
+<h3 class="text-[1.375rem] font-semibold tracking-tight">年级通知</h3>
+<span class="bg-on-primary-fixed text-primary text-[0.6875rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Urgent</span>
+</div>
+<div class="bg-primary-fixed/30 rounded-lg p-4 backdrop-blur-sm border border-on-primary-fixed/10">
+<h4 class="text-[1rem] font-bold mb-2">Campus Maintenance Notice</h4>
+<p class="text-[0.875rem] text-on-primary-fixed-variant opacity-90 leading-relaxed mb-4">Library South Wing will be closed for HVAC repairs starting this Friday through Sunday.</p>
+<button class="text-[0.75rem] font-semibold uppercase tracking-wider border-b border-on-primary-fixed/50 pb-0.5 hover:border-on-primary-fixed transition-colors">Read Details</button>
+</div>
+</div>
+</div>
+<!-- 4. Feedback Board (意见反馈留言板) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 lg:col-span-2 border border-outline-variant/15 shadow-[0_12px_40px_rgba(25,28,30,0.06)] flex flex-col lg:flex-row gap-8">
+<div class="flex-1">
+<h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight mb-2">意见反馈留言板</h3>
+<p class="text-[0.875rem] text-secondary mb-6">Submit your suggestions or report issues directly to the administration.</p>
+<form class="space-y-4">
+<div>
+<label class="block text-[0.6875rem] font-bold text-secondary uppercase tracking-[0.05em] mb-1.5">Topic</label>
+<select class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-md text-[0.875rem] py-2 px-3 text-on-surface">
+<option>Facilities &amp; Maintenance</option>
+<option>Academic Curriculum</option>
+<option>Campus Life</option>
+<option>Other</option>
+</select>
+</div>
+<div>
+<label class="block text-[0.6875rem] font-bold text-secondary uppercase tracking-[0.05em] mb-1.5">Message</label>
+<textarea class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-md text-[0.875rem] py-2 px-3 text-on-surface resize-none placeholder-outline" placeholder="Briefly describe your feedback..." rows="3"></textarea>
+</div>
+<button class="bg-surface-container-high text-on-surface hover:bg-surface-dim transition-colors rounded-md px-4 py-2 text-[0.875rem] font-semibold w-full sm:w-auto" type="button">
+                                    Submit Feedback
+                                </button>
+</form>
+</div>
+<div class="w-px bg-outline-variant/20 hidden lg:block"></div>
+<div class="flex-[0.8] flex flex-col">
+<h4 class="text-[0.875rem] font-bold text-on-surface mb-4">Recent Submissions</h4>
+<div class="space-y-3 flex-1">
+<div class="flex justify-between items-center p-3 rounded-lg bg-surface-container-low">
+<div>
+<p class="text-[0.875rem] font-medium text-on-surface">Wi-Fi drop in Hall B</p>
+<span class="text-[0.6875rem] text-secondary">Submitted 2 days ago</span>
+</div>
+<span class="bg-tertiary-container text-on-tertiary-container px-2.5 py-1 rounded-full text-[0.6875rem] font-bold uppercase tracking-wider">Resolved</span>
+</div>
+<div class="flex justify-between items-center p-3 rounded-lg bg-surface border border-outline-variant/15">
+<div>
+<p class="text-[0.875rem] font-medium text-on-surface">More vegan options in dining</p>
+<span class="text-[0.6875rem] text-secondary">Submitted 1 week ago</span>
+</div>
+<span class="bg-surface-variant text-on-surface-variant px-2.5 py-1 rounded-full text-[0.6875rem] font-bold uppercase tracking-wider border border-outline-variant/30">In Review</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Academic Exchange / Activity Signup (学术交流 / 活动报名) -->
+<div class="md:col-span-12 bg-surface-container-low rounded-xl p-8 mt-4">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight mb-1">学术交流 / 活动报名</h3>
+<p class="text-[0.875rem] text-secondary">Discover and register for upcoming seminars, workshops, and events.</p>
+</div>
+<button class="text-[0.875rem] font-semibold text-secondary hover:text-primary transition-colors flex items-center gap-1">
+                            Browse All <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Activity Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15 group shadow-[0_4px_20px_rgba(25,28,30,0.04)] hover:shadow-[0_12px_40px_rgba(25,28,30,0.08)] transition-all">
+<div class="h-32 bg-surface-variant relative overflow-hidden">
+<img alt="Seminar Image" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="large modern university auditorium with empty seats, soft ambient lighting, professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATHzUPzOYUMyrc5IeQdgJ1UXaKiOS0yHk6NGQT2WZmwIYFzvrvtuMPoGjveQ7YVx_34h-5uu7DGD2PmeTtmei7Y94nvk2kOG-MoMuzPUbOp012Ymp-kchku24JOngPKS52PMogLVQa-dqz4P6ZuiwcLl_MueXX2yGFNYXPzuwHunzNiVD2tlfRbZPrxQxg9AYYl5rA0oBz-9OWEZ-2BvUfVgyCpr7jptvLGAFIDADAz4oqYMZyGnS9JPtCbDXTVb9bG2Hfvkxriit9"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-[0.6875rem] font-bold uppercase tracking-wider text-on-surface">Seminar</div>
+</div>
+<div class="p-5">
+<h4 class="text-[1rem] font-bold text-on-surface mb-2 leading-tight">The Future of Quantum Computing in Academia</h4>
+<div class="flex items-center gap-2 text-[0.75rem] text-secondary mb-4 font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_month">calendar_month</span>
+                                    Nov 12, 14:00
+                                    <span class="material-symbols-outlined text-[16px] ml-2" data-icon="location_on">location_on</span>
+                                    Science Hall 101
+                                </div>
+<div class="flex justify-between items-center mt-2 pt-4 border-t border-outline-variant/15">
+<span class="text-[0.75rem] font-semibold text-secondary">42/100 Seats</span>
+<button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded px-4 py-1.5 text-[0.75rem] font-semibold">Register</button>
+</div>
+</div>
+</div>
+<!-- Activity Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15 group shadow-[0_4px_20px_rgba(25,28,30,0.04)] hover:shadow-[0_12px_40px_rgba(25,28,30,0.08)] transition-all">
+<div class="h-32 bg-surface-variant relative overflow-hidden">
+<img alt="Workshop Image" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="close up of hands typing on a laptop over scattered papers and notebooks, bright natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT00AtsDGhxe3wLj9yHrnQEitGBPlgfSIfL660Pavgf23dt_C9HWPw_wEgyRBonGA_GgYiTMKBo7NMei_QHfsrmPqu3am8REHUkkhahInwvg33_7pgLolnPjykosfTFEm0xCRx9XQi6Xwxrcn6VaPFDRf0cW3VMmd09A3XkrnaVdh2IzhFnUFDVrAAQQe7VxqspYU0l_sjPjShGKMKs_JWwNcxyFg0gmntz5zSzFhH6EBRZlTBQZsw3W_Ku5rqXwDTDjbx7DE00_R6"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-[0.6875rem] font-bold uppercase tracking-wider text-on-surface">Workshop</div>
+</div>
+<div class="p-5">
+<h4 class="text-[1rem] font-bold text-on-surface mb-2 leading-tight">Effective Research Methodologies for Postgrads</h4>
+<div class="flex items-center gap-2 text-[0.75rem] text-secondary mb-4 font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_month">calendar_month</span>
+                                    Nov 15, 10:00
+                                    <span class="material-symbols-outlined text-[16px] ml-2" data-icon="videocam">videocam</span>
+                                    Virtual (Zoom)
+                                </div>
+<div class="flex justify-between items-center mt-2 pt-4 border-t border-outline-variant/15">
+<span class="text-[0.75rem] font-semibold text-error">Only 5 left</span>
+<button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded px-4 py-1.5 text-[0.75rem] font-semibold">Register</button>
+</div>
+</div>
+</div>
+<!-- Activity Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15 group shadow-[0_4px_20px_rgba(25,28,30,0.04)] hover:shadow-[0_12px_40px_rgba(25,28,30,0.08)] transition-all">
+<div class="h-32 bg-surface-variant relative overflow-hidden flex items-center justify-center border-b border-outline-variant/15">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-variant to-surface-dim opacity-50"></div>
+<span class="material-symbols-outlined text-[48px] text-outline relative z-10" data-icon="groups">groups</span>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-[0.6875rem] font-bold uppercase tracking-wider text-on-surface z-10">Social</div>
+</div>
+<div class="p-5">
+<h4 class="text-[1rem] font-bold text-on-surface mb-2 leading-tight">Inter-departmental Fall Mixer &amp; Networking</h4>
+<div class="flex items-center gap-2 text-[0.75rem] text-secondary mb-4 font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_month">calendar_month</span>
+                                    Nov 18, 18:00
+                                    <span class="material-symbols-outlined text-[16px] ml-2" data-icon="location_on">location_on</span>
+                                    Student Union
+                                </div>
+<div class="flex justify-between items-center mt-2 pt-4 border-t border-outline-variant/15">
+<span class="text-[0.75rem] font-semibold text-secondary">Open Registration</span>
+<button class="bg-transparent border border-outline-variant text-on-surface hover:bg-surface-container-low transition-colors rounded px-4 py-1.5 text-[0.75rem] font-semibold">Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
