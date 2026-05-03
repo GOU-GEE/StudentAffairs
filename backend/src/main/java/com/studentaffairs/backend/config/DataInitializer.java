@@ -3,10 +3,12 @@ package com.studentaffairs.backend.config;
 import com.studentaffairs.backend.entity.AcademicRecord;
 import com.studentaffairs.backend.entity.Announcement;
 import com.studentaffairs.backend.entity.SafetyIncident;
+import com.studentaffairs.backend.entity.StudentApplication;
 import com.studentaffairs.backend.entity.WorkStudyJob;
 import com.studentaffairs.backend.repository.AcademicRecordRepository;
 import com.studentaffairs.backend.repository.AnnouncementRepository;
 import com.studentaffairs.backend.repository.SafetyIncidentRepository;
+import com.studentaffairs.backend.repository.StudentApplicationRepository;
 import com.studentaffairs.backend.repository.WorkStudyJobRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +25,8 @@ public class DataInitializer {
     public CommandLineRunner initData(WorkStudyJobRepository jobRepository,
                                       AcademicRecordRepository academicRepository,
                                       SafetyIncidentRepository safetyRepository,
-                                      AnnouncementRepository announcementRepository) {
+                                      AnnouncementRepository announcementRepository,
+                                      StudentApplicationRepository applicationRepository) {
         return args -> {
             // 初始化勤工助学岗位
             if (jobRepository.count() == 0) {
@@ -76,6 +79,7 @@ public class DataInitializer {
 
             initSafety(safetyRepository);
             initAnnouncements(announcementRepository);
+            initApplications(applicationRepository);
         };
     }
 
@@ -154,5 +158,36 @@ public class DataInitializer {
 
         repo.saveAll(list);
         System.out.println("Initialized default Announcements.");
+    }
+
+    private void initApplications(StudentApplicationRepository repo) {
+        if (repo.count() > 0) return;
+        List<StudentApplication> list = new ArrayList<>();
+
+        StudentApplication a1 = new StudentApplication();
+        a1.setStudentId("202301042"); a1.setStudentName("张小明");
+        a1.setType("SCHOLARSHIP"); a1.setTitle("2024-2025学年国家励志奖学金申请");
+        a1.setReason("本学期学习成绩优异，GPA 3.85，专业排名前10%，积极参加社会实践活动，特申请国家励志奖学金。");
+        a1.setStatus("PENDING"); a1.setApplyTime(LocalDateTime.now().minusDays(3));
+        list.add(a1);
+
+        StudentApplication a2 = new StudentApplication();
+        a2.setStudentId("202301042"); a2.setStudentName("张小明");
+        a2.setType("LEAVE"); a2.setTitle("周末外出报备（2024-11-16至11-17）");
+        a2.setReason("本周末需返回家乡参加家庭事务，请批准2天外出申请，保证按时返校。");
+        a2.setStatus("APPROVED"); a2.setApplyTime(LocalDateTime.now().minusDays(10));
+        a2.setReviewComment("同意，注意安全"); a2.setReviewerName("李辅导员");
+        a2.setReviewTime(LocalDateTime.now().minusDays(9));
+        list.add(a2);
+
+        StudentApplication a3 = new StudentApplication();
+        a3.setStudentId("202301043"); a3.setStudentName("李四");
+        a3.setType("FINANCIAL_AID"); a3.setTitle("国家助学金申请（困难认定C档）");
+        a3.setReason("家庭经济困难，父母务农，年收入不足3万元，已提交困难认定材料，特申请国家助学金。");
+        a3.setStatus("PENDING"); a3.setApplyTime(LocalDateTime.now().minusDays(5));
+        list.add(a3);
+
+        repo.saveAll(list);
+        System.out.println("Initialized default StudentApplications.");
     }
 }
