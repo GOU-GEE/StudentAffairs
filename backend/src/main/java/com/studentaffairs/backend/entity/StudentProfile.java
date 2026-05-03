@@ -39,6 +39,5 @@ public class StudentProfile {
 
     // 非结构化数据降维：将紧急联系人、病史、爱好等存入 JSONB
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
     private Map<String, Object> extraInfo;
 }

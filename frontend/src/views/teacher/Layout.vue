@@ -11,38 +11,34 @@
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-semibold border-r-2 border-primary bg-surface-container-highest transition-colors scale-98">
+          <router-link to="/teacher" exact-active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><DataBoard /></el-icon>
             学生档案大屏
           </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/teacher/financial-aid" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><Money /></el-icon>
             奖助服务管理
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/teacher/academic-warning" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><TrendCharts /></el-icon>
             学业预警支持
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98 relative group" href="#">
-            <el-icon :size="20" class="text-ai-primary"><Guide /></el-icon>
-            <span class="text-ai-primary font-semibold">AI 职业规划</span>
-            <span class="absolute right-3 flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-ai-primary opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-ai-primary"></span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/teacher/career-plan" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><ChatLineRound /></el-icon>
             沟通互动
-          </a>
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/teacher/communication" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
+            <el-icon :size="20"><Warning /></el-icon>
+            校园安全预警
+          </router-link>
         </li>
       </ul>
 
@@ -97,7 +93,7 @@
 </template>
 
 <script setup>
-import { DataBoard, Money, TrendCharts, Guide, ChatLineRound, Search, Bell } from '@element-plus/icons-vue'
+import { DataBoard, Money, TrendCharts, ChatLineRound, Warning, Search, Bell } from '@element-plus/icons-vue'
 </script>
 
 <style scoped>

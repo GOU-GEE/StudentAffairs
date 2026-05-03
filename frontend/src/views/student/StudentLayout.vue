@@ -11,34 +11,34 @@
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/student" class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-semibold border-r-2 border-primary bg-surface-container-highest transition-colors scale-98">
+          <router-link to="/student" exact-active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><UserFilled /></el-icon>
             个人主页
           </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/student/academic" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><Reading /></el-icon>
             学业与第二课堂
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/student/applications" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><Document /></el-icon>
             我的申请 (奖助/请假)
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98 relative group" href="#">
+          <router-link to="/student/career-plan" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98 relative group">
             <el-icon :size="20" class="text-ai-primary"><Guide /></el-icon>
             <span class="text-ai-primary font-semibold">职业规划 (AI 分析)</span>
-          </a>
+          </router-link>
         </li>
         <li>
-          <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98" href="#">
+          <router-link to="/student/campus-life" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors scale-98">
             <el-icon :size="20"><School /></el-icon>
             校园生活与安全
-          </a>
+          </router-link>
         </li>
       </ul>
 
