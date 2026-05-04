@@ -1,9 +1,5 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="mb-8">
-      <h2 class="text-[2.5rem] leading-none font-bold tracking-tight text-on-surface mb-2">校园通知</h2>
-      <p class="text-[0.875rem] text-secondary font-medium">Announcements & Campus Life</p>
-    </div>
 
     <!-- Pinned Announcement -->
     <div v-if="pinned" class="mb-5 p-5 bg-primary text-on-primary-fixed rounded-xl border border-primary flex gap-4 items-start shadow-[0_8px_20px_rgba(49,107,243,0.2)]">

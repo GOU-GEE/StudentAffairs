@@ -1,22 +1,15 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- Page Header -->
-    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div>
-        <h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">学生档案大屏</h2>
-        <p class="text-[0.875rem] text-secondary font-medium">Student Panorama & AI Analytics Hub</p>
-      </div>
-      <div class="flex gap-3">
-        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 border border-outline-variant/20 shadow-sm">
-          <el-icon :size="18"><Download /></el-icon>
-          导出报表
+    <teleport to="#header-actions">
+      <div class="flex gap-2">
+        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
+          <el-icon :size="14"><Download /></el-icon>导出报表
         </button>
-        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
-          <el-icon :size="18"><UploadFilled /></el-icon>
-          导入数据
+        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+          <el-icon :size="14"><UploadFilled /></el-icon>导入数据
         </button>
       </div>
-    </div>
+    </teleport>
 
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">

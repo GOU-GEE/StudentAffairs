@@ -1,16 +1,11 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-      <div>
-        <h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">沟通互动</h2>
-        <p class="text-[0.875rem] text-secondary font-medium">Announcements & Communication Center</p>
-      </div>
+    <teleport to="#header-actions">
       <button @click="showPublishDialog = true"
-              class="bg-primary text-on-primary-fixed hover:bg-primary-fixed rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-md">
-        <el-icon><EditPen /></el-icon>
-        发布公告
+              class="bg-primary text-on-primary-fixed hover:bg-primary-fixed rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon><EditPen /></el-icon>发布公告
       </button>
-    </div>
+    </teleport>
 
     <!-- Announcement Feed -->
     <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 overflow-hidden">

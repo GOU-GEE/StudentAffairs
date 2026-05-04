@@ -1,17 +1,12 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- Page Header -->
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-      <div>
-        <h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">学业预警支持</h2>
-        <p class="text-[0.875rem] text-secondary font-medium">Academic Early Warning & Analysis System</p>
-      </div>
+    <teleport to="#header-actions">
       <button @click="runEngine" :disabled="engineRunning"
-              class="bg-error text-white hover:bg-error/80 transition-colors rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-md disabled:opacity-50">
+              class="bg-error text-white hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md disabled:opacity-50">
         <el-icon :class="engineRunning ? 'animate-spin' : ''"><Refresh /></el-icon>
-        {{ engineRunning ? '引擎运行中...' : '运行学业预警引擎' }}
+        {{ engineRunning ? '引擎运行中...' : '运行预警引擎' }}
       </button>
-    </div>
+    </teleport>
 
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">

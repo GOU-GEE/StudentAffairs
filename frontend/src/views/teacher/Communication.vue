@@ -1,16 +1,11 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-      <div>
-        <h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">校园安全预警</h2>
-        <p class="text-[0.875rem] text-secondary font-medium">Campus Safety Monitoring & Incident Management</p>
-      </div>
+    <teleport to="#header-actions">
       <button @click="showNewDialog = true"
-              class="bg-error text-white hover:bg-error/80 rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-md">
-        <el-icon><Plus /></el-icon>
-        上报新事件
+              class="bg-error text-white hover:bg-error/80 rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon><Plus /></el-icon>上报新事件
       </button>
-    </div>
+    </teleport>
 
     <!-- Stats Row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

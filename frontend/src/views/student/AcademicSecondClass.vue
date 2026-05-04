@@ -1,9 +1,5 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="mb-8">
-      <h2 class="text-[2.5rem] leading-none font-bold tracking-tight text-on-surface mb-2">学业成绩</h2>
-      <p class="text-[0.875rem] text-secondary font-medium">Academic Records & Radar Analysis</p>
-    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 

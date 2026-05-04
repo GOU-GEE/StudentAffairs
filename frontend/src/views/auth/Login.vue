@@ -1,13 +1,12 @@
 <template>
-  <div class="min-h-screen bg-surface flex flex-col items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(var(--color-outline-variant)_1px,transparent_1px)] [background-size:24px_24px] opacity-50"></div>
-    
+  <div class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
     <div class="z-10 w-full max-w-md bg-surface-container-lowest p-10 rounded-2xl border border-outline-variant/20 shadow-xl shadow-outline-variant/10">
       <div class="flex items-center gap-4 mb-10 justify-center">
-        <div class="w-12 h-12 rounded-xl bg-primary text-on-primary-fixed flex items-center justify-center font-bold text-2xl tracking-tighter shadow-md">S</div>
-        <div>
-          <h1 class="text-2xl font-bold tracking-tighter text-primary leading-none">智慧学工</h1>
-          <p class="text-[0.6875rem] uppercase tracking-wider text-outline mt-1 font-semibold">综合信息系统 V2.0</p>
+        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
+        <div class="flex flex-col text-left">
+          <span class="text-[1rem] font-bold tracking-widest text-on-surface leading-tight">西华师范大学</span>
+          <span class="text-[1.2rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5">智慧学工系统</span>
+          <span class="text-[0.48rem] font-medium tracking-wider text-outline mt-1">CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS</span>
         </div>
       </div>
 

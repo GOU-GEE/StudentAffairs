@@ -1,18 +1,10 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- Page Header -->
-    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div>
-        <h2 class="text-[3.5rem] leading-none font-bold tracking-[-0.02em] text-on-surface mb-2">奖助服务管理</h2>
-        <p class="text-[0.875rem] text-secondary font-medium">Financial Aid & Work-Study Management</p>
-      </div>
-      <div class="flex gap-3">
-        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-5 py-2.5 text-[0.875rem] font-semibold flex items-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
-          <el-icon :size="18"><Plus /></el-icon>
-          发布新岗位/奖助
-        </button>
-      </div>
-    </div>
+    <teleport to="#header-actions">
+      <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon :size="14"><Plus /></el-icon>发布新岗位/奖助
+      </button>
+    </teleport>
 
     <!-- Main Content -->
     <div class="flex-1 bg-surface-container-lowest rounded-xl border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] p-6">
