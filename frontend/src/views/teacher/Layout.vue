@@ -2,41 +2,40 @@
   <div class="antialiased min-h-screen flex text-on-surface">
     <!-- 侧边栏 毛玻璃 -->
     <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50">
-      <div class="mb-12 px-4 flex items-center gap-3">
-        <img src="/logosvg.png" alt="Logo" class="w-10 h-10 object-contain">
-        <div class="flex flex-col text-left">
-          <span class="text-[0.85rem] font-bold tracking-widest text-on-surface leading-tight">西华师范大学</span>
-          <span class="text-[1rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5">智慧学工系统</span>
-          <span class="text-[0.42rem] font-medium tracking-wider text-outline mt-1 whitespace-nowrap">CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS</span>
+      <div class="mb-12 px-2 flex items-center justify-center gap-3">
+        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
+        <div class="flex flex-col items-center">
+          <span class="text-[0.9rem] font-bold tracking-[0.2em] text-on-surface leading-tight text-center">西华师范大学</span>
+          <span class="text-[1rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5 text-center">智慧学工系统</span>
         </div>
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/teacher" exact-active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors">
+          <router-link to="/teacher" exact-active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
             <el-icon :size="20"><DataBoard /></el-icon>
             学生档案大屏
           </router-link>
         </li>
         <li>
-          <router-link to="/teacher/financial-aid" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors">
+          <router-link to="/teacher/financial-aid" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
             <el-icon :size="20"><Money /></el-icon>
             奖助服务管理
           </router-link>
         </li>
         <li>
-          <router-link to="/teacher/academic-warning" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors">
+          <router-link to="/teacher/academic-warning" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
             <el-icon :size="20"><TrendCharts /></el-icon>
             学业预警支持
           </router-link>
         </li>
         <li>
-          <router-link to="/teacher/career-plan" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors">
+          <router-link to="/teacher/career-plan" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
             <el-icon :size="20"><ChatLineRound /></el-icon>
             沟通互动
           </router-link>
         </li>
         <li>
-          <router-link to="/teacher/communication" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-colors">
+          <router-link to="/teacher/communication" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
             <el-icon :size="20"><Warning /></el-icon>
             校园安全预警
           </router-link>
@@ -59,7 +58,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
+    <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
       <!-- Header: 毛玻璃 + 路由标题 + 右侧操作 -->
       <header class="flex items-center justify-between px-8 sticky top-0 z-40 h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight w-full">
         <!-- 页面标题 & 页面特定操作(通过 teleport 注入) -->
@@ -110,9 +109,7 @@
 
       <!-- Canvas -->
       <main class="flex-1 p-6 lg:p-10 max-w-[1600px] w-full mx-auto">
-        <router-view v-slot="{ Component }">
-          <component :is="Component" :key="route.fullPath" />
-        </router-view>
+        <router-view :key="route.fullPath" />
       </main>
     </div>
 

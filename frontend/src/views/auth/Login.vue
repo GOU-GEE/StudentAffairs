@@ -1,13 +1,15 @@
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
     <div class="z-10 w-full max-w-md bg-surface-container-lowest p-10 rounded-2xl border border-outline-variant/20 shadow-xl shadow-outline-variant/10">
-      <div class="flex items-center gap-4 mb-10 justify-center">
-        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
-        <div class="flex flex-col text-left">
-          <span class="text-[1rem] font-bold tracking-widest text-on-surface leading-tight">西华师范大学</span>
-          <span class="text-[1.2rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5">智慧学工系统</span>
-          <span class="text-[0.48rem] font-medium tracking-wider text-outline mt-1">CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS</span>
+      <div class="flex flex-col items-center justify-center mb-10">
+        <div class="flex items-center gap-4 justify-center">
+          <img src="/logosvg.png" alt="Logo" class="w-14 h-14 object-contain">
+          <div class="flex flex-col items-center">
+            <span class="text-[1.1rem] font-bold tracking-[0.15em] text-on-surface">西华师范大学</span>
+            <span class="text-[1.3rem] font-black tracking-[0.1em] text-primary mt-0.5">智慧学工系统</span>
+          </div>
         </div>
+        <span class="text-[0.55rem] font-medium tracking-[0.05em] text-outline mt-2 text-center">CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS</span>
       </div>
 
       <div class="space-y-6">

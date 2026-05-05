@@ -27,7 +27,8 @@ const router = createRouter({
       path: '/student',
       component: () => import('../views/student/StudentLayout.vue'),
       children: [
-        { path: '', name: 'StudentDashboard', meta: { title: '个人主页' }, component: () => import('../views/student/StudentDashboard.vue') },
+        { path: '', name: 'StudentDashboard', meta: { title: '主页' }, component: () => import('../views/student/StudentDashboard.vue') },
+        { path: 'profile', name: 'StudentProfile', meta: { title: '个人信息' }, component: { template: '<div></div>' } },
         { path: 'academic', name: 'StudentAcademic', meta: { title: '学业成绩' }, component: () => import('../views/student/AcademicSecondClass.vue') },
         { path: 'applications', name: 'StudentApplications', meta: { title: '我的申请' }, component: () => import('../views/student/MyApplications.vue') },
         { path: 'career-plan', name: 'StudentCareerPlan', meta: { title: '职业规划' }, component: () => import('../views/student/CareerPlan.vue') },

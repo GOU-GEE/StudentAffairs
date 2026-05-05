@@ -24,15 +24,21 @@
 }
 
 @layer base {
+  html {
+    overflow-x: auto;
+  }
   body {
     background-color: var(--color-surface);
     color: var(--color-on-surface);
     /* 基础层：浅灰色点阵 */
     background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 0);
-    background-size: 24px 24px;
-    background-position: -12px -12px;
+    background-size: 19px 19px;
+    background-position: -9.5px -9.5px;
     background-attachment: fixed;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    /* 最小宽度：防止窗口过窄时排版错位，改用横向滚动条 */
+    min-width: 1020px;
+    overflow-x: auto;
   }
 
   /* 鼠标光晕层 - 深色点阵层，通过 mask-image 控制仅在鼠标周围显现 */
@@ -41,31 +47,46 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 0;
+    /* z-index: 1 — 高于body背景但低于所有页面内容，避免探照灯显示在内容上层 */
+    z-index: 1;
     /* 顶层：深黑色且稍大的点阵 */
     background-image: radial-gradient(circle, rgba(0,0,0,0.6) 1.5px, transparent 0);
-    background-size: 24px 24px;
-    background-position: -12px -12px;
+    background-size: 19px 19px;
+    background-position: -9.5px -9.5px;
     /* 遮罩：以鼠标为圆心，渐变消隐 */
     -webkit-mask-image: radial-gradient(
-      300px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+      100px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
       black 0%,
       transparent 100%
     );
     mask-image: radial-gradient(
-      300px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+      100px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
       black 0%,
       transparent 100%
     );
   }
 }
 
-/* 侧边栏毛玻璃 class（供 Layout 使用） */
+/* 侧边栏毛玻璃 class（供 Layout 使用），背景比正文深一档，以形成视觉区分 */
 .sidebar-glass {
-  background: rgba(247, 249, 251, 0.82) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-right: 1px solid rgba(198, 198, 198, 0.25) !important;
+  border-right: 1px solid rgba(220, 220, 220, 0.5) !important;
+  /* 注意：不加 position ，避免覆盖 HTML 模板中的 Tailwind fixed 类 */
+}
+
+/* 侧边栏选中项：白色背景 + 浅灰阴影 */
+.sidebar-active {
+  background: rgba(240, 240, 240, 0.85) !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.06) !important;
+  border-radius: 0.75rem;
+}
+
+/* 确保主内容区在探照灯层上方 */
+.main-content-wrapper {
+  position: relative;
+  z-index: 2;
 }
 
 

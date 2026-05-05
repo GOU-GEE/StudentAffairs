@@ -21,8 +21,8 @@
               <h3 class="text-xl font-bold text-on-surface">张小明</h3>
               <p class="text-sm text-secondary">计算机学院 | 软件工程 | 软工2班</p>
             </div>
-            <button class="bg-surface-container-high text-on-surface text-xs font-semibold px-3 py-1.5 rounded-md hover:bg-outline-variant/30 transition-colors">
-              申请修改信息
+            <button @click="openProfile" class="bg-surface-container-high text-on-surface text-xs font-semibold px-3 py-1.5 rounded-md hover:bg-outline-variant/30 transition-colors">
+              查看个人详情信息
             </button>
           </div>
           
@@ -148,7 +148,9 @@
 
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, DataLine, Money, School, Guide, ChatDotRound } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
+
+const openProfile = inject('openProfile')
 
 const date = new Date()
 const currentDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`

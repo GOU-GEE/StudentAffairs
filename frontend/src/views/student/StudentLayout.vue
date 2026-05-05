@@ -2,49 +2,33 @@
   <div class="antialiased min-h-screen flex text-on-surface">
     <!-- 侧边栏 毛玻璃 -->
     <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50">
-      <div class="mb-12 px-4 flex items-center gap-3">
-        <img src="/logosvg.png" alt="Logo" class="w-10 h-10 object-contain">
-        <div class="flex flex-col text-left">
-          <span class="text-[0.85rem] font-bold tracking-widest text-on-surface leading-tight">西华师范大学</span>
-          <span class="text-[1rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5">智慧学工系统</span>
-          <span class="text-[0.42rem] font-medium tracking-wider text-outline mt-1 whitespace-nowrap">CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS</span>
+      <div class="mb-12 px-2 flex items-center justify-center gap-3">
+        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
+        <div class="flex flex-col items-center">
+          <span class="text-[0.9rem] font-bold tracking-[0.2em] text-on-surface leading-tight text-center">西华师范大学</span>
+          <span class="text-[1rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5 text-center">智慧学工系统</span>
         </div>
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
-        <li><router-link to="/student" exact-active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-colors"><el-icon :size="20"><UserFilled /></el-icon>个人主页</router-link></li>
-        <li><router-link to="/student/academic" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-colors"><el-icon :size="20"><Reading /></el-icon>学业与第二课堂</router-link></li>
-        <li><router-link to="/student/applications" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-colors"><el-icon :size="20"><Document /></el-icon>我的申请</router-link></li>
-        <li><router-link to="/student/career-plan" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-colors"><el-icon :size="20" class="text-ai-primary"><Guide /></el-icon><span class="text-ai-primary font-semibold">职业规划 (AI)</span></router-link></li>
-        <li><router-link to="/student/campus-life" active-class="text-primary font-semibold border-r-2 border-primary bg-surface-container-highest" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-colors"><el-icon :size="20"><School /></el-icon>校园生活与安全</router-link></li>
+        <li><router-link to="/student" exact :exact-active-class="route.path === '/student' ? 'sidebar-active text-primary font-semibold' : ''" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><House /></el-icon>主页</router-link></li>
+        <li><router-link to="/student/profile" :class="route.path === '/student/profile' ? 'sidebar-active text-primary font-semibold' : ''" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><UserFilled /></el-icon>个人信息</router-link></li>
+        <li><router-link to="/student/academic" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Reading /></el-icon>学业与第二课堂</router-link></li>
+        <li><router-link to="/student/applications" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Document /></el-icon>我的申请</router-link></li>
+        <li><router-link to="/student/career-plan" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20" class="text-ai-primary"><Guide /></el-icon><span class="text-ai-primary font-semibold">职业规划 (AI)</span></router-link></li>
+        <li><router-link to="/student/campus-life" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><School /></el-icon>校园生活与安全</router-link></li>
       </ul>
-      <!-- 个人信息入口 -->
-      <div class="mt-auto px-4">
-        <button @click="showProfile = !showProfile"
-                class="w-full text-left p-4 rounded-xl border border-outline-variant/20 hover:bg-white/60 hover:border-primary/20 transition-all group"
-                :class="showProfile ? 'bg-white/80 border-primary/30' : ''">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary text-on-primary-fixed flex items-center justify-center font-bold text-base shadow-sm flex-shrink-0">张</div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-bold text-on-surface truncate">张小明</p>
-              <p class="text-[0.6875rem] text-secondary truncate">202301042 · 计科2301班</p>
-            </div>
-            <el-icon class="text-outline group-hover:text-primary transition-colors flex-shrink-0" :size="14"><ArrowRightBold /></el-icon>
-          </div>
-          <p class="text-[0.6875rem] text-outline mt-2">点击查看个人档案 →</p>
-        </button>
-      </div>
     </nav>
 
     <!-- 主内容区 -->
-    <div class="flex-1 ml-0 md:ml-64 flex flex-col min-h-screen relative">
+    <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
       <!-- Header 毛玻璃 -->
       <header class="flex items-center justify-between px-8 sticky top-0 z-40 h-14 bg-surface/75 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight w-full">
         <div class="flex items-center gap-6">
           <h2 class="text-2xl font-black text-on-surface tracking-tight whitespace-nowrap">
-            {{ showProfile ? '个人档案' : (route.meta.title || '') }}
+            {{ route.meta.title || '' }}
           </h2>
           <!-- 申请页切换标签 -->
-          <div v-if="route.name === 'StudentApplications' && !showProfile" class="flex items-center gap-1 bg-surface-container-low rounded-lg p-1">
+          <div v-if="route.name === 'StudentApplications'" class="flex items-center gap-1 bg-surface-container-low rounded-lg p-1">
             <button v-for="tab in appTabs" :key="tab.value" @click="switchTab(tab.value)"
                     class="px-3.5 py-1.5 rounded-md text-[0.8125rem] font-semibold transition-all"
                     :class="currentTab === tab.value ? 'bg-surface text-on-surface shadow-sm' : 'text-secondary hover:text-on-surface'">
@@ -106,78 +90,202 @@
       <main class="flex-1 p-6 lg:p-10 max-w-[1400px] w-full mx-auto relative z-10">
         <!-- 个人档案（全页展示） -->
         <transition name="fade">
-          <div v-if="showProfile" class="space-y-6">
-            <!-- 基本身份 -->
-            <div class="bg-surface/90 backdrop-blur-md rounded-2xl border border-outline-variant/15 p-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="md:col-span-1">
-                <div class="flex items-center justify-between mb-4">
-                  <p class="text-[0.6875rem] font-bold text-outline uppercase tracking-widest">基本身份</p>
-                  <span class="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full flex items-center gap-1 border border-green-100"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>在籍</span>
+          <div v-if="route.path === '/student/profile'" class="space-y-4">
+            <!-- Top Card: 参考图二，头像在左，信息在右 -->
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <div class="flex gap-5 items-center">
+                <!-- 最左列：头像 + 在读标签，上下居中 -->
+                <div class="flex flex-col items-center justify-center gap-2 flex-shrink-0 w-[6.5rem]">
+                  <img src="https://i.pravatar.cc/150?u=student_profile" class="w-24 h-24 rounded-full object-cover shadow-md ring-2 ring-white">
+                  <span class="px-2.5 py-0.5 bg-green-50 text-green-700 text-[0.65rem] font-bold rounded-full border border-green-100">在读</span>
                 </div>
-                <div class="flex items-center gap-4 mb-5">
-                  <img src="https://i.pravatar.cc/150?u=student_profile" class="w-20 h-20 rounded-2xl object-cover shadow-sm ring-1 ring-outline-variant/20">
-                  <div>
-                    <h4 class="text-2xl font-bold text-on-surface mb-1">张小明</h4>
-                    <p class="text-sm text-secondary">学号: 202301042</p>
-                    <p class="text-xs text-outline">出生日期: 2004年3月15日</p>
+
+                <!-- 右侧内容区 -->
+                <div class="flex-1 flex flex-col gap-3">
+                  <!-- 第一行：姓名 + 三个按钮 -->
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-bold text-on-surface">{{ profileForm.name }}</h3>
+                    <div class="flex gap-2">
+                      <button @click="showPrivacy = !showPrivacy" class="px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-1.5">
+                        <el-icon><View v-if="!showPrivacy" /><Hide v-else /></el-icon>{{ showPrivacy ? '隐藏私密信息' : '展示私密信息' }}
+                      </button>
+                      <button @click="isEditingProfile = !isEditingProfile" :class="isEditingProfile ? 'bg-primary text-on-primary-fixed border-primary' : 'border-outline-variant/30 text-secondary hover:bg-surface-container-low'" class="px-3 py-1.5 border rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+                        <el-icon><EditPen /></el-icon>{{ isEditingProfile ? '保存信息' : '编辑信息' }}
+                      </button>
+                      <button @click="showPdfPreview = true" class="px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-1.5">
+                        <el-icon><Printer /></el-icon>打印/导出为PDF
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div class="divide-y divide-outline-variant/10 text-sm">
-                  <div class="flex justify-between py-2.5"><span class="text-secondary">电子邮箱</span><span class="font-semibold text-on-surface">zhangxm@stu.university.edu</span></div>
-                  <div class="flex justify-between py-2.5"><span class="text-secondary">联系电话</span><span class="font-semibold">138 **** 2024</span></div>
-                  <div class="flex justify-between py-2.5"><span class="text-secondary">证件号码</span><span class="font-semibold">440*** ****0032</span></div>
-                </div>
-              </div>
-              <!-- 学籍详情 -->
-              <div class="md:col-span-2">
-                <p class="text-[0.6875rem] font-bold text-outline uppercase tracking-widest mb-4">学籍详情</p>
-                <div class="grid grid-cols-3 gap-3">
-                  <div v-for="item in academicInfo" :key="item.label" class="p-3 bg-surface rounded-xl border border-outline-variant/10 shadow-sm">
-                    <label class="text-xs text-secondary font-semibold block mb-1">{{ item.label }}</label>
-                    <p class="text-sm font-bold text-on-surface">{{ item.value }}</p>
+
+                  <!-- 第二行：左侧竖排4项 + 右侧网格 -->
+                  <div class="flex gap-0 border-t border-outline-variant/15 pt-3">
+                    <!-- 左侧：学号/身份证/电话/邮箱 竖排 -->
+                    <div class="flex flex-col gap-2.5 pr-6 border-r border-outline-variant/15 flex-shrink-0 w-64">
+                      <div class="flex items-center gap-2">
+                        <el-icon class="text-secondary text-sm flex-shrink-0"><User /></el-icon>
+                        <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0">学号</span>
+                        <span class="text-sm font-bold">{{ profileForm.studentId }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <el-icon class="text-secondary text-sm flex-shrink-0"><Postcard /></el-icon>
+                        <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0">身份证号</span>
+                        <span class="text-sm font-bold">{{ showPrivacy ? profileForm.idCard : profileForm.idCardMasked }}</span>
+                      </div>
+                      <div class="flex items-center gap-2 group">
+                        <el-icon @click="copyPhone(profileForm.phone)" class="text-secondary text-sm flex-shrink-0 cursor-pointer hover:text-primary transition-colors" title="点击复制"><Phone /></el-icon>
+                        <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0">电话</span>
+                        <input v-if="isEditingProfile" v-model="profileForm.phone" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 flex-1 outline-none focus:border-primary">
+                        <span v-else class="text-sm font-bold">{{ showPrivacy ? profileForm.phone : profileForm.phoneMasked }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <el-icon class="text-secondary text-sm flex-shrink-0"><Message /></el-icon>
+                        <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0">邮箱</span>
+                        <input v-if="isEditingProfile" v-model="profileForm.email" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 flex-1 outline-none focus:border-primary">
+                        <span v-else class="text-sm font-bold truncate min-w-0 flex-1" :title="profileForm.email">{{ profileForm.email }}</span>
+                      </div>
+                    </div>
+
+                    <!-- 右侧：学院/专业/年级班级/校区/宿舍/非集中住宿 网格（3列2行，内部分割线，无外边框） -->
+                    <div class="flex-1 grid grid-cols-3 min-w-0">
+                      <!-- 第一行 -->
+                      <div class="flex items-start gap-2 py-2 px-3 border-b border-r border-outline-variant/15">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><School /></el-icon>
+                        <div><span class="text-[0.6rem] text-secondary block mb-0.5">学院</span><span class="text-sm font-bold leading-snug">{{ profileForm.college }}</span></div>
+                      </div>
+                      <div class="flex items-start gap-2 py-2 px-3 border-b border-r border-outline-variant/15">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><Reading /></el-icon>
+                        <div><span class="text-[0.6rem] text-secondary block mb-0.5">专业</span><span class="text-sm font-bold leading-snug">{{ profileForm.major }}</span></div>
+                      </div>
+                      <div class="flex items-start gap-2 py-2 px-3 border-b border-outline-variant/15">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><CollectionTag /></el-icon>
+                        <div><span class="text-[0.6rem] text-secondary block mb-0.5">年级班级</span><span class="text-sm font-bold leading-snug">{{ profileForm.classGrade }}</span></div>
+                      </div>
+                      <!-- 第二行 -->
+                      <div class="flex items-start gap-2 py-2 px-3 border-r border-outline-variant/15">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><Location /></el-icon>
+                        <div><span class="text-[0.6rem] text-secondary block mb-0.5">校区</span><span class="text-sm font-bold leading-snug">{{ profileForm.campus }}</span></div>
+                      </div>
+                      <div class="flex items-start gap-2 py-2 px-3 border-r border-outline-variant/15">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><House /></el-icon>
+                        <div class="flex-1"><span class="text-[0.6rem] text-secondary block mb-0.5">宿舍</span>
+                          <input v-if="isEditingProfile" v-model="profileForm.dorm" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                          <span v-else class="text-sm font-bold leading-snug">{{ profileForm.dorm }}</span>
+                        </div>
+                      </div>
+                      <div class="flex items-start gap-2 py-2 px-3">
+                        <el-icon class="text-secondary text-sm mt-0.5 flex-shrink-0"><MapLocation /></el-icon>
+                        <div class="flex-1"><span class="text-[0.6rem] text-secondary block mb-0.5">非集中住宿地址</span>
+                          <input v-if="isEditingProfile" v-model="profileForm.offCampus" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                          <span v-else class="text-sm font-bold leading-snug">{{ profileForm.offCampus }}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- 健康与画像 + 家庭联系人 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="bg-surface/90 backdrop-blur-md rounded-2xl border border-outline-variant/15 p-6 shadow-sm">
-                <p class="text-[0.6875rem] font-bold text-outline uppercase tracking-widest mb-4">健康与个人画像</p>
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                  <div class="p-3 rounded-xl bg-surface border border-outline-variant/10">
-                    <p class="text-xs text-secondary font-semibold mb-1">过敏史</p><p class="font-bold">无已知过敏</p>
+            <!-- Bento Grid: 左列健康信息撑满高度，右侧2×2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <!-- 健康与个人信息：行跨2，撑满左列高度 -->
+              <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm lg:row-span-2 flex flex-col h-[460px]">
+                <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">健康与个人信息</h4>
+                <div class="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                  <div><span class="text-xs text-secondary block mb-1">病史</span>
+                    <input v-if="isEditingProfile" v-model="profileForm.medical" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                    <span v-else class="text-sm font-bold">{{ profileForm.medical }}</span>
                   </div>
-                  <div class="p-3 rounded-xl bg-surface border border-outline-variant/10">
-                    <p class="text-xs text-secondary font-semibold mb-1">血型</p><p class="font-bold">A 型 (Rh+)</p>
+                  <div><span class="text-xs text-secondary block mb-1">血型</span>
+                    <input v-if="isEditingProfile" v-model="profileForm.blood" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                    <span v-else class="text-sm font-bold">{{ profileForm.blood }}</span>
                   </div>
-                  <div class="p-3 rounded-xl bg-surface border border-outline-variant/10 col-span-2">
-                    <p class="text-xs text-secondary font-semibold mb-1">职业目标</p>
-                    <p class="font-medium leading-relaxed">致力于 AI / 大模型工程领域，目标进入头部互联网公司担任算法工程师。</p>
-                  </div>
-                  <div class="col-span-2">
-                    <p class="text-xs text-secondary font-semibold mb-2">课外兴趣</p>
-                    <div class="flex flex-wrap gap-1.5">
-                      <span v-for="tag in ['篮球', '算法竞赛', 'GitHub 开源', '读书']" :key="tag" class="px-3 py-1 bg-surface border border-outline-variant/20 rounded-full text-xs font-semibold text-secondary">{{ tag }}</span>
+                  <div><span class="text-xs text-secondary block mb-1">兴趣爱好</span>
+                    <input v-if="isEditingProfile" v-model="profileForm.hobbies" placeholder="用逗号分隔" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                    <div v-else class="flex flex-wrap gap-1.5 mt-1">
+                      <span v-for="h in profileForm.hobbies.split(/[,，]/)" :key="h" class="px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-semibold">{{ h.trim() }}</span>
                     </div>
+                  </div>
+                  <div><span class="text-xs text-secondary block mb-1">性格特点</span>
+                    <input v-if="isEditingProfile" v-model="profileForm.personality" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                    <span v-else class="text-sm font-bold">{{ profileForm.personality }}</span>
+                  </div>
+                  <div><span class="text-xs text-secondary block mb-1">职业目标</span>
+                    <textarea v-if="isEditingProfile" v-model="profileForm.goal" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary min-h-[60px]"></textarea>
+                    <span v-else class="text-sm font-bold leading-relaxed">{{ profileForm.goal }}</span>
                   </div>
                 </div>
               </div>
-              <div class="bg-surface/90 backdrop-blur-md rounded-2xl border border-outline-variant/15 p-6 shadow-sm">
-                <p class="text-[0.6875rem] font-bold text-outline uppercase tracking-widest mb-4">家庭与紧急联系人</p>
-                <div class="space-y-3">
-                  <div class="p-4 bg-surface rounded-xl border border-outline-variant/10">
-                    <div class="flex justify-between mb-2"><span class="text-sm font-bold">张大国</span><span class="text-xs px-2 py-0.5 bg-surface-container-high text-secondary rounded-full font-bold">父亲</span></div>
-                    <p class="text-sm text-secondary flex items-center gap-2"><el-icon class="text-outline"><Phone /></el-icon>138 **** 1024</p>
+
+              <!-- 右侧上行: 家庭情况 + 学业与班级 -->
+              <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col h-[222px]">
+                <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">家庭情况</h4>
+                <div class="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                  <div class="flex items-center justify-between p-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+                    <div class="flex items-center gap-3"><span class="text-xs text-secondary w-8">父亲</span><span class="text-sm font-bold">张大国</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.fatherPhone" class="text-sm bg-surface-container-low px-1 rounded border border-outline-variant/30 w-28 outline-none focus:border-primary">
+                      <span v-else class="text-sm">{{ showPrivacy ? profileForm.fatherPhone : profileForm.fatherPhoneMasked }}</span>
+                    </div>
+                    <el-icon @click="copyPhone(profileForm.fatherPhone)" class="text-outline hover:text-primary cursor-pointer transition-colors" title="点击复制"><Phone /></el-icon>
                   </div>
-                  <div class="p-4 bg-surface rounded-xl border border-outline-variant/10">
-                    <div class="flex justify-between mb-2"><span class="text-sm font-bold">李秀梅</span><span class="text-xs px-2 py-0.5 bg-surface-container-high text-secondary rounded-full font-bold">母亲</span></div>
-                    <p class="text-sm text-secondary flex items-center gap-2"><el-icon class="text-outline"><Phone /></el-icon>139 **** 8823</p>
+                  <div class="flex items-center justify-between p-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+                    <div class="flex items-center gap-3"><span class="text-xs text-secondary w-8">母亲</span><span class="text-sm font-bold">李秀梅</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.motherPhone" class="text-sm bg-surface-container-low px-1 rounded border border-outline-variant/30 w-28 outline-none focus:border-primary">
+                      <span v-else class="text-sm">{{ showPrivacy ? profileForm.motherPhone : profileForm.motherPhoneMasked }}</span>
+                    </div>
+                    <el-icon @click="copyPhone(profileForm.motherPhone)" class="text-outline hover:text-primary cursor-pointer transition-colors" title="点击复制"><Phone /></el-icon>
                   </div>
-                  <div class="p-4 bg-red-50 rounded-xl border border-red-100">
-                    <div class="flex justify-between mb-1"><span class="text-sm font-bold">张大国</span><span class="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded-full font-bold">紧急联系人</span></div>
-                    <p class="text-xs text-secondary mb-2">关系: 父亲</p>
-                    <p class="text-sm font-bold text-error flex items-center gap-2"><el-icon><Phone /></el-icon>138 **** 1024</p>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col h-[222px]">
+                <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">学业与班级信息</h4>
+                <div class="space-y-3 text-sm overflow-y-auto pr-2 custom-scrollbar flex-1">
+                  <div class="flex"><span class="text-secondary w-16">学院</span><span class="font-bold">计算机科学学院</span></div>
+                  <div class="flex"><span class="text-secondary w-16">专业</span><span class="font-bold">计算机科学与技术</span></div>
+                  <div class="flex"><span class="text-secondary w-16">年级班级</span><span class="font-bold">大一 (2023级) 软件工程12班</span></div>
+                  <div class="flex items-center mt-1"><span class="text-secondary w-16">班主任</span><span class="font-bold">李老师</span><span class="ml-4 text-xs">{{ showPrivacy ? '15012347777' : '150 **** 7777' }}</span><el-icon @click="copyPhone('15012347777')" class="ml-auto text-outline hover:text-primary cursor-pointer transition-colors" title="点击复制"><Phone /></el-icon></div>
+                </div>
+              </div>
+
+              <!-- 右侧下行: 紧急联系人 + 困难认定等级 -->
+              <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col h-[222px]">
+                <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">紧急联系人 (至少2位)</h4>
+                <div class="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                  <div class="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+                    <div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-outline-variant/20 flex items-center justify-center text-xs font-bold text-secondary">1</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.emerg1Name" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-24 outline-none focus:border-primary">
+                      <span v-else class="text-sm font-bold">{{ profileForm.emerg1Name }}</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.emerg1Phone" class="text-xs bg-surface-container-low px-1 rounded border border-outline-variant/30 w-24 outline-none focus:border-primary">
+                      <span v-else class="text-xs">{{ showPrivacy ? profileForm.emerg1Phone : profileForm.emerg1PhoneMasked }}</span>
+                    </div>
+                    <div class="flex items-center gap-2"><span class="px-2 py-0.5 bg-red-50 text-red-600 rounded-full text-[0.6rem] font-bold border border-red-100">紧急联系人</span><el-icon @click="copyPhone(profileForm.emerg1Phone)" class="text-outline hover:text-primary cursor-pointer transition-colors" title="点击复制"><Phone /></el-icon></div>
+                  </div>
+                  <div class="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+                    <div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-outline-variant/20 flex items-center justify-center text-xs font-bold text-secondary">2</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.emerg2Name" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-24 outline-none focus:border-primary">
+                      <span v-else class="text-sm font-bold">{{ profileForm.emerg2Name }}</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.emerg2Phone" class="text-xs bg-surface-container-low px-1 rounded border border-outline-variant/30 w-24 outline-none focus:border-primary">
+                      <span v-else class="text-xs">{{ showPrivacy ? profileForm.emerg2Phone : profileForm.emerg2PhoneMasked }}</span>
+                    </div>
+                    <div class="flex items-center gap-2"><span class="px-2 py-0.5 bg-red-50 text-red-600 rounded-full text-[0.6rem] font-bold border border-red-100">紧急联系人</span><el-icon @click="copyPhone(profileForm.emerg2Phone)" class="text-outline hover:text-primary cursor-pointer transition-colors" title="点击复制"><Phone /></el-icon></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col h-[222px]">
+                <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">困难认定等级</h4>
+                <div class="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                  <div><span class="text-xs text-secondary block mb-2">认定级别</span><span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold border border-blue-100">等级 2</span></div>
+                  <div>
+                    <span class="text-xs text-secondary block mb-2">特殊人员证明材料</span>
+                    <div class="flex items-center justify-between p-3 border border-outline-variant/30 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors group">
+                      <div class="flex items-center gap-3">
+                        <el-icon class="text-red-500 text-2xl"><Document /></el-icon>
+                        <div><p class="text-sm font-bold text-on-surface">困难证明材料.pdf</p><p class="text-xs text-secondary">1.2MB</p></div>
+                      </div>
+                      <el-icon class="text-outline group-hover:text-primary"><Download /></el-icon>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -187,7 +295,7 @@
 
         <!-- 正常路由页面 -->
         <transition name="fade">
-          <div v-if="!showProfile">
+          <div v-if="route.path !== '/student/profile'">
             <router-view v-slot="{ Component }">
               <transition name="fade" mode="out-in">
                 <component :is="Component" :key="route.fullPath" />
@@ -198,6 +306,109 @@
       </main>
     </div>
 
+    <!-- PDF 预览与导出弹窗 -->
+    <el-dialog v-model="showPdfPreview" title="个人档案预览" width="800px" align-center destroy-on-close class="pdf-dialog">
+      <div id="pdf-printable-area" class="bg-white p-10 text-black mx-auto max-w-[210mm] min-h-[297mm] shadow-lg border border-gray-200">
+        <!-- 头部 -->
+        <div class="flex items-center gap-6 mb-8">
+          <div class="w-24 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center text-gray-400">照片</div>
+          <div class="flex-1">
+            <h2 class="text-3xl font-bold mb-4">{{ profileForm.name }}</h2>
+            <div class="grid grid-cols-1 gap-y-2 text-sm text-gray-800">
+              <p>学号: {{ profileForm.studentId }}</p>
+              <p>{{ profileForm.college }} · {{ profileForm.major }}</p>
+              <p>电话: {{ profileForm.phone }} &nbsp;|&nbsp; 邮箱: {{ profileForm.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 基本信息 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">基本信息</h3>
+          <div class="grid grid-cols-2 gap-y-4 text-sm">
+            <div><span class="text-gray-500 inline-block w-20">身份证号</span>{{ showPrivacy ? profileForm.idCard : profileForm.idCardMasked }}</div>
+            <div><span class="text-gray-500 inline-block w-20">年级班级</span>{{ profileForm.classGrade }}</div>
+            <div><span class="text-gray-500 inline-block w-20">校区</span>{{ profileForm.campus }}</div>
+            <div><span class="text-gray-500 inline-block w-20">宿舍</span>{{ profileForm.dorm }}</div>
+            <div class="col-span-2"><span class="text-gray-500 inline-block w-20">非集中住宿</span>{{ profileForm.offCampus }}</div>
+          </div>
+        </div>
+
+        <!-- 健康与个人情况 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">健康与个人情况</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex"><span class="text-gray-500 w-20">病史</span><span class="flex-1">{{ profileForm.medical }}</span></div>
+            <div class="flex"><span class="text-gray-500 w-20">血型</span><span class="flex-1">{{ profileForm.blood }}</span></div>
+            <div class="flex items-start"><span class="text-gray-500 w-20">兴趣爱好</span>
+              <div class="flex gap-2 flex-wrap flex-1">
+                <span v-for="h in profileForm.hobbies.split(',')" :key="h" class="px-2 py-0.5 bg-gray-100 rounded text-xs">{{ h.trim() }}</span>
+              </div>
+            </div>
+            <div class="flex"><span class="text-gray-500 w-20">性格特征</span><span class="flex-1">{{ profileForm.personality }}</span></div>
+            <div class="flex"><span class="text-gray-500 w-20">职业目标</span><span class="flex-1">{{ profileForm.goal }}</span></div>
+          </div>
+        </div>
+
+        <!-- 家庭情况 - 2列 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">家庭情况</h3>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex gap-2"><span class="text-gray-500 w-12">父亲</span><span>张大国 &nbsp; {{ showPrivacy ? profileForm.fatherPhone : profileForm.fatherPhoneMasked }}</span></div>
+            <div class="flex gap-2"><span class="text-gray-500 w-12">母亲</span><span>李秀梅 &nbsp; {{ showPrivacy ? profileForm.motherPhone : profileForm.motherPhoneMasked }}</span></div>
+          </div>
+        </div>
+
+        <!-- 紧急联系人 - 2列 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">紧急联系人</h3>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex gap-2 items-start">
+              <span class="text-gray-500 w-6 flex-shrink-0">1</span>
+              <span>{{ profileForm.emerg1Name }} &nbsp; {{ showPrivacy ? profileForm.emerg1Phone : profileForm.emerg1PhoneMasked }}</span>
+            </div>
+            <div class="flex gap-2 items-start">
+              <span class="text-gray-500 w-6 flex-shrink-0">2</span>
+              <span>{{ profileForm.emerg2Name }} &nbsp; {{ showPrivacy ? profileForm.emerg2Phone : profileForm.emerg2PhoneMasked }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 行政信息 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">行政信息</h3>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="flex gap-3 items-center">
+              <span class="text-gray-500 w-16 flex-shrink-0">班主任</span>
+              <span>李老师</span>
+            </div>
+            <div class="flex gap-3 items-center">
+              <span class="text-gray-500 w-16 flex-shrink-0">联系方式</span>
+              <span>{{ showPrivacy ? '15012347777' : '150 **** 7777' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 困难认定 -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">困难认定</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex"><span class="text-gray-500 w-20">等级</span><span class="flex-1">二级</span></div>
+            <div class="flex"><span class="text-gray-500 w-20">证明材料</span><span class="flex-1">困难证明材料.pdf</span></div>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showPdfPreview = false">取消</el-button>
+          <el-button type="primary" @click="handlePrint">
+            打印 / 导出 PDF
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    
     <!-- 设置弹窗 -->
     <div v-if="showSettings" class="fixed inset-0 z-[100] flex items-center justify-center" @click.self="showSettings = false">
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
@@ -238,24 +449,64 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck } from '@element-plus/icons-vue'
+import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-const showProfile = ref(false)
 const showSettings = ref(false)
 const settingsTab = ref('password')
 const notifOpen = ref(false)
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
 
-const academicInfo = [
-  { label: '所属学院', value: '计算机科学学院' },
-  { label: '主修专业', value: '计算机科学与技术' },
-  { label: '当前年级', value: '大一 · 2023级' },
-  { label: '学籍状态', value: '全日制在读' },
-  { label: '所在校区', value: '南校区 3号宿舍楼' },
-  { label: '生源地', value: '广东省广州市' },
-]
+// Route change fixes the sidebar active bug
+
+// Profile interaction state
+const isEditingProfile = ref(false)
+const showPrivacy = ref(false)
+const showPdfPreview = ref(false)
+
+const handlePrint = () => {
+  window.print()
+}
+
+const profileForm = ref({
+  name: '张小明',
+  studentId: '202301042',
+  idCard: '440106200403150032',
+  idCardMasked: '440**********0032',
+  college: '计算机科学学院',
+  major: '计算机科学与技术',
+  classGrade: '大一 (2023级) 软件工程12班',
+  campus: '南校区',
+  phone: '13812342024',
+  phoneMasked: '138 **** 2024',
+  email: 'zhangxm@stu.university.edu',
+  dorm: '3号楼 304 室',
+  offCampus: '-',
+  medical: '无已知过敏史',
+  blood: 'A (Rh+)',
+  hobbies: '篮球, 编程, 阅读',
+  personality: '外向，善于分析',
+  goal: '立志成为领先科技公司的 AI 工程师',
+  fatherPhone: '13812341024',
+  fatherPhoneMasked: '138 **** 1024',
+  motherPhone: '13912348823',
+  motherPhoneMasked: '139 **** 8823',
+  emerg1Name: '张大国 (父亲)',
+  emerg1Phone: '13812341024',
+  emerg1PhoneMasked: '138 **** 1024',
+  emerg2Name: '李老师 (老师)',
+  emerg2Phone: '15012347777',
+  emerg2PhoneMasked: '150 **** 7777',
+})
+
+const copyPhone = (phone) => {
+  navigator.clipboard.writeText(phone).then(() => {
+    ElMessage.success('复制成功: ' + phone)
+  }).catch(() => {
+    ElMessage.error('复制失败，请手动复制')
+  })
+}
 
 const notifications = ref([
   { id: 1, tag: '审批结果', tagStyle: 'bg-green-100 text-green-700', time: '05-03 17:30', title: '您的请假申请已通过审批', content: '辅导员李老师已批准您 11月16日至11月17日的返乡假。请注意按时返校销假。', read: false, expanded: false, path: '/student/applications' },
@@ -289,7 +540,6 @@ onMounted(() => document.addEventListener('click', closeNotif))
 onUnmounted(() => document.removeEventListener('click', closeNotif))
 
 // 路由切换时关闭档案
-watch(() => route.name, () => { showProfile.value = false })
 
 const appTabs = [{ label: '📅 请假报备', value: 'leave' }, { label: '🏆 奖助学金', value: 'scholarship' }]
 const currentTab = ref('leave')
@@ -321,4 +571,27 @@ const logout = () => {
 .expand-enter-active, .expand-leave-active { transition: all 0.2s ease; overflow: hidden; }
 .expand-enter-from, .expand-leave-to { max-height: 0; opacity: 0; }
 .expand-enter-to, .expand-leave-from { max-height: 200px; opacity: 1; }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #pdf-printable-area, #pdf-printable-area * {
+    visibility: visible;
+  }
+  #pdf-printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+  }
+  /* Hide the rest of the dialog ui */
+  .el-dialog__header, .el-dialog__footer {
+    display: none !important;
+  }
+}
 </style>
