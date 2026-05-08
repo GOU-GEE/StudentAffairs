@@ -28,11 +28,18 @@ const router = createRouter({
       component: () => import('../views/student/StudentLayout.vue'),
       children: [
         { path: '', name: 'StudentDashboard', meta: { title: '主页' }, component: () => import('../views/student/StudentDashboard.vue') },
-        { path: 'profile', name: 'StudentProfile', meta: { title: '个人信息' }, component: { template: '<div></div>' } },
+        { path: 'profile', name: 'StudentProfile', meta: { title: '个人信息' }, component: { render: () => null } },
         { path: 'academic', name: 'StudentAcademic', meta: { title: '学业成绩' }, component: () => import('../views/student/AcademicSecondClass.vue') },
-        { path: 'applications', name: 'StudentApplications', meta: { title: '我的申请' }, component: () => import('../views/student/MyApplications.vue') },
+        {
+          path: 'applications',
+          redirect: '/student/applications/leave',
+          children: [
+            { path: 'leave', name: 'StudentLeave', meta: { title: '请假报备' }, component: () => import('../views/student/LeaveApplication.vue') },
+            { path: 'scholarship', name: 'StudentScholarship', meta: { title: '奖助学金' }, component: () => import('../views/student/ScholarshipApplication.vue') },
+          ]
+        },
         { path: 'career-plan', name: 'StudentCareerPlan', meta: { title: '职业规划' }, component: () => import('../views/student/CareerPlan.vue') },
-        { path: 'campus-life', name: 'StudentCampusLife', meta: { title: '校园通知' }, component: () => import('../views/student/CampusLife.vue') }
+        { path: 'campus-life', name: 'StudentCampusLife', meta: { title: '通知与沟通' }, component: () => import('../views/student/CampusLife.vue') }
       ]
     }
   ]

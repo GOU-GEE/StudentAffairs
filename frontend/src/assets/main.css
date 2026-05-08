@@ -30,15 +30,22 @@
   body {
     background-color: var(--color-surface);
     color: var(--color-on-surface);
-    /* 基础层：浅灰色点阵 */
-    background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 0);
-    background-size: 19px 19px;
-    background-position: -9.5px -9.5px;
-    background-attachment: fixed;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     /* 最小宽度：防止窗口过窄时排版错位，改用横向滚动条 */
     min-width: 1020px;
     overflow-x: auto;
+  }
+
+  /* 基础层：浅灰色点阵 — 使用 fixed 定位以确保在橡皮筋滚动时不发生偏移 */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 0);
+    background-size: 19px 19px;
+    background-position: -9.5px -9.5px;
+    pointer-events: none;
   }
 
   /* 鼠标光晕层 - 深色点阵层，通过 mask-image 控制仅在鼠标周围显现 */

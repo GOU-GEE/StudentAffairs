@@ -11,34 +11,54 @@
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/teacher" exact-active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
+          <button
+            @click="navigateTo('/teacher')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            :class="route.path === '/teacher' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          >
             <el-icon :size="20"><DataBoard /></el-icon>
             学生档案大屏
-          </router-link>
+          </button>
         </li>
         <li>
-          <router-link to="/teacher/financial-aid" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
+          <button
+            @click="navigateTo('/teacher/financial-aid')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            :class="route.path === '/teacher/financial-aid' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          >
             <el-icon :size="20"><Money /></el-icon>
             奖助服务管理
-          </router-link>
+          </button>
         </li>
         <li>
-          <router-link to="/teacher/academic-warning" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
+          <button
+            @click="navigateTo('/teacher/academic-warning')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            :class="route.path === '/teacher/academic-warning' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          >
             <el-icon :size="20"><TrendCharts /></el-icon>
             学业预警支持
-          </router-link>
+          </button>
         </li>
         <li>
-          <router-link to="/teacher/career-plan" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
+          <button
+            @click="navigateTo('/teacher/career-plan')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            :class="route.path === '/teacher/career-plan' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          >
             <el-icon :size="20"><ChatLineRound /></el-icon>
             沟通互动
-          </router-link>
+          </button>
         </li>
         <li>
-          <router-link to="/teacher/communication" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-surface-container-low transition-all">
+          <button
+            @click="navigateTo('/teacher/communication')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+            :class="route.path === '/teacher/communication' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          >
             <el-icon :size="20"><Warning /></el-icon>
             校园安全预警
-          </router-link>
+          </button>
         </li>
       </ul>
 
@@ -58,9 +78,9 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
+    <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden">
       <!-- Header: 毛玻璃 + 路由标题 + 右侧操作 -->
-      <header class="flex items-center justify-between px-8 sticky top-0 z-40 h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight w-full">
+      <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-40 h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight">
         <!-- 页面标题 & 页面特定操作(通过 teleport 注入) -->
         <div class="flex items-center gap-6">
           <h2 class="text-2xl font-black text-on-surface tracking-tight">{{ route.meta.title || '' }}</h2>
@@ -108,8 +128,8 @@
       </header>
 
       <!-- Canvas -->
-      <main class="flex-1 p-6 lg:p-10 max-w-[1600px] w-full mx-auto">
-        <router-view :key="route.fullPath" />
+      <main class="flex-1 overflow-y-auto p-6 pt-16 lg:p-10 lg:pt-20 max-w-[1600px] w-full mx-auto">
+        <router-view :key="route.path + '_' + refreshKey" />
       </main>
     </div>
 
@@ -181,6 +201,14 @@ import { DataBoard, Money, TrendCharts, ChatLineRound, Warning, Bell, Setting, C
 
 const route = useRoute()
 const router = useRouter()
+const refreshKey = ref(0)
+
+const navigateTo = async (path) => {
+  if (route.path !== path) {
+    await router.push(path)
+  }
+  refreshKey.value++
+}
 const showSettings = ref(false)
 const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
