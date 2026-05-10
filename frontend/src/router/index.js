@@ -29,7 +29,7 @@ const router = createRouter({
       children: [
         { path: '', name: 'StudentDashboard', meta: { title: '主页' }, component: () => import('../views/student/StudentDashboard.vue') },
         { path: 'profile', name: 'StudentProfile', meta: { title: '个人信息' }, component: { render: () => null } },
-        { path: 'academic', name: 'StudentAcademic', meta: { title: '学业成绩' }, component: () => import('../views/student/AcademicSecondClass.vue') },
+        { path: 'academic', name: 'StudentAcademic', meta: { title: '学业与第二课堂' }, component: () => import('../views/student/AcademicSecondClass.vue') },
         {
           path: 'applications',
           redirect: '/student/applications/leave',
@@ -39,7 +39,8 @@ const router = createRouter({
           ]
         },
         { path: 'career-plan', name: 'StudentCareerPlan', meta: { title: '职业规划' }, component: () => import('../views/student/CareerPlan.vue') },
-        { path: 'campus-life', name: 'StudentCampusLife', meta: { title: '通知与沟通' }, component: () => import('../views/student/CampusLife.vue') }
+        { path: 'campus-life', name: 'StudentCampusLife', meta: { title: '通讯中心' }, component: () => import('../views/student/CampusLife.vue') },
+        { path: 'activity-center', name: 'StudentActivityCenter', meta: { title: '活动大厅' }, component: () => import('../views/student/ActivityCenter.vue') }
       ]
     }
   ]

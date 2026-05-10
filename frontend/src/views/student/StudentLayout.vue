@@ -27,7 +27,8 @@
           </ul>
         </li>
         <li><router-link to="/student/career-plan" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20" class="text-ai-primary"><Guide /></el-icon><span class="text-ai-primary font-semibold">职业规划 (AI)</span></router-link></li>
-        <li><router-link to="/student/campus-life" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><School /></el-icon>通知与沟通</router-link></li>
+        <li><router-link to="/student/campus-life" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><School /></el-icon>通讯中心</router-link></li>
+        <li><router-link to="/student/activity-center" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><LocationInformation /></el-icon>活动大厅</router-link></li>
         <li><router-link to="/student/profile" :class="route.path === '/student/profile' ? 'sidebar-active text-primary font-semibold' : ''" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><UserFilled /></el-icon>个人信息</router-link></li>
       </ul>
     </nav>
@@ -459,7 +460,7 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer } from '@element-plus/icons-vue'
+import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
