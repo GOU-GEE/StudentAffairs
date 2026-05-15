@@ -4,12 +4,9 @@
     <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
       <!-- 头部标题 -->
       <div class="px-6 pt-6 pb-5 border-b border-gray-100 flex-shrink-0">
-        <div class="flex items-center gap-3 mb-1">
-          <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">🏆</div>
-          <div>
-            <h3 class="text-base font-bold text-gray-900">奖助学金申请</h3>
-            <p class="text-xs text-gray-400 mt-0.5">请如实填写申请信息，材料将提交辅导员审核</p>
-          </div>
+        <div>
+          <h3 class="text-base font-bold text-gray-900">奖助学金申请</h3>
+          <p class="text-xs text-gray-400 mt-0.5">请如实填写申请信息，材料将提交辅导员审核</p>
         </div>
       </div>
 
@@ -20,169 +17,167 @@
           <span class="text-sm font-bold text-gray-700">申请信息</span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
-          <!-- 左列 -->
-          <div class="space-y-4">
-            <!-- 申请奖助类别 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                申请奖助类别 <span class="text-red-500">*</span>
-              </label>
-              <div class="relative">
-                <select
-                  v-model="form.scholarType"
-                  class="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors cursor-pointer pr-8"
-                >
-                  <option value="" disabled>请选择奖助类型</option>
-                  <option value="nat_scholarship">国家奖学金（成绩全院前 0.5%）</option>
-                  <option value="nat_incentive">国家励志奖学金（成绩前 3%，有困难认定）</option>
-                  <option value="nat_aid">国家助学金（家庭经济困难）</option>
-                  <option value="school_scholarship">学校奖学金（成绩优秀）</option>
-                  <option value="school_aid">学校助学金（生活临时困难）</option>
-                </select>
-                <el-icon class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" :size="14"><ArrowDown /></el-icon>
-              </div>
-            </div>
-
-            <!-- 学号 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                学号 <span class="text-red-500">*</span>
-              </label>
-              <input
-                value="202301042"
-                disabled
-                class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
-              />
-            </div>
-
-            <!-- 姓名 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                姓名 <span class="text-red-500">*</span>
-              </label>
-              <input
-                value="张小明"
-                disabled
-                class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
-              />
-            </div>
-
-            <!-- 所在班级 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                所在班级 <span class="text-red-500">*</span>
-              </label>
-              <input
-                value="计算机科学2301班"
-                disabled
-                class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
-              />
-            </div>
-
-            <!-- 本学期加权平均成绩 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                本学期加权平均成绩 <span class="text-red-500">*</span>
-              </label>
-              <input
-                v-model="form.gpa"
-                placeholder="如：88.5"
-                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
-              />
-            </div>
-
-            <!-- 专业排名 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">专业排名</label>
-              <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-400 flex-shrink-0">名</span>
-                <input
-                  v-model="form.rank"
-                  placeholder="名次"
-                  class="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
-                />
-                <span class="text-sm text-gray-400 flex-shrink-0">/ 共</span>
-                <input
-                  v-model="form.total"
-                  placeholder="人数"
-                  class="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
-                />
-                <span class="text-sm text-gray-400 flex-shrink-0">人</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+          <!-- 申请奖助类别 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              申请奖助类别 <span class="text-red-500">*</span>
+            </label>
+            <div class="relative flex items-center">
+              <select
+                v-model="form.scholarType"
+                class="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors cursor-pointer pr-10 block"
+              >
+                <option value="" disabled>请选择奖助类型</option>
+                <option value="nat_scholarship">国家奖学金（成绩全院前 0.5%）</option>
+                <option value="nat_incentive">国家励志奖学金（成绩前 3%，有困难认定）</option>
+                <option value="nat_aid">国家助学金（家庭经济困难）</option>
+                <option value="school_scholarship">学校奖学金（成绩优秀）</option>
+                <option value="school_aid">学校助学金（生活临时困难）</option>
+              </select>
+              <div class="absolute right-3 top-0 bottom-0 flex items-center pointer-events-none">
+                <el-icon class="text-gray-400" :size="14"><ArrowDown /></el-icon>
               </div>
             </div>
           </div>
 
-          <!-- 右列 -->
-          <div class="space-y-4">
-            <!-- 家庭年收入 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                家庭年收入（元）<span class="text-red-500">*</span>
-              </label>
-              <input
-                v-model="form.familyIncome"
-                placeholder="如：50000"
-                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
-              />
-            </div>
+          <!-- 学号 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              学号 <span class="text-red-500">*</span>
+            </label>
+            <input
+              value="202301042"
+              disabled
+              class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
+            />
+          </div>
 
-            <!-- 困难认定等级 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                困难认定等级 <span class="text-red-500">*</span>
-              </label>
-              <div class="relative">
-                <select
-                  v-model="form.povertyLevel"
-                  class="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors cursor-pointer pr-8"
-                >
-                  <option value="none">无困难认定</option>
-                  <option value="A">A 档（特困）</option>
-                  <option value="B">B 档（困难）</option>
-                  <option value="C">C 档（一般困难）</option>
-                </select>
-                <el-icon class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" :size="14"><ArrowDown /></el-icon>
+          <!-- 姓名 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              姓名 <span class="text-red-500">*</span>
+            </label>
+            <input
+              value="张小明"
+              disabled
+              class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
+            />
+          </div>
+
+          <!-- 所在班级 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              所在班级 <span class="text-red-500">*</span>
+            </label>
+            <input
+              value="计算机科学2301班"
+              disabled
+              class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
+            />
+          </div>
+
+          <!-- 家庭年收入 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              家庭年收入（元）<span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.familyIncome"
+              placeholder="如：50000"
+              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
+            />
+          </div>
+
+          <!-- 困难认定等级 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              困难认定等级 <span class="text-red-500">*</span>
+            </label>
+            <div class="relative flex items-center">
+              <select
+                v-model="form.povertyLevel"
+                class="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors cursor-pointer pr-10 block"
+              >
+                <option value="none">无困难认定</option>
+                <option value="A">A 档（特困）</option>
+                <option value="B">B 档（困难）</option>
+                <option value="C">C 档（一般困难）</option>
+              </select>
+              <div class="absolute right-3 top-0 bottom-0 flex items-center pointer-events-none">
+                <el-icon class="text-gray-400" :size="14"><ArrowDown /></el-icon>
               </div>
             </div>
+          </div>
 
-            <!-- 在校获得荣誉 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                在校获得荣誉 <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                v-model="form.honors"
-                rows="3"
-                placeholder="如：2024年校级三好学生&#10;全国大学生数学竞赛二等奖"
-                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors resize-none"
-              ></textarea>
-            </div>
+          <!-- 本学期加权平均成绩 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              本学期加权平均成绩 <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.gpa"
+              placeholder="如：88.5"
+              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
+            />
+          </div>
 
-            <!-- 志愿服务时长 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                志愿服务时长 <span class="text-red-500">*</span>
-              </label>
+          <!-- 专业排名 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">专业排名</label>
+            <div class="flex items-center gap-2 h-[42px]">
+              <span class="text-sm text-gray-400 flex-shrink-0">第</span>
               <input
-                v-model="form.volunteer"
-                placeholder="如：累计志愿服务时长 32 小时"
-                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
+                v-model="form.rank"
+                placeholder="名次"
+                class="w-20 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors text-center"
               />
+              <span class="text-sm text-gray-400 flex-shrink-0">名 / 共</span>
+              <input
+                v-model="form.total"
+                placeholder="人数"
+                class="w-20 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors text-center"
+              />
+              <span class="text-sm text-gray-400 flex-shrink-0">人</span>
             </div>
+          </div>
 
-            <!-- 个人申请陈述 -->
-            <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">
-                个人申请陈述 <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                v-model="form.statement"
-                rows="4"
-                placeholder="简述您的在校表现、申请理由..."
-                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors resize-none"
-              ></textarea>
-            </div>
+          <!-- 在校获得荣誉 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              在校获得荣誉 <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              v-model="form.honors"
+              rows="3"
+              placeholder="如：2024年校级三好学生&#10;全国大学生数学竞赛二等奖"
+              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors resize-none"
+            ></textarea>
+          </div>
+
+          <!-- 志愿服务时长 -->
+          <div>
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              志愿服务时长 <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.volunteer"
+              placeholder="如：累计志愿服务时长 32 小时"
+              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors"
+            />
+          </div>
+
+          <!-- 个人申请陈述 -->
+          <div class="md:col-span-2">
+            <label class="text-sm text-gray-700 font-medium block mb-1.5">
+              个人申请陈述 <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              v-model="form.statement"
+              rows="4"
+              placeholder="简述您的在校表现、申请理由..."
+              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-gray-500 hover:border-gray-400 transition-colors resize-none"
+            ></textarea>
           </div>
         </div>
       </div>
@@ -196,9 +191,8 @@
         <button
           @click="submitScholarship"
           :disabled="submitting"
-          class="flex-shrink-0 px-6 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+          class="flex-shrink-0 px-6 py-2.5 bg-[#409eff] text-white rounded-xl font-bold text-sm hover:bg-[#409eff]/80 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
         >
-          <span>🚀</span>
           {{ submitting ? '提交中...' : '提交申请' }}
         </button>
       </div>
@@ -213,8 +207,7 @@
       </div>
 
       <div class="flex-1 overflow-y-auto px-6 py-5">
-        <!-- 时间线 -->
-        <div class="space-y-3">
+        <div class="space-y-4">
           <div
             v-for="(item, i) in history"
             :key="item.id"
@@ -222,30 +215,24 @@
             :class="i === 0 ? 'border-amber-200 bg-amber-50/60' : 'border-gray-100 bg-white hover:border-gray-200'"
           >
             <div class="flex items-start gap-3">
-              <!-- 奖杯图标 -->
-              <div
-                class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 text-sm"
-                :class="i === 0 ? 'bg-amber-100' : 'bg-gray-100'"
-              >🏆</div>
-
               <div class="flex-1 min-w-0">
                 <!-- 标题行 -->
                 <div class="flex items-start justify-between gap-2 mb-1.5">
                   <h4 class="text-sm font-bold text-gray-900 leading-snug">{{ item.title }}</h4>
                   <span
-                    class="flex-shrink-0 text-xs font-bold px-2 py-0.5 rounded-full"
+                    class="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
                     :class="statusBadgeStyle(item.status)"
                   >{{ statusLabel(item.status) }}</span>
                 </div>
 
                 <!-- 申请时间 -->
-                <div class="flex items-center gap-1.5 text-xs text-gray-400 mb-2">
+                <div class="flex items-center gap-1.5 text-[11px] text-gray-400 mb-2">
                   <el-icon :size="11"><Calendar /></el-icon>
                   <span>申请时间：{{ item.applyTime }}</span>
                 </div>
 
                 <!-- 简述 -->
-                <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">{{ item.summary }}</p>
+                <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2">{{ item.summary }}</p>
 
                 <!-- 展开箭头 -->
                 <div class="flex justify-end mt-1">
@@ -264,7 +251,7 @@
 
         <!-- 空状态 -->
         <div v-if="history.length === 0" class="py-16 flex flex-col items-center text-gray-400">
-          <span class="text-4xl mb-3">🏆</span>
+          <span class="text-4xl mb-3">📋</span>
           <p class="text-sm">暂无申请记录</p>
         </div>
       </div>

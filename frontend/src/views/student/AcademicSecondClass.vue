@@ -94,7 +94,7 @@
         </el-table>
         <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
           <span class="text-sm text-gray-500">共 24 条</span>
-          <el-pagination background layout="prev, pager, next" :total="24" :page-size="10" small />
+          <el-pagination background layout="prev, pager, next" :total="24" :page-size="10" size="small" />
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="antialiased min-h-screen flex text-on-surface">
     <!-- 侧边栏 毛玻璃 -->
-    <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50">
+    <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50 overflow-y-auto overscroll-contain custom-scrollbar">
       <div class="mb-12 px-2 flex items-center justify-center gap-3">
         <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
         <div class="flex flex-col items-center">
@@ -10,26 +10,33 @@
         </div>
       </div>
       <ul class="flex flex-col gap-1 font-medium tracking-tight text-[0.875rem]">
-        <li><router-link to="/student" exact :exact-active-class="route.path === '/student' ? 'sidebar-active text-primary font-semibold' : ''" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><House /></el-icon>主页</router-link></li>
-        <li><router-link to="/student/academic" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Reading /></el-icon>学业与第二课堂</router-link></li>
+        <li><router-link to="/student" exact exact-active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><House /></el-icon>主页</router-link></li>
+        <li><router-link to="/student/academic" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Reading /></el-icon>学业与第二课堂</router-link></li>
         <!-- 我的申请展开菜单 -->
         <li>
           <button @click="appsExpanded = !appsExpanded"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path.startsWith('/student/applications') ? 'text-primary font-semibold' : 'text-secondary hover:bg-white/60'">
+            :class="route.path.startsWith('/student/applications') ? '!text-primary font-bold' : 'text-secondary hover:bg-white/60'">
             <el-icon :size="20"><Document /></el-icon>
             <span class="flex-1 text-left">我的申请</span>
             <el-icon :size="14" class="transition-transform duration-200" :class="appsExpanded ? 'rotate-180' : ''"><ArrowDown /></el-icon>
           </button>
-          <ul v-show="appsExpanded" class="ml-4 mt-1 flex flex-col gap-1">
-            <li><router-link to="/student/applications/leave" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]"><span class="text-base leading-none">📅</span>请假报备</router-link></li>
-            <li><router-link to="/student/applications/scholarship" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]"><span class="text-base leading-none">🏆</span>奖助学金</router-link></li>
-          </ul>
+          <transition name="expand">
+            <ul v-show="appsExpanded" class="ml-4 mt-1 flex flex-col gap-1">
+              <li><router-link to="/student/applications/leave" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">请假报备</router-link></li>
+              <li><router-link to="/student/applications/scholarship" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">奖助学金</router-link></li>
+              <li><router-link to="/student/applications/work-study" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">勤工助学</router-link></li>
+              <li><router-link to="/student/applications/safety-report" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">安全异常报备</router-link></li>
+              <li><router-link to="/student/applications/awards" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">获奖情况录入</router-link></li>
+              <li><router-link to="/student/applications/mid-term" active-class="!bg-gray-200/60 !text-gray-900 font-bold" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-secondary hover:bg-white/60 transition-all text-[0.8125rem]">中期鉴定填报</router-link></li>
+            </ul>
+          </transition>
         </li>
-        <li><router-link to="/student/career-plan" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20" class="text-ai-primary"><Guide /></el-icon><span class="text-ai-primary font-semibold">职业规划 (AI)</span></router-link></li>
-        <li><router-link to="/student/campus-life" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><School /></el-icon>通讯中心</router-link></li>
-        <li><router-link to="/student/activity-center" active-class="sidebar-active text-primary font-semibold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><LocationInformation /></el-icon>活动大厅</router-link></li>
-        <li><router-link to="/student/profile" :class="route.path === '/student/profile' ? 'sidebar-active text-primary font-semibold' : ''" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><UserFilled /></el-icon>个人信息</router-link></li>
+        <li><router-link to="/student/career-plan" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Guide /></el-icon>职业规划 (AI)</router-link></li>
+        <li><router-link to="/student/campus-life" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><School /></el-icon>通讯中心</router-link></li>
+        <li><router-link to="/student/activity-center" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><LocationInformation /></el-icon>活动大厅</router-link></li>
+        <li><router-link to="/student/honors" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><Medal /></el-icon>个人荣誉与记录</router-link></li>
+        <li><router-link to="/student/profile" active-class="!text-primary font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-white/60 transition-all"><el-icon :size="20"><UserFilled /></el-icon>个人信息</router-link></li>
       </ul>
     </nav>
 
@@ -460,7 +467,7 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation } from '@element-plus/icons-vue'
+import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation, Medal } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()

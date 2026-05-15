@@ -4,9 +4,6 @@
     <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
       <!-- 卡片标题 -->
       <div class="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-gray-100 flex-shrink-0">
-        <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-          <el-icon class="text-white" :size="16"><EditPen /></el-icon>
-        </div>
         <h3 class="text-base font-bold text-gray-900">填写请假申请</h3>
       </div>
 
@@ -46,7 +43,7 @@
               @click="leaveForm.leaveType = lt.value"
               class="px-4 py-2 rounded-lg text-sm font-medium border transition-all"
               :class="leaveForm.leaveType === lt.value
-                ? 'bg-gray-900 text-white border-gray-900'
+                ? 'bg-[#409eff] text-white border-[#409eff]'
                 : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'"
             >
               {{ lt.label }}
@@ -59,7 +56,6 @@
           <label class="text-sm font-semibold text-gray-700 block mb-2">请假时间</label>
           <div class="flex items-center gap-3">
             <div class="flex-1 flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 bg-white hover:border-gray-400 transition-colors">
-              <el-icon class="text-gray-400" :size="15"><Calendar /></el-icon>
               <el-date-picker
                 v-model="leaveForm.startDate"
                 type="date"
@@ -72,7 +68,6 @@
             </div>
             <el-icon class="text-gray-400 flex-shrink-0" :size="14"><ArrowRight /></el-icon>
             <div class="flex-1 flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 bg-white hover:border-gray-400 transition-colors">
-              <el-icon class="text-gray-400" :size="15"><Calendar /></el-icon>
               <el-date-picker
                 v-model="leaveForm.endDate"
                 type="date"
@@ -130,27 +125,24 @@
             />
           </div>
         </div>
+      </div>
 
-        <!-- 温馨提示 -->
-        <div class="flex items-start gap-2 p-3 bg-orange-50 border border-orange-100 rounded-xl">
-          <el-icon class="text-orange-500 mt-0.5 flex-shrink-0" :size="15"><InfoFilled /></el-icon>
-          <p class="text-xs text-orange-700 leading-relaxed">
-            请假批准后方可离校，请确保返校后及时向辅导员进行<strong>销假</strong>。超时未归视为旷课处理。
-          </p>
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0 flex items-center justify-between gap-4">
+          <div class="flex items-start gap-2 p-3 bg-orange-50 border border-orange-100 rounded-xl flex-1">
+            <el-icon class="text-orange-500 mt-0.5 flex-shrink-0" :size="15"><InfoFilled /></el-icon>
+            <p class="text-xs text-orange-700 leading-relaxed">
+              请假批准后方可离校，请确保返校后及时向辅导员进行<strong>销假</strong>。超时未归视为旷课处理。
+            </p>
+          </div>
+          <button
+            @click="submitLeave"
+            :disabled="submitting"
+            class="px-8 py-2.5 bg-[#409eff] text-white rounded-xl font-bold text-sm hover:bg-[#409eff]/80 transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap"
+          >
+            {{ submitting ? '提交中...' : '提交请假申请' }}
+          </button>
         </div>
       </div>
-
-      <!-- 提交按钮 -->
-      <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
-        <button
-          @click="submitLeave"
-          :disabled="submitting"
-          class="w-full py-3.5 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-700 transition-colors shadow-sm disabled:opacity-50"
-        >
-          {{ submitting ? '提交中...' : '提交请假申请' }}
-        </button>
-      </div>
-    </div>
 
     <!-- 右侧：历史请假记录 -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
@@ -161,25 +153,12 @@
       </div>
 
       <div class="flex-1 overflow-y-auto px-6 py-5">
-        <!-- 时间线 -->
-        <div class="relative">
-          <!-- 竖线 -->
-          <div class="absolute left-3 top-3 bottom-3 w-px bg-gray-200"></div>
-
-          <div class="space-y-5">
+          <div class="space-y-4">
             <div
               v-for="(r, i) in leaveHistory"
               :key="r.id"
-              class="relative pl-10"
+              class="relative"
             >
-              <!-- 时间线圆点 -->
-              <div
-                class="absolute left-0 top-3 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10"
-                :class="dotStyle(r.status)"
-              >
-                <div class="w-2 h-2 rounded-full" :class="dotInnerStyle(r.status)"></div>
-              </div>
-
               <!-- 卡片内容 -->
               <div
                 class="border rounded-xl p-4 transition-all"
@@ -220,7 +199,6 @@
               </div>
             </div>
           </div>
-        </div>
 
         <!-- 查看更多 -->
         <button class="mt-5 w-full py-2.5 text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1">

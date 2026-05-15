@@ -1,189 +1,296 @@
 <template>
-  <div class="h-full flex flex-col">
-
-    <!-- Main Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-
-      <!-- AI Career Card -->
-      <div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-7 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] relative overflow-hidden">
-        <div class="absolute -right-16 -bottom-16 w-56 h-56 bg-ai-primary/8 rounded-full blur-[60px] pointer-events-none"></div>
+  <div class="h-full flex flex-col space-y-6">
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1 min-h-0">
+      
+      <!-- Left Column: Main Content -->
+      <div class="md:col-span-8 flex flex-col gap-6 overflow-y-auto no-scrollbar">
         
-        <div class="flex items-center gap-3 mb-6 relative z-10">
-          <div class="w-10 h-10 rounded-xl bg-ai-primary text-white flex items-center justify-center shadow-lg shadow-ai-primary/30">
-            <el-icon :size="20"><Guide /></el-icon>
+        <!-- AI Banner -->
+        <div class="relative overflow-hidden rounded-2xl p-8 text-white shadow-lg flex items-stretch min-h-[260px]">
+          <!-- Background Image -->
+          <div class="absolute inset-0 w-full h-full">
+            <img src="@/assets/career_bg.png" class="w-full h-full object-cover object-right" alt="AI Career Banner">
           </div>
-          <div>
-            <h3 class="font-bold text-on-surface">AI 职业路径推演</h3>
-            <p class="text-xs text-secondary">基于你的成绩、技能标签与兴趣分析</p>
-          </div>
-          <div class="ml-auto flex items-center gap-2 text-xs text-ai-primary font-bold">
-            <span class="w-2 h-2 rounded-full bg-ai-primary animate-pulse"></span>
-            AI 分析就绪
+          <!-- Gradient Overlay: Left blurry/solid to right transparent -->
+          <div class="absolute inset-0 bg-gradient-to-r from-[#6366F1] via-[#6366F1]/85 to-transparent"></div>
+
+          <div class="relative z-10 w-full flex flex-col justify-between">
+            <div class="max-w-md">
+              <h3 class="text-3xl font-bold mb-3 tracking-tight">AI 助力你的职业未来</h3>
+              <p class="text-white/90 text-sm leading-relaxed mb-6">
+                通过测评探索自我，获取个性化建议，精准匹配职业机会，为你的职业发展保驾护航。
+              </p>
+              <el-button color="white" round class="!text-indigo-600 font-bold px-6 shadow-md border-0 group" @click="showAssessmentDialog = true">
+                开始生涯测评
+                <el-icon class="ml-2 transition-transform group-hover:translate-x-1"><ArrowRight /></el-icon>
+              </el-button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center gap-x-12 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 w-max mt-6">
+              <div v-for="(stat, idx) in stats" :key="idx" class="flex flex-col items-start">
+                <span class="text-[13px] text-white/80 mb-1 leading-none">{{ stat.label }}</span>
+                <span class="text-[22px] font-bold leading-none">{{ stat.value }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Career Tracks -->
-        <div class="space-y-4 relative z-10">
-          <div v-for="(track, i) in careerTracks" :key="i"
-               class="p-4 rounded-xl border cursor-pointer transition-all hover:scale-[1.01]"
-               :class="selectedTrack === i ? 'border-ai-primary bg-ai-primary/5 shadow-md shadow-ai-primary/10' : 'border-outline-variant/20 bg-surface hover:border-ai-primary/40'"
-               @click="selectedTrack = i">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-3">
-                <span class="text-xl">{{ track.emoji }}</span>
-                <div>
-                  <h4 class="font-bold text-sm text-on-surface">{{ track.title }}</h4>
-                  <p class="text-xs text-secondary">{{ track.subtitle }}</p>
+        <!-- Recommended Positions -->
+        <div class="mb-6 flex-1 flex flex-col min-h-0">
+          
+          <!-- 3 Columns Layout Wrapped in a single box with title integrated -->
+          <div class="bg-white rounded-2xl border border-outline-variant/20 shadow-sm flex flex-col flex-1 overflow-hidden">
+            <!-- Integrated Title -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
+              <h3 class="text-[17px] font-bold text-on-surface flex items-center gap-2">
+                <div class="w-1.5 h-4 bg-primary rounded-full"></div> 根据成绩问卷寻得最佳匹配
+              </h3>
+              <el-link type="primary" :underline="false" class="text-sm flex items-center gap-1">换一批 <el-icon><Refresh /></el-icon></el-link>
+            </div>
+
+            <!-- The Grid -->
+            <div class="flex flex-1">
+              <div class="flex flex-col flex-1" v-for="(job, idx) in recommendedJobs" :key="idx">
+                <div class="p-6 flex flex-col h-full hover:bg-surface-container-lowest transition-colors relative" :class="idx !== 0 ? 'border-l border-outline-variant/20' : ''">
+                  <!-- Top: Job Direction -->
+                  <div class="flex items-start justify-between mb-4">
+                    <h4 class="font-bold text-on-surface text-[17px] tracking-tight">{{ job.title }}</h4>
+                    <span class="text-[11px] bg-green-50 text-green-600 px-2 py-0.5 rounded font-bold border border-green-200 shadow-sm flex-shrink-0">匹配度 {{ job.match }}%</span>
+                  </div>
+                  
+                  <!-- Reason for Recommendation -->
+                  <div class="pt-2 flex-1 flex flex-col">
+                    <div class="text-[12px] font-bold text-primary mb-2 flex items-center gap-1.5">
+                      <el-icon><Aim /></el-icon> 推荐理由
+                    </div>
+                    <p class="text-[13px] text-secondary leading-relaxed text-justify">
+                      {{ job.reason }}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div class="text-right">
-                <div class="text-xs font-bold px-2.5 py-1 rounded-full"
-                     :class="track.matchColor">匹配度 {{ track.match }}%</div>
-              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <div class="flex-1 bg-surface-container-high h-1.5 rounded-full overflow-hidden">
-                <div class="h-full rounded-full bg-ai-primary transition-all duration-700"
-                     :style="`width: ${selectedTrack === i ? track.match : 0}%`"></div>
-              </div>
-            </div>
-            <!-- Expanded Details -->
-            <transition name="slide">
-              <div v-if="selectedTrack === i" class="mt-4 pt-4 border-t border-outline-variant/20">
-                <p class="text-sm text-secondary leading-relaxed mb-3">{{ track.description }}</p>
-                <div class="flex flex-wrap gap-2">
-                  <span v-for="skill in track.skills" :key="skill"
-                        class="text-xs px-3 py-1.5 rounded-full bg-ai-primary/10 text-ai-primary border border-ai-primary/20 font-medium">
-                    {{ skill }}
-                  </span>
-                </div>
-              </div>
-            </transition>
           </div>
+
         </div>
+
       </div>
 
-      <!-- Right Panel: Skills & Roadmap -->
-      <div class="md:col-span-4 space-y-5">
-        <!-- Skills Radar -->
-        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)]">
-          <h3 class="font-semibold text-on-surface text-sm mb-4">当前技能评估</h3>
-          <div class="space-y-3">
-            <div v-for="(skill, i) in skills" :key="i">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-xs font-semibold text-secondary">{{ skill.name }}</span>
-                <span class="text-xs font-bold text-on-surface">{{ skill.score }}/100</span>
-              </div>
-              <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-                <div class="h-full rounded-full transition-all duration-1000"
-                     :class="skill.color"
-                     :style="`width: ${skill.score}%`"></div>
+      <!-- Right Column: Sidebar -->
+      <div class="md:col-span-4 flex flex-col gap-6 overflow-y-auto no-scrollbar pb-6">
+
+        <!-- Employment Counseling Appointment -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100/50 shadow-sm relative overflow-hidden group">
+          <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl transition-transform group-hover:scale-150"></div>
+          
+          <div class="flex items-start justify-between mb-4 relative z-10">
+            <div>
+              <h3 class="font-bold text-on-surface text-lg mb-1">就业咨询预约</h3>
+              <p class="text-xs text-secondary">一对一职业规划咨询，解决求职困惑</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+              <el-icon :size="20"><Calendar /></el-icon>
+            </div>
+          </div>
+          
+          <div class="relative z-10 flex items-center justify-between mt-6">
+            <el-button type="primary" class="!rounded-lg shadow-sm shadow-blue-500/20">
+              立即预约 <el-icon class="ml-1"><ArrowRight /></el-icon>
+            </el-button>
+          </div>
+        </div>
+
+        <!-- Career Assessment Tools (Moved to sidebar) -->
+        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/20 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="font-bold text-on-surface">生涯测评工具</h3>
+            <el-link type="primary" :underline="false" class="text-[13px] font-semibold" @click="showAssessmentDialog = true">
+              查看详细测评结果 <el-icon class="ml-1"><ArrowRight /></el-icon>
+            </el-link>
+          </div>
+          
+          <!-- 2x2 Grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <div v-for="(tool, idx) in assessmentTools" :key="idx" 
+                 class="border border-outline-variant/20 rounded-xl p-4 hover:shadow-md transition-all flex flex-col bg-white">
+              <h4 class="font-bold text-sm text-on-surface mb-2">{{ tool.title }}</h4>
+              <p class="text-[11px] text-secondary mb-4 line-clamp-2 flex-1">{{ tool.desc }}</p>
+              <div class="flex items-center justify-between mt-auto">
+                <span class="text-[10px] text-secondary">约{{ tool.time }}分钟</span>
+                <el-button plain :type="tool.btnType" size="small" class="!rounded-lg px-3 text-xs h-7">测评</el-button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Roadmap Timeline -->
-        <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)]">
-          <h3 class="font-semibold text-on-surface text-sm mb-4">
-            {{ careerTracks[selectedTrack]?.title }} 成长路线图
-          </h3>
-          <div class="space-y-3">
-            <div v-for="(step, i) in careerTracks[selectedTrack]?.roadmap" :key="i" class="flex gap-3">
-              <div class="flex flex-col items-center">
-                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                     :class="step.done ? 'bg-ai-primary text-white' : 'bg-surface-container-high text-secondary border border-outline-variant/30'">
-                  {{ step.done ? '✓' : i + 1 }}
-                </div>
-                <div class="w-0.5 flex-1 mt-1" :class="step.done ? 'bg-ai-primary/40' : 'bg-outline-variant/20'" v-if="i < careerTracks[selectedTrack]?.roadmap.length - 1"></div>
-              </div>
-              <div class="pb-3">
-                <p class="text-sm font-semibold text-on-surface">{{ step.title }}</p>
-                <p class="text-xs text-secondary mt-0.5">{{ step.detail }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
     </div>
+
+    <!-- 局部暗色遮罩层 -->
+    <div v-if="showAssessmentDialog" class="fixed top-[56px] left-[256px] right-0 bottom-0 bg-black/40 z-[1000] pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- 详细测评结果弹窗 -->
+    <el-dialog v-model="showAssessmentDialog" title="" modal-class="custom-calendar-overlay" class="custom-calendar-dialog" :show-close="true" append-to-body lock-scroll destroy-on-close>
+      <div class="flex flex-col h-full bg-surface-container-lowest overflow-hidden p-8">
+        <!-- 头部 -->
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="text-2xl font-bold text-on-surface flex items-center gap-3">
+            <el-icon class="text-primary"><Document /></el-icon>
+            生涯详细测评结果
+          </h3>
+        </div>
+        
+        <!-- 十字格网格 -->
+        <div class="flex-1 grid grid-cols-2 grid-rows-2 min-h-0 bg-white rounded-3xl border border-outline-variant/30 shadow-sm overflow-hidden">
+          <div v-for="(tool, idx) in assessmentTools" :key="idx" class="p-8 flex flex-col relative transition-all hover:bg-surface-container-lowest/50"
+               :class="{
+                 'border-b border-outline-variant/30': idx < 2,
+                 'border-r border-outline-variant/30': idx % 2 === 0
+               }">
+            <!-- 小标题 和 重新测试按钮 -->
+            <div class="mb-4 pb-3 flex items-center justify-between">
+              <h4 class="font-bold text-lg text-on-surface">{{ tool.title }}</h4>
+              <el-button size="small" class="!bg-surface-container-low !border-0 !text-secondary hover:!bg-surface-container hover:!text-on-surface transition-colors">重新测试</el-button>
+            </div>
+            
+            <!-- 测试记录 (无蓝色块包裹) -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
+              <div class="relative mt-1">
+                <div class="text-xl font-bold text-primary mb-3">{{ assessmentHistory[idx][0].result }}</div>
+                <div class="text-[14px] text-secondary leading-relaxed" v-if="assessmentHistory[idx][0].detail">{{ assessmentHistory[idx][0].detail }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { Guide } from '@element-plus/icons-vue'
+import { 
+  ArrowRight, ArrowDown, Monitor, Key, Ticket, Document, Star, StarFilled,
+  OfficeBuilding, Location, Refresh, Calendar, DataLine, Help, Magnet, Clock, Aim
+} from '@element-plus/icons-vue'
 
-const selectedTrack = ref(0)
+const showAssessmentDialog = ref(false)
 
-const skills = ref([
-  { name: '数据结构与算法', score: 92, color: 'bg-ai-primary' },
-  { name: '工程实践能力', score: 78, color: 'bg-green-500' },
-  { name: '英语与国际化', score: 72, color: 'bg-blue-400' },
-  { name: '团队协作与领导力', score: 65, color: 'bg-orange-400' },
-  { name: '产品与商业思维', score: 50, color: 'bg-purple-400' }
+const stats = ref([
+  { label: '测评次数', value: '3次' },
+  { label: '预约咨询', value: '1次' },
 ])
 
-const careerTracks = ref([
-  {
-    emoji: '🤖', title: 'AI / 大模型研发工程师', subtitle: '人工智能 · 研究型',
-    match: 88,
-    matchColor: 'bg-ai-primary/15 text-ai-primary',
-    description: '你在数据结构（95分）和算法（88分）上的卓越表现，高度符合大模型研发岗位对理论基础的要求。建议加深 PyTorch、Transformers 和 CUDA 的学习。',
-    skills: ['PyTorch', 'Transformer', 'CUDA', '数学基础', '分布式训练'],
-    roadmap: [
-      { title: '夯实数学基础', detail: '线性代数、概率论、最优化理论', done: true },
-      { title: '掌握深度学习框架', detail: 'PyTorch 实践，复现经典论文', done: true },
-      { title: '参与开源项目', detail: 'GitHub 贡献，积累工程经验', done: false },
-      { title: '算法/大厂实习', detail: '字节 / 百度 / 华为暑期实习', done: false },
-      { title: '研究生深造', detail: '推免目标：清/北/交大 AI 方向', done: false }
-    ]
+const assessmentTools = ref([
+  { title: '职业兴趣测评', desc: '探索你的兴趣类型，发掘适合的职业方向', time: '20', icon: 'Star', iconBgClass: 'bg-blue-50', iconTextClass: 'text-blue-500', btnType: 'primary' },
+  { title: '性格特质测评', desc: '了解你的性格优势，适合的工作环境', time: '15', icon: 'Magnet', iconBgClass: 'bg-green-50', iconTextClass: 'text-green-500', btnType: 'success' },
+  { title: '能力倾向测评', desc: '评估你的能力水平，找到优势领域', time: '25', icon: 'DataLine', iconBgClass: 'bg-purple-50', iconTextClass: 'text-purple-500', btnType: 'warning' },
+  { title: '职业价值观测评', desc: '明确你的职业价值观，帮助职业决策', time: '15', icon: 'Help', iconBgClass: 'bg-orange-50', iconTextClass: 'text-orange-500', btnType: 'danger' },
+])
+
+const recommendedJobs = ref([
+  { 
+    title: '算法研究方向', 
+    match: 92,
+    reason: '结合您的性格特质测试（INTJ），该方向高度契合您出色的逻辑分析和独立思考能力，算法研究需要深入探索未知领域。'
   },
-  {
-    emoji: '⚙️', title: '后端架构师 / 平台研发', subtitle: '分布式系统 · 高并发',
-    match: 82,
-    matchColor: 'bg-green-100 text-green-700',
-    description: '你的数据库（86分）和软件工程（91分）成绩显示出扎实的系统设计功底。Java 和 Go 的深入学习将帮助你进入大厂基础架构团队。',
-    skills: ['Java/Go', 'Kafka', 'Redis', 'MySQL 调优', '微服务'],
-    roadmap: [
-      { title: '精通 Java 生态', detail: 'JVM 调优、Spring 核心原理', done: true },
-      { title: '分布式系统实践', detail: 'Redis 集群、Kafka 消息队列', done: false },
-      { title: '系统设计强化', detail: '刷 System Design Primer', done: false },
-      { title: '后端校招冲刺', detail: '目标：字节/腾讯/阿里后端', done: false },
-      { title: '技术管理进阶', detail: '带领小团队完成复杂项目', done: false }
-    ]
+  { 
+    title: '软件工程与系统架构', 
+    match: 89,
+    reason: '您的能力倾向测评在系统架构方面得分较高（95分），在复杂系统中能发挥出极强的工程思维和构建能力。'
   },
-  {
-    emoji: '🏀', title: '体育科技 / 数据分析师', subtitle: 'AI + 运动科学 · 新兴赛道',
-    match: 71,
-    matchColor: 'bg-blue-100 text-blue-700',
-    description: '你热爱篮球，同时具备强大的数据分析能力。这让你在体育科技赛道（如 NBA 数据公司、运动智能硬件厂商）中具备独特竞争力。',
-    skills: ['Python', '数据可视化', '运动生物力学', '机器学习', '商业分析'],
-    roadmap: [
-      { title: '数据分析基础', detail: 'Python、Pandas、Matplotlib', done: true },
-      { title: '体育数据项目', detail: '搭建篮球数据可视化平台', done: false },
-      { title: '跨学科拓展', detail: '辅修运动科学或生物力学', done: false },
-      { title: '行业实习', detail: '体育媒体、运动品牌数据岗', done: false },
-      { title: '创业或加入独角兽', detail: '运动科技领域初创公司', done: false }
-    ]
+  { 
+    title: '产品设计与规划', 
+    match: 86,
+    reason: '您的职业价值观倾向于成就感导向，产品方向能给您提供广阔的发展平台和用户价值验证的巨大成就感。'
   }
+])
+
+const assessmentHistory = ref([
+  // 职业兴趣测评
+  [
+    { date: '2026-05-10 14:30', result: '研究型 (I) / 艺术型 (A)', detail: '倾向于从事需要深度思考和创新的工作，适合科研、设计等领域。' },
+    { date: '2025-10-15 09:15', result: '研究型 (I) / 实际型 (R)', detail: '具有较强的逻辑思维和动手能力，喜欢探索事物运作原理。' }
+  ],
+  // 性格特质测评
+  [
+    { date: '2026-05-12 10:00', result: 'INTJ (建筑师)', detail: '富有想象力和战略性，对一切事物皆有计划，适合高阶管理或架构师角色。' },
+    { date: '2025-11-20 16:40', result: 'INTP (逻辑学家)', detail: '具有创造力，对知识有着永不满足的渴望，适合独立研究和开发。' }
+  ],
+  // 能力倾向测评
+  [
+    { date: '2026-05-14 08:50', result: '逻辑推理能力突出 (95分)', detail: '在复杂系统分析、算法设计方面具有显著优势。' },
+    { date: '2025-09-05 11:20', result: '逻辑推理 (88分) / 空间想象 (82分)', detail: '具备良好的抽象思维能力和空间构建能力。' }
+  ],
+  // 职业价值观测评
+  [
+    { date: '2026-05-15 09:30', result: '成就感导向 / 智力刺激', detail: '期望在工作中解决复杂问题并获得成就认可，注重自我价值实现。' },
+    { date: '2025-12-01 15:10', result: '成就感导向 / 独立性', detail: '喜欢自主安排工作，追求专业领域的突破，不喜被过度微观管理。' }
+  ]
 ])
 </script>
 
 <style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.3s ease;
-  overflow: hidden;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-.slide-enter-from,
-.slide-leave-to {
-  max-height: 0;
-  opacity: 0;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-.slide-enter-to,
-.slide-leave-from {
-  max-height: 400px;
-  opacity: 1;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--el-border-color-lighter);
+  border-radius: 4px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--el-border-color);
+}
+</style>
+
+<style>
+.custom-calendar-overlay {
+  background-color: transparent !important; /* 隐藏原生遮罩背景 */
+}
+.custom-calendar-dialog {
+  position: fixed !important;
+  top: 96px !important;
+  bottom: 40px !important;
+  left: 288px !important;
+  right: 32px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  border-radius: 32px !important; /* 圆角处理 */
+  overflow: hidden !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  overscroll-behavior: contain;
+}
+.custom-calendar-dialog .el-dialog__headerbtn {
+  top: 22px;
+  right: 25px;
+  z-index: 100;
+}
+.custom-calendar-dialog .el-dialog__header {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 0;
+}
+.custom-calendar-dialog .el-dialog__body {
+  flex: 1;
+  min-height: 0;
+  padding: 0 !important;
 }
 </style>

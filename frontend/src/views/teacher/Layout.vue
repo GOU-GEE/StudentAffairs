@@ -1,64 +1,84 @@
 <template>
   <div class="antialiased min-h-screen flex text-on-surface">
     <!-- 侧边栏 毛玻璃 -->
-    <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50">
+    <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50 overflow-y-auto overscroll-contain custom-scrollbar">
       <div class="mb-12 px-2 flex items-center justify-center gap-3">
-        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain">
+        <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain group-hover:rotate-12 transition-transform duration-500">
         <div class="flex flex-col items-center">
           <span class="text-[0.9rem] font-bold tracking-[0.2em] text-on-surface leading-tight text-center">西华师范大学</span>
-          <span class="text-[1rem] font-black tracking-[0.15em] text-primary leading-tight mt-0.5 text-center">智慧学工系统</span>
+          <span class="text-[1.1rem] font-black tracking-[0.15em] text-gradient leading-tight mt-0.5 text-center">智慧学工系统</span>
         </div>
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <button
-            @click="navigateTo('/teacher')"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path === '/teacher' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          <router-link
+            to="/teacher"
+            exact-active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20"><DataBoard /></el-icon>
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Monitor /></el-icon>
             学生档案大屏
-          </button>
+          </router-link>
         </li>
         <li>
-          <button
-            @click="navigateTo('/teacher/financial-aid')"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path === '/teacher/financial-aid' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          <router-link
+            to="/teacher/financial-aid"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20"><Money /></el-icon>
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Trophy /></el-icon>
             奖助服务管理
-          </button>
+          </router-link>
         </li>
         <li>
-          <button
-            @click="navigateTo('/teacher/academic-warning')"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path === '/teacher/academic-warning' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          <router-link
+            to="/teacher/work-study"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20"><TrendCharts /></el-icon>
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Briefcase /></el-icon>
+            勤工助学管理
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/teacher/academic-warning"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><TrendCharts /></el-icon>
             学业预警支持
-          </button>
+          </router-link>
         </li>
         <li>
-          <button
-            @click="navigateTo('/teacher/career-plan')"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path === '/teacher/career-plan' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
+          <router-link
+            to="/teacher/safety-monitoring"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20"><ChatLineRound /></el-icon>
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Warning /></el-icon>
+            安全监控中心
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/teacher/mid-term"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><DocumentChecked /></el-icon>
+            中期鉴定管理
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/teacher/career-plan"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><ChatLineRound /></el-icon>
             沟通互动
-          </button>
-        </li>
-        <li>
-          <button
-            @click="navigateTo('/teacher/communication')"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-            :class="route.path === '/teacher/communication' ? 'sidebar-active text-primary font-semibold' : 'text-secondary hover:bg-surface-container-low'"
-          >
-            <el-icon :size="20"><Warning /></el-icon>
-            校园安全预警
-          </button>
+          </router-link>
         </li>
       </ul>
 
@@ -129,7 +149,11 @@
 
       <!-- Canvas -->
       <main class="flex-1 overflow-y-auto p-6 pt-16 lg:p-10 lg:pt-20 max-w-[1600px] w-full mx-auto">
-        <router-view :key="route.path + '_' + refreshKey" />
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" :key="route.fullPath" />
+          </transition>
+        </router-view>
       </main>
     </div>
 
@@ -197,18 +221,15 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { DataBoard, Money, TrendCharts, ChatLineRound, Warning, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
+import { 
+  User, Document, Warning, Trophy, Bell, Setting, Close, Lock, 
+  SwitchButton, CircleCheck, TrendCharts, UserFilled,
+  Monitor, Briefcase, DocumentChecked, ChatLineRound
+} from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-const refreshKey = ref(0)
 
-const navigateTo = async (path) => {
-  if (route.path !== path) {
-    await router.push(path)
-  }
-  refreshKey.value++
-}
 const showSettings = ref(false)
 const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
@@ -249,7 +270,7 @@ const logout = () => {
 
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(5px); }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(6px); }
 .notif-drop-enter-active { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .notif-drop-leave-active { transition: all 0.15s ease; }
 .notif-drop-enter-from, .notif-drop-leave-to { opacity: 0; transform: translateY(-8px) scale(0.96); }

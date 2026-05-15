@@ -61,10 +61,11 @@ const router = useRouter()
 const login = (role) => {
   // 模拟登录态存储
   localStorage.setItem('userRole', role)
+  console.log('Login successful, role:', role)
   if (role === 'student') {
     router.push('/student')
   } else {
-    router.push('/teacher')
+    window.location.href = '/teacher'
   }
 }
 </script>

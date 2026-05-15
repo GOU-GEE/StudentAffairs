@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  --color-surface: #f7f9fb;
-  --color-on-surface: #191c1e;
+  /* Modern Color Palette */
+  --color-surface: #f8fafc;
+  --color-on-surface: #0f172a;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f2f4f6;
-  --color-surface-container: #eceef0;
-  --color-surface-container-high: #e6e8ea;
-  --color-surface-container-highest: #e0e3e5;
-  --color-outline: #777777;
-  --color-outline-variant: #c6c6c6;
-  --color-primary: #000000;
-  --color-on-primary-fixed: #ffffff;
-  --color-primary-fixed: #5f5e5e;
-  --color-secondary: #505f76;
-  --color-tertiary-container: #316bf3;
-  --color-on-tertiary-container: #ffffff;
-  --color-error: #ba1a1a;
+  --color-surface-container-low: #f1f5f9;
+  --color-surface-container: #e2e8f0;
+  --color-surface-container-high: #cbd5e1;
+  --color-surface-container-highest: #94a3b8;
   
-  /* Additional colors for AI / modern feel */
-  --color-ai-primary: #6366f1;
-  --color-ai-primary-light: #818cf8;
+  --color-primary: #3b82f6;
+  --color-primary-fixed: #2563eb;
+  --color-on-primary-fixed: #ffffff;
+  
+  --color-secondary: #64748b;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #e2e8f0;
+  
+  --color-error: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  
+  /* AI & Gradient Colors */
+  --color-ai-primary: #8b5cf6;
+  --color-ai-secondary: #ec4899;
+  --color-indigo: #6366f1;
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
+  
+  .glass-card-dark {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .premium-shadow {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .text-gradient {
+    background: linear-gradient(to right, var(--color-primary), var(--color-ai-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 @layer base {
@@ -97,18 +130,34 @@
 }
 
 
-/* Custom scrollbar for better gallery feel */
+/* Custom scrollbar utility */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* Global scrollbar for better gallery feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-container-highest);
+  background: rgba(148, 163, 184, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-outline);
+  background: rgba(148, 163, 184, 0.45);
 }

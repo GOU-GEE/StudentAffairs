@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(kill 82127)",
+      "Bash(npx vite *)"
+    ]
+  }
+}
