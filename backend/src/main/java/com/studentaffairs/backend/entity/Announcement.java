@@ -22,6 +22,9 @@ public class Announcement {
     @Column(name = "publisher_name", nullable = false, length = 50)
     private String publisherName;
 
+    @Column(name = "publisher_id", length = 50)
+    private String publisherId;
+
     @Column(nullable = false, length = 20)
     private String type; // NOTICE, URGENT, EVENT
 

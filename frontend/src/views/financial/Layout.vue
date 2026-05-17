@@ -1,6 +1,6 @@
 <template>
   <div class="antialiased min-h-screen flex text-on-surface">
-    <!-- 侧边栏 毛玻璃 -->
+    <!-- 侧边栏 -->
     <nav class="sidebar-glass hidden md:flex flex-col fixed left-0 top-0 h-full py-8 px-4 w-64 z-50 overflow-y-auto overscroll-contain custom-scrollbar">
       <div class="mb-12 px-2 flex items-center justify-center gap-3">
         <img src="/logosvg.png" alt="Logo" class="w-12 h-12 object-contain group-hover:rotate-12 transition-transform duration-500">
@@ -12,62 +12,42 @@
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
           <router-link
-            to="/teacher"
-            exact-active-class="!text-primary font-bold"
+            to="/financial"
+            exact-active-class="!text-amber-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Monitor /></el-icon>
-            学生档案大屏
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><HomeFilled /></el-icon>
+            资助管理首页
           </router-link>
         </li>
         <li>
           <router-link
-            to="/teacher/financial-aid"
-            active-class="!text-primary font-bold"
+            to="/financial/scholarships"
+            active-class="!text-amber-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
             <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Trophy /></el-icon>
-            奖助服务管理
+            奖助学金审批
           </router-link>
         </li>
         <li>
           <router-link
-            to="/teacher/academic-warning"
-            active-class="!text-primary font-bold"
+            to="/financial/work-study"
+            active-class="!text-amber-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><TrendCharts /></el-icon>
-            学业预警支持
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Briefcase /></el-icon>
+            勤工助学管理
           </router-link>
         </li>
         <li>
           <router-link
-            to="/teacher/safety-monitoring"
-            active-class="!text-primary font-bold"
+            to="/financial/poverty"
+            active-class="!text-amber-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Warning /></el-icon>
-            安全监控中心
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/teacher/career-plan"
-            active-class="!text-primary font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><EditPen /></el-icon>
-            发布通知
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/teacher/communication"
-            active-class="!text-primary font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><ChatLineRound /></el-icon>
-            沟通互动
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Stamp /></el-icon>
+            困难认定管理
           </router-link>
         </li>
       </ul>
@@ -80,8 +60,8 @@
              <span class="text-xs text-secondary font-medium">后端服务正常</span>
            </div>
            <div class="flex items-center gap-2">
-             <div class="w-2 h-2 rounded-full bg-ai-primary animate-pulse"></div>
-             <span class="text-xs text-secondary font-medium">Ollama AI 就绪</span>
+             <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+             <span class="text-xs text-secondary font-medium">资助管理中心模式</span>
            </div>
         </div>
       </div>
@@ -89,35 +69,32 @@
 
     <!-- Main Content -->
     <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden">
-      <!-- Header: 毛玻璃 + 路由标题 + 右侧操作 -->
       <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-40 h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight">
-        <!-- 页面标题 & 页面特定操作(通过 teleport 注入) -->
         <div class="flex items-center gap-6">
           <h2 class="text-2xl font-black text-on-surface tracking-tight">{{ route.meta.title || '' }}</h2>
           <div id="header-actions" class="flex items-center gap-3"></div>
         </div>
 
-        <!-- 右侧操作区 -->
         <div class="flex items-center gap-4">
-          <!-- 通知铃铛 -->
+          <!-- 通知 -->
           <div class="relative flex items-center justify-center">
-            <button @click.stop="notifOpen = !notifOpen" class="relative text-secondary hover:text-primary transition-colors p-1.5 rounded-lg hover:bg-surface-container-low flex items-center justify-center">
+            <button @click.stop="notifOpen = !notifOpen" class="relative text-secondary hover:text-amber-600 transition-colors p-1.5 rounded-lg hover:bg-surface-container-low flex items-center justify-center">
               <el-icon :size="20"><Bell /></el-icon>
-              <span v-if="unreadCount > 0" class="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-error rounded-full text-white text-[10px] font-bold flex items-center justify-center px-1 border-2 border-surface">{{ unreadCount }}</span>
+              <span v-if="unreadCount > 0" class="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-amber-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center px-1 border-2 border-surface">{{ unreadCount }}</span>
             </button>
             <transition name="notif-drop">
               <div v-if="notifOpen" class="absolute right-0 top-full mt-3 w-80 bg-surface/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-outline-variant/20 overflow-hidden z-50">
                 <div class="absolute -top-2 right-3 w-4 h-4 bg-surface/95 border-l border-t border-outline-variant/20 rotate-45"></div>
                 <div class="px-4 py-3.5 border-b border-outline-variant/10 flex items-center justify-between">
-                  <span class="font-bold text-sm">站内消息</span>
-                  <button @click="markAllRead" class="text-xs text-primary hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
+                  <span class="font-bold text-sm">审批消息</span>
+                  <button @click="markAllRead" class="text-xs text-amber-600 hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-blue-50/50' : ''">
+                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-amber-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span>
                       <span class="text-xs text-outline ml-auto">{{ n.time }}</span>
-                      <span v-if="!n.read" class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
+                      <span v-if="!n.read" class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
                     <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
@@ -126,21 +103,19 @@
               </div>
             </transition>
           </div>
-          <!-- 设置 -->
-          <button @click="showSettings = true" class="text-secondary hover:text-primary transition-colors p-1.5 rounded-lg hover:bg-surface-container-low flex items-center justify-center">
+          <button @click="showSettings = true" class="text-secondary hover:text-amber-600 transition-colors p-1.5 rounded-lg hover:bg-surface-container-low flex items-center justify-center">
             <el-icon :size="20"><Setting /></el-icon>
           </button>
           <div class="flex items-center gap-2 cursor-pointer group">
-            <div class="w-8 h-8 rounded-full bg-primary text-on-primary-fixed flex items-center justify-center font-bold text-sm shadow-md">李</div>
-            <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">李辅导员</span>
+            <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow-md">资</div>
+            <span class="text-sm font-semibold text-on-surface group-hover:text-amber-600 transition-colors">资助管理中心</span>
           </div>
         </div>
       </header>
 
-      <!-- Canvas -->
       <main class="flex-1 overflow-y-auto p-6 pt-16 lg:p-10 lg:pt-20 max-w-[1600px] w-full mx-auto">
         <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
+          <transition name="fade">
             <component :is="Component" :key="route.fullPath" />
           </transition>
         </router-view>
@@ -158,25 +133,21 @@
           </button>
         </div>
         <div class="flex min-h-[460px]">
-          <!-- 设置导航 -->
           <div class="w-48 bg-surface-container-lowest border-r border-outline-variant/15 p-4 flex flex-col">
             <p class="text-[0.6875rem] font-bold text-outline uppercase tracking-wider mb-3 px-2">账号</p>
             <button @click="settingsTab = 'password'"
                     class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left mb-1 transition-colors"
-                    :class="settingsTab === 'password' ? 'bg-primary text-on-primary-fixed font-semibold' : 'text-secondary hover:bg-surface-container-low'">
+                    :class="settingsTab === 'password' ? 'bg-amber-500 text-white font-semibold' : 'text-secondary hover:bg-surface-container-low'">
               <el-icon :size="16"><Lock /></el-icon>
               密码修改
             </button>
-            <!-- 退出按钮放在设置导航最下方 -->
             <div class="mt-auto">
-              <button @click="logout"
-                      class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left text-error hover:bg-error-container transition-colors">
+              <button @click="logout" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-left text-error hover:bg-error-container transition-colors">
                 <el-icon :size="16"><SwitchButton /></el-icon>
                 退出登录
               </button>
             </div>
           </div>
-          <!-- 设置内容 -->
           <div class="flex-1 p-8">
             <div v-if="settingsTab === 'password'">
               <h3 class="text-lg font-bold text-on-surface mb-1">修改密码</h3>
@@ -194,8 +165,7 @@
                   <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">确认新密码</label>
                   <el-input v-model="pwdForm.confirm" type="password" show-password placeholder="再次输入新密码" />
                 </div>
-                <button @click="changePwd"
-                        class="mt-2 px-6 py-2.5 bg-primary text-on-primary-fixed rounded-xl text-sm font-bold hover:bg-primary-fixed transition-colors shadow-md">
+                <button @click="changePwd" class="mt-2 px-6 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors shadow-md">
                   确认修改
                 </button>
               </div>
@@ -208,93 +178,33 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
-import {
-  Warning, Trophy, Bell, Setting, Close, Lock,
-  SwitchButton, CircleCheck, TrendCharts,
-  Monitor, ChatLineRound, EditPen
-} from '@element-plus/icons-vue'
+import { HomeFilled, Trophy, Briefcase, Stamp, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-
-const API = 'http://localhost:8080/api/communication'
-const teacherId = sessionStorage.getItem('userId') || 'T001'
 
 const showSettings = ref(false)
 const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
 const notifOpen = ref(false)
 
-const staticNotifications = ref([
-  { id: 'static-1', tag: '申请待审', tagStyle: 'bg-orange-100 text-orange-700', time: '05-03 16:20', title: '张小明 提交了请假申请，待审批', content: '申请人: 张小明（202301042）｜类型: 返乡假｜时间: 11月16日至11月17日。请及时处理。', read: false, expanded: false, path: '/teacher' },
-  { id: 'static-2', tag: '系统', tagStyle: 'bg-blue-100 text-blue-700', time: '05-03 09:00', title: '学业预警引擎已完成本期检测', content: '本次检测发现 3 名学生触发学业预警条件，请前往「学业预警支持」查看详情。', read: true, expanded: false, path: '/teacher/academic-warning' },
+const notifications = ref([
+  { id: 1, tag: '待审批', tagStyle: 'bg-amber-100 text-amber-700', time: '05-16 10:00', title: '张小明 提交了国家励志奖学金申请', content: 'GPA 3.85，专业排名前10%，已提交证明材料。请及时审核。', read: false, expanded: false, path: '/financial/scholarships' },
+  { id: 2, tag: '岗位', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 15:00', title: '勤工助学岗位申请数已达上限', content: '图书馆阅览室助理岗位已满员，请关注其他岗位的申请情况。', read: true, expanded: false, path: '/financial/work-study' },
 ])
-const msgNotifications = ref([])
-
-const notifications = computed(() => {
-  return [...msgNotifications.value, ...staticNotifications.value]
-})
-const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
-
-const fetchMessageAlerts = async () => {
-  try {
-    const res = await axios.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
-    if (res.data.code === 200) {
-      const contacts = res.data.data
-      const alerts = []
-      for (const c of contacts) {
-        if (c.unread > 0) {
-          alerts.push({
-            id: 'msg-' + c.id,
-            tag: '私信',
-            tagStyle: 'bg-green-100 text-green-700',
-            time: '',
-            title: `${c.name} 发来 ${c.unread} 条新消息`,
-            content: '',
-            read: false,
-            expanded: false,
-            path: `/teacher/communication?studentId=${c.id}`
-          })
-        }
-      }
-      // 保留已读状态：之前标记为已读的保持已读
-      const oldMap = new Map(msgNotifications.value.map(n => [n.id, n.read]))
-      for (const a of alerts) {
-        if (oldMap.get(a.id) === true) a.read = true
-      }
-      msgNotifications.value = alerts
-    }
-  } catch (e) { /* ignore polling errors */ }
-}
-
-let pollTimer = null
-
+const unreadCount = ref(notifications.value.filter(n => !n.read).length)
 const toggleNotif = (n) => {
   n.expanded = !n.expanded
-  if (!n.read) { n.read = true }
-  if (n.path) {
-    router.push(n.path)
-    notifOpen.value = false
-  }
+  if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length }
+  if (n.path) { router.push(n.path); notifOpen.value = false }
 }
-const markAllRead = () => {
-  notifications.value.forEach(n => n.read = true)
-}
+const markAllRead = () => { notifications.value.forEach(n => n.read = true); unreadCount.value = 0 }
 const closeNotif = () => { notifOpen.value = false }
-
-onMounted(() => {
-  document.addEventListener('click', closeNotif)
-  fetchMessageAlerts()
-  pollTimer = setInterval(fetchMessageAlerts, 10000)
-})
-onUnmounted(() => {
-  document.removeEventListener('click', closeNotif)
-  if (pollTimer) clearInterval(pollTimer)
-})
+onMounted(() => document.addEventListener('click', closeNotif))
+onUnmounted(() => document.removeEventListener('click', closeNotif))
 
 const changePwd = () => {
   if (!pwdForm.value.current || !pwdForm.value.newPwd || !pwdForm.value.confirm) { ElMessage.warning('请填写完整的密码信息'); return }
@@ -307,6 +217,8 @@ const changePwd = () => {
 
 const logout = () => {
   sessionStorage.removeItem('userRole')
+  sessionStorage.removeItem('userName')
+  sessionStorage.removeItem('token')
   window.location.href = '/login'
 }
 </script>

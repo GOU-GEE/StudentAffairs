@@ -1,145 +1,162 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <button @click="showPublishDialog = true"
-              class="bg-primary text-on-primary-fixed hover:bg-primary-fixed rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon><EditPen /></el-icon>发布公告
-      </button>
-    </teleport>
-
-    <!-- Announcement Feed -->
     <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 overflow-hidden">
-      <div class="md:col-span-8 flex flex-col bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] overflow-hidden">
-        <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">已发布公告</h3>
-        <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-2">
-          <div v-for="(a, i) in announcements" :key="i"
-               class="p-5 bg-surface rounded-xl border hover:border-primary/20 transition-colors group"
-               :class="a.isPinned ? 'border-primary/30 ring-1 ring-primary/10' : 'border-outline-variant/20'">
-            <div class="flex items-start justify-between gap-2 mb-2 flex-wrap">
-              <div class="flex items-center gap-2 flex-wrap">
-                <el-icon v-if="a.isPinned" class="text-primary text-sm"><StarFilled /></el-icon>
-                <span class="text-xs px-2 py-0.5 rounded-full font-bold"
-                      :class="typeStyle(a.type)">{{ typeLabel(a.type) }}</span>
-                <h4 class="font-bold text-sm text-on-surface">{{ a.title }}</h4>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-outline">{{ formatDate(a.publishTime) }}</span>
-                <button @click="deleteAnnouncement(a.id)"
-                        class="opacity-0 group-hover:opacity-100 text-error hover:text-error/80 transition-all text-xs font-semibold">删除</button>
-              </div>
+      <!-- 左侧：发布通知 / 公告详情 -->
+      <div class="md:col-span-7 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] flex flex-col overflow-hidden">
+        <!-- 发布通知模式 -->
+        <template v-if="!viewingAnnouncement">
+          <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">发布通知</h3>
+          <div class="space-y-4 flex-1">
+            <div>
+              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">标题</label>
+              <el-input v-model="form.title" placeholder="请输入通知标题" />
             </div>
-            <p class="text-sm text-secondary leading-relaxed">{{ a.content }}</p>
-            <p class="text-xs text-outline mt-2">发布人: {{ a.publisherName }}</p>
+            <div class="flex-1">
+              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">内容</label>
+              <el-input v-model="form.content" type="textarea" :rows="10" placeholder="请输入通知内容..." />
+            </div>
+            <div class="flex items-center gap-2">
+              <el-switch v-model="form.isPinned" />
+              <span class="text-sm text-secondary">置顶显示</span>
+            </div>
           </div>
-          <div v-if="announcements.length === 0" class="py-12 text-center text-secondary">
-            <el-icon :size="48" class="mb-2 opacity-30"><Bell /></el-icon>
-            <p>暂无公告</p>
+          <div class="flex justify-end mt-6">
+            <button @click="publishAnnouncement"
+                    class="px-8 py-2.5 bg-primary text-on-primary-fixed rounded-xl font-bold text-sm hover:bg-primary-fixed transition-colors flex items-center gap-2 shadow-md">
+              <el-icon><Check /></el-icon>
+              发送
+            </button>
           </div>
-        </div>
+        </template>
+
+        <!-- 公告详情模式 -->
+        <template v-else>
+          <div class="flex items-start justify-between mb-4">
+            <h2 class="text-xl font-bold text-on-surface leading-snug flex-1 pr-4">{{ viewingAnnouncement.title }}</h2>
+            <button @click="viewingAnnouncement = null"
+                    class="w-8 h-8 rounded-full bg-surface-container-high hover:bg-error-container hover:text-error flex items-center justify-center flex-shrink-0 transition-colors"
+                    title="关闭详情">
+              <el-icon :size="18"><Close /></el-icon>
+            </button>
+          </div>
+          <p class="text-xs text-outline mb-6">{{ formatFullDate(viewingAnnouncement.publishTime) }}</p>
+          <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <p class="text-sm text-on-surface leading-relaxed whitespace-pre-wrap">{{ viewingAnnouncement.content }}</p>
+          </div>
+        </template>
       </div>
 
-      <!-- Quick Compose Panel -->
-      <div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] flex flex-col">
-        <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">快速发布</h3>
-        <div class="space-y-4 flex-1">
-          <div>
-            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">公告类型</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button v-for="t in types" :key="t.value" @click="quickForm.type = t.value"
-                      class="py-2 rounded-lg text-xs font-bold border transition-colors"
-                      :class="quickForm.type === t.value ? 'bg-primary text-on-primary-fixed border-primary' : 'bg-surface border-outline-variant/30 text-secondary hover:border-primary/30'">
-                {{ t.label }}
-              </button>
+      <!-- 右侧：已发布公告历史 -->
+      <div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] overflow-hidden flex flex-col">
+        <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">已发布公告</h3>
+        <div class="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
+          <div v-for="a in announcements" :key="a.id"
+               @click="viewAnnouncement(a)"
+               class="p-4 bg-surface rounded-xl border hover:border-primary/20 transition-colors group cursor-pointer"
+               :class="a.isPinned ? 'border-primary/30 ring-1 ring-primary/10' : 'border-outline-variant/20'">
+            <div class="flex items-start justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <el-icon v-if="a.isPinned" class="text-primary text-sm flex-shrink-0"><Top /></el-icon>
+                <h4 class="font-bold text-sm text-on-surface truncate">{{ a.title }}</h4>
+              </div>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <span class="text-[11px] text-outline">{{ formatDate(a.publishTime) }}</span>
+                <button @click.stop="deleteAnnouncement(a.id)"
+                        class="opacity-0 group-hover:opacity-100 text-error hover:text-error/80 transition-all p-0.5"
+                        title="删除">
+                  <el-icon :size="14"><Delete /></el-icon>
+                </button>
+              </div>
             </div>
+            <p class="text-xs text-secondary leading-relaxed line-clamp-2">{{ a.content }}</p>
           </div>
-          <div>
-            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">标题</label>
-            <el-input v-model="quickForm.title" placeholder="公告标题" />
-          </div>
-          <div class="flex-1">
-            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">内容</label>
-            <el-input v-model="quickForm.content" type="textarea" :rows="6" placeholder="请输入公告内容..." />
-          </div>
-          <div class="flex items-center gap-2">
-            <el-switch v-model="quickForm.isPinned" />
-            <span class="text-sm text-secondary">置顶显示</span>
+          <div v-if="announcements.length === 0" class="py-16 flex flex-col items-center text-secondary">
+            <el-icon :size="48" class="mb-2 opacity-30"><Bell /></el-icon>
+            <p class="text-sm">暂无已发布的公告</p>
           </div>
         </div>
-        <button @click="publishAnnouncement"
-                class="mt-6 w-full py-3 bg-primary text-on-primary-fixed rounded-xl font-bold text-sm hover:bg-primary-fixed transition-colors flex items-center justify-center gap-2 shadow-md">
-          <el-icon><Check /></el-icon>
-          立即发布给全体学生
-        </button>
       </div>
     </div>
-
-    <el-dialog v-model="showPublishDialog" title="发布公告" width="500px" align-center>
-      <div class="space-y-4 p-2">
-        <el-input v-model="quickForm.title" placeholder="公告标题" />
-        <el-select v-model="quickForm.type" style="width: 100%">
-          <el-option label="普通通知" value="NOTICE" />
-          <el-option label="紧急通知" value="URGENT" />
-          <el-option label="活动通知" value="EVENT" />
-        </el-select>
-        <el-input v-model="quickForm.content" type="textarea" :rows="5" placeholder="公告内容..." />
-        <div class="flex items-center gap-2">
-          <el-switch v-model="quickForm.isPinned" />
-          <span class="text-sm">置顶显示</span>
-        </div>
-      </div>
-      <template #footer>
-        <el-button @click="showPublishDialog = false">取消</el-button>
-        <el-button type="primary" @click="publishAnnouncement">发布</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { EditPen, StarFilled, Bell, Check } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { Check, Bell, Delete, Top, Close } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 
-const announcements = ref([])
-const showPublishDialog = ref(false)
-const quickForm = ref({ title: '', content: '', type: 'NOTICE', publisherName: '辅导员', isPinned: false })
-const types = [{ label: '通知', value: 'NOTICE' }, { label: '紧急', value: 'URGENT' }, { label: '活动', value: 'EVENT' }]
-
 const API = 'http://localhost:8080/api/communication'
+const publisherId = sessionStorage.getItem('userId') || 'T001'
+const publisherName = sessionStorage.getItem('userName') || '李老师'
 
-const loadData = async () => {
+const announcements = ref([])
+const form = ref({ title: '', content: '', isPinned: false })
+const viewingAnnouncement = ref(null)
+
+const loadAnnouncements = async () => {
   try {
-    const res = await axios.get(`${API}/announcements`)
+    const res = await axios.get(`${API}/announcements`, { params: { publisherId } })
     if (res.data.code === 200) announcements.value = res.data.data
   } catch (e) { console.error(e) }
 }
 
+const viewAnnouncement = (a) => {
+  viewingAnnouncement.value = a
+}
+
 const publishAnnouncement = async () => {
-  if (!quickForm.value.title || !quickForm.value.content) {
+  if (!form.value.title || !form.value.content) {
     ElMessage.warning('请填写标题和内容')
     return
   }
   try {
-    await axios.post(`${API}/announcements`, quickForm.value)
-    ElMessage.success('公告已发布')
-    showPublishDialog.value = false
-    quickForm.value = { title: '', content: '', type: 'NOTICE', publisherName: '辅导员', isPinned: false }
-    await loadData()
+    await axios.post(`${API}/announcements`, {
+      title: form.value.title,
+      content: form.value.content,
+      publisherName,
+      publisherId,
+      type: 'NOTICE',
+      isPinned: form.value.isPinned
+    })
+    ElMessage.success('通知已发布')
+    form.value = { title: '', content: '', isPinned: false }
+    await loadAnnouncements()
   } catch (e) { ElMessage.error('发布失败，请确保后端服务已启动') }
 }
 
 const deleteAnnouncement = async (id) => {
   try {
+    await ElMessageBox.confirm('确定要删除这条公告吗？删除后学生端将不可见。', '确认删除', {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    if (viewingAnnouncement.value?.id === id) viewingAnnouncement.value = null
     await axios.delete(`${API}/announcements/${id}`)
     ElMessage.success('公告已删除')
-    await loadData()
-  } catch (e) { ElMessage.error('删除失败') }
+    await loadAnnouncements()
+  } catch (e) {
+    if (e !== 'cancel') ElMessage.error('删除失败')
+  }
 }
 
-const typeStyle = (t) => ({ URGENT: 'bg-error-container text-error border border-error/20', EVENT: 'bg-blue-100 text-tertiary-container border border-blue-200', NOTICE: 'bg-surface-container-high text-secondary border border-outline-variant/30' }[t])
-const typeLabel = (t) => ({ URGENT: '紧急', EVENT: '活动', NOTICE: '通知' }[t] || t)
-const formatDate = (s) => s ? new Date(s).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''
+const formatDate = (s) => {
+  if (!s) return ''
+  const d = new Date(s)
+  const now = new Date()
+  const diff = now.getTime() - d.getTime()
+  if (diff < 86400000) {
+    return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  }
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+}
 
-onMounted(loadData)
+const formatFullDate = (s) => {
+  if (!s) return ''
+  const d = new Date(s)
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
+onMounted(loadAnnouncements)
 </script>

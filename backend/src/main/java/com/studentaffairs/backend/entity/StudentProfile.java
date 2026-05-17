@@ -34,6 +34,9 @@ public class StudentProfile {
     @Column(length = 50)
     private String gradeClass; // 年级班级
 
+    @Column(length = 50)
+    private String teacherId; // 辅导员ID
+
     @Column(length = 18)
     private String idCard; // 身份证号码（需AOP脱敏）
 

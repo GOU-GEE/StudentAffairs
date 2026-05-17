@@ -15,57 +15,104 @@
       <div class="space-y-6">
         <div>
           <h2 class="text-xl font-bold text-on-surface mb-2 text-center">系统登录</h2>
-          <p class="text-sm text-secondary text-center">请选择您的身份进入系统</p>
+          <p class="text-sm text-secondary text-center">请输入账号密码进入系统</p>
         </div>
-        
-        <div class="grid grid-cols-1 gap-4 mt-8">
-          <button @click="login('student')" class="group relative flex items-center justify-between p-4 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-all overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-ai-primary/10 to-transparent translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
-            <div class="flex items-center gap-4 relative z-10">
-              <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary-fixed transition-colors">
-                <el-icon><User /></el-icon>
-              </div>
-              <div class="text-left">
-                <h3 class="font-bold text-on-surface">我是学生</h3>
-                <p class="text-xs text-secondary mt-0.5">访问个人主页与学业支持</p>
-              </div>
-            </div>
-            <el-icon class="text-secondary group-hover:text-primary relative z-10"><ArrowRight /></el-icon>
-          </button>
 
-          <button @click="login('teacher')" class="group relative flex items-center justify-between p-4 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-all overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-tertiary-container/10 to-transparent translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
-            <div class="flex items-center gap-4 relative z-10">
-              <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary-fixed transition-colors">
-                <el-icon><Service /></el-icon>
-              </div>
-              <div class="text-left">
-                <h3 class="font-bold text-on-surface">我是教师 / 辅导员</h3>
-                <p class="text-xs text-secondary mt-0.5">进入管理大屏与全局监控</p>
-              </div>
-            </div>
-            <el-icon class="text-secondary group-hover:text-primary relative z-10"><ArrowRight /></el-icon>
+        <form @submit.prevent="handleLogin" class="space-y-4 mt-6">
+          <div>
+            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">账号</label>
+            <el-input
+              v-model="username"
+              placeholder="请输入账号"
+              :prefix-icon="User"
+              size="large"
+              clearable
+            />
+          </div>
+          <div>
+            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">密码</label>
+            <el-input
+              v-model="password"
+              type="password"
+              placeholder="请输入密码"
+              :prefix-icon="Lock"
+              size="large"
+              show-password
+              @keyup.enter="handleLogin"
+            />
+          </div>
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full py-3 bg-primary text-on-primary-fixed rounded-xl text-sm font-bold hover:bg-primary-fixed transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          >
+            <span v-if="loading" class="flex items-center justify-center gap-2">
+              <el-icon class="animate-spin"><Loading /></el-icon>登录中...
+            </span>
+            <span v-else>登 录</span>
           </button>
-        </div>
+        </form>
+
+        <p class="text-xs text-outline text-center mt-4">系统将根据账号自动识别角色并跳转至对应工作台</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { User, Service, ArrowRight } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { User, Lock, Loading } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 const router = useRouter()
 
-const login = (role) => {
-  // 模拟登录态存储
-  localStorage.setItem('userRole', role)
-  console.log('Login successful, role:', role)
-  if (role === 'student') {
-    router.push('/student')
-  } else {
-    window.location.href = '/teacher'
+const username = ref('')
+const password = ref('')
+const loading = ref(false)
+
+const handleLogin = async () => {
+  if (!username.value.trim() || !password.value) {
+    ElMessage.warning('请输入账号和密码')
+    return
+  }
+
+  loading.value = true
+  try {
+    const res = await axios.post('http://localhost:8080/api/auth/login', {
+      username: username.value.trim(),
+      password: password.value,
+    })
+
+    if (res.data.code === 200) {
+      const { role, name, token, userId } = res.data.data
+      sessionStorage.setItem('userRole', role)
+      sessionStorage.setItem('userName', name)
+      sessionStorage.setItem('token', token)
+      if (userId) sessionStorage.setItem('userId', userId)
+      ElMessage.success(`欢迎回来，${name}`)
+
+      if (role === 'student') {
+        router.push('/student')
+      } else if (role === 'admin') {
+        router.push('/admin')
+      } else if (role === 'financial') {
+        router.push('/financial')
+      } else if (role === 'youth') {
+        router.push('/youth')
+      } else if (role === 'academic') {
+        router.push('/academic')
+      } else {
+        window.location.href = '/teacher'
+      }
+    } else {
+      ElMessage.error(res.data.msg || '登录失败')
+    }
+  } catch {
+    ElMessage.error('无法连接服务器，请检查后端是否启动')
+  } finally {
+    loading.value = false
   }
 }
 </script>

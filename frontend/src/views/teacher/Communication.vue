@@ -1,164 +1,344 @@
 <template>
-  <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <button @click="showNewDialog = true"
-              class="bg-error text-white hover:bg-error/80 rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon><Plus /></el-icon>上报新事件
-      </button>
-    </teleport>
+  <div class="h-[calc(100vh-72px)] lg:h-[calc(100vh-104px)] w-full flex gap-6 -mb-4">
+    <!-- 左侧学生列表 -->
+    <div class="w-80 flex-shrink-0 flex flex-col bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm overflow-hidden">
+      <!-- 搜索栏 -->
+      <div class="px-3 pt-2 pb-2">
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline z-10 flex items-center justify-center"><el-icon :size="14"><Search /></el-icon></span>
+          <input v-model="searchQuery" placeholder="搜索学生姓名或学号..."
+                 class="w-full pl-9 pr-3 py-2 rounded-xl border border-outline-variant/30 bg-white text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all" />
+        </div>
+      </div>
 
-    <!-- Stats Row -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/15 text-center">
-        <p class="text-3xl font-bold text-on-surface">{{ stats.total || 0 }}</p>
-        <p class="text-xs text-secondary font-semibold uppercase tracking-wider mt-1">事件总数</p>
-      </div>
-      <div class="bg-error-container rounded-xl p-5 border border-error/15 text-center">
-        <p class="text-3xl font-bold text-error">{{ stats.open || 0 }}</p>
-        <p class="text-xs text-error font-semibold uppercase tracking-wider mt-1">未处理</p>
-      </div>
-      <div class="bg-orange-50 rounded-xl p-5 border border-orange-200 text-center">
-        <p class="text-3xl font-bold text-orange-600">{{ stats.processing || 0 }}</p>
-        <p class="text-xs text-orange-600 font-semibold uppercase tracking-wider mt-1">处理中</p>
-      </div>
-      <div class="bg-green-50 rounded-xl p-5 border border-green-200 text-center">
-        <p class="text-3xl font-bold text-green-600">{{ stats.closed || 0 }}</p>
-        <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mt-1">已结案</p>
-      </div>
-    </div>
+      <div class="h-px bg-outline-variant/15"></div>
 
-    <!-- Incident Timeline -->
-    <div class="flex-1 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] overflow-hidden flex flex-col">
-      <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">事件台账 (按时间降序)</h3>
-      <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-2">
-        <div v-for="(inc, i) in incidents" :key="i" class="flex gap-4 group">
-          <!-- Timeline dot -->
-          <div class="flex flex-col items-center">
-            <div class="w-4 h-4 rounded-full border-2 mt-1 flex-shrink-0"
-                 :class="inc.level === 'HIGH' ? 'bg-error border-error' : inc.level === 'MEDIUM' ? 'bg-orange-400 border-orange-400' : 'bg-green-500 border-green-500'"></div>
-            <div class="w-0.5 bg-outline-variant/20 flex-1 mt-1" v-if="i < incidents.length - 1"></div>
-          </div>
-          <!-- Card -->
-          <div class="flex-1 mb-4 bg-surface border rounded-xl p-4 group-hover:border-primary/30 transition-colors"
-               :class="inc.level === 'HIGH' ? 'border-error/20' : 'border-outline-variant/20'">
-            <div class="flex justify-between items-start gap-2 mb-2 flex-wrap">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-bold text-sm text-on-surface">{{ inc.studentName || '匿名' }}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full font-bold"
-                      :class="levelStyle(inc.level)">{{ levelLabel(inc.level) }}</span>
-                <span class="text-xs px-2 py-0.5 rounded font-semibold bg-surface-container-high text-secondary border border-outline-variant/20">{{ typeLabel(inc.type) }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-outline">{{ formatDate(inc.reportTime) }}</span>
-                <el-select v-model="inc.status" size="small" style="width: 100px"
-                           @change="updateStatus(inc.id, inc.status)">
-                  <el-option label="未处理" value="OPEN" />
-                  <el-option label="处理中" value="PROCESSING" />
-                  <el-option label="已结案" value="CLOSED" />
-                </el-select>
-              </div>
+      <!-- 学生列表 -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+        <div v-for="student in filteredStudents" :key="student.studentId"
+             @click="selectStudent(student)"
+             class="p-3 rounded-xl cursor-pointer transition-all border flex items-center gap-3"
+             :class="activeStudentId === student.studentId ? 'bg-white shadow-sm border-primary/30 ring-1 ring-primary/20' : 'border-transparent hover:bg-white hover:shadow-md hover:border-outline-variant/30'">
+          <div class="relative flex-shrink-0">
+            <img :src="student.avatar || 'https://i.pravatar.cc/150?u=default'" class="w-10 h-10 rounded-full border border-outline-variant/30 object-cover" />
+            <div v-if="getUnreadCount(student.studentId) > 0"
+                 class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+              {{ getUnreadCount(student.studentId) }}
             </div>
-            <p class="text-sm text-secondary leading-relaxed">{{ inc.description }}</p>
-            <p v-if="inc.handlerName" class="text-xs text-outline mt-2">处理人: {{ inc.handlerName }}</p>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-bold text-sm text-on-surface truncate">{{ student.name }}</div>
+            <div class="text-xs text-outline truncate">{{ student.studentId }} · {{ student.major || '' }}</div>
+          </div>
+          <div v-if="getLastTime(student.studentId)" class="text-[10px] text-outline flex-shrink-0">
+            {{ getLastTime(student.studentId) }}
           </div>
         </div>
-        <div v-if="incidents.length === 0" class="py-16 flex flex-col items-center text-secondary">
-          <el-icon :size="48" class="mb-2 opacity-30"><CircleCheck /></el-icon>
-          <p>暂无事件记录</p>
+
+        <div v-if="filteredStudents.length === 0" class="py-10 text-center text-secondary text-sm">
+          暂无学生
         </div>
       </div>
     </div>
 
-    <!-- New Incident Dialog -->
-    <el-dialog v-model="showNewDialog" title="上报新安全事件" width="480px" align-center>
-      <div class="space-y-4 p-2">
-        <div>
-          <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">学生姓名</label>
-          <el-input v-model="newIncident.studentName" placeholder="涉事学生姓名（可选）" />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">事件类型</label>
-            <el-select v-model="newIncident.type" style="width: 100%">
-              <el-option label="心理健康" value="MENTAL" />
-              <el-option label="医疗紧急" value="MEDICAL" />
-              <el-option label="打架斗殴" value="FIGHT" />
-              <el-option label="失踪走失" value="MISSING" />
-              <el-option label="违规违纪" value="VIOLATION" />
-            </el-select>
+    <!-- 右侧聊天面板 -->
+    <div class="flex-1 bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm overflow-hidden flex flex-col relative"
+         @click="closeContextMenu">
+      <transition name="fade" mode="out-in">
+        <!-- 聊天界面 -->
+        <div v-if="activeStudentId" key="chat" class="flex flex-col h-full w-full">
+          <!-- 聊天头部 -->
+          <div class="px-6 py-4 border-b border-outline-variant/30 flex items-center bg-white/40">
+            <div>
+              <h3 class="font-bold text-base text-on-surface">{{ activeStudent?.name }}</h3>
+              <p class="text-xs text-secondary mt-0.5">{{ activeStudent?.studentId }} · {{ activeStudent?.major || '' }}</p>
+            </div>
           </div>
-          <div>
-            <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">预警级别</label>
-            <el-select v-model="newIncident.level" style="width: 100%">
-              <el-option label="🔴 高级" value="HIGH" />
-              <el-option label="🟡 中级" value="MEDIUM" />
-              <el-option label="🟢 低级" value="LOW" />
-            </el-select>
+
+          <!-- 消息列表 -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-surface-container-lowest/30" ref="chatScrollContainer">
+            <template v-for="msg in currentMessages" :key="msg.id">
+              <!-- 撤回的系统提示 -->
+              <div v-if="msg.isRecalled" class="flex justify-center my-2">
+                <span class="px-3 py-1 bg-surface-container-low rounded-full text-[11px] text-secondary">
+                  {{ msg.senderId === teacherId ? '你' : (activeStudent?.name || '对方') }}撤回了一条消息
+                </span>
+              </div>
+              <!-- 正常消息 -->
+              <div v-else class="flex items-start gap-3"
+                   :class="msg.senderId === teacherId ? 'flex-row-reverse' : ''"
+                   @contextmenu.prevent="openContextMenu($event, msg)">
+                <div class="px-4 py-2.5 rounded-2xl shadow-sm max-w-[70%]"
+                     :class="msg.senderId === teacherId ? 'bg-primary text-on-primary-fixed rounded-tr-sm' : 'bg-white border border-outline-variant/15 rounded-tl-sm'">
+                  <!-- 引用内容展示 -->
+                  <div v-if="msg.quoteId && getQuotedMessage(msg.quoteId)" class="mb-2 p-2 bg-black/10 rounded-lg text-xs">
+                    <div class="font-bold opacity-80 mb-1">{{ getQuotedSender(msg.quoteId) }}</div>
+                    <div class="opacity-90 line-clamp-2">{{ getQuotedMessage(msg.quoteId)?.content || '消息已撤回' }}</div>
+                  </div>
+                  <p class="text-sm leading-relaxed" :class="msg.senderId === teacherId ? '' : 'text-on-surface'">{{ msg.content }}</p>
+                </div>
+              </div>
+            </template>
+            <div v-if="currentMessages.length === 0" class="flex flex-col items-center justify-center h-full text-secondary py-20">
+              <el-icon :size="48" class="mb-3 opacity-20"><ChatDotRound /></el-icon>
+              <p class="text-sm">暂无消息，发送第一条消息吧</p>
+            </div>
+          </div>
+
+          <!-- 底部输入框 -->
+          <div class="p-4 border-t border-outline-variant/15 bg-white/40 flex flex-col gap-2">
+            <!-- 引用预览 -->
+            <div v-if="quotingMessage" class="flex items-center justify-between bg-surface-container-low pl-3 pr-2 py-1.5 rounded-lg mx-2">
+              <div class="text-xs text-secondary truncate flex-1 pr-4">
+                <span class="font-bold">{{ quotingMessage.senderId === teacherId ? '你' : (activeStudent?.name || '对方') }}:</span> {{ quotingMessage.content }}
+              </div>
+              <el-icon class="cursor-pointer text-secondary hover:text-error transition-colors flex-shrink-0" @click="cancelQuote"><Close /></el-icon>
+            </div>
+            <div class="flex items-end gap-3 bg-white p-1.5 rounded-2xl border border-outline-variant/30 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <textarea ref="chatInputRef" v-model="chatInput" rows="1"
+                        @keydown.enter.exact.prevent="sendMessage"
+                        class="flex-1 resize-none outline-none text-sm px-2 py-1.5 bg-transparent custom-scrollbar max-h-32 min-h-[32px]"
+                        placeholder="输入消息... (Enter发送，Shift+Enter换行)"></textarea>
+              <button @click="sendMessage"
+                      class="px-4 py-1.5 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      :disabled="!chatInput.trim()">发送</button>
+            </div>
           </div>
         </div>
-        <div>
-          <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">事件描述</label>
-          <el-input v-model="newIncident.description" type="textarea" :rows="3" placeholder="请详细描述事件经过..." />
+
+        <!-- 空状态 -->
+        <div v-else key="empty" class="flex flex-col items-center justify-center h-full w-full text-secondary">
+          <el-icon :size="64" class="mb-4 opacity-20"><ChatLineSquare /></el-icon>
+          <p class="text-lg font-medium text-on-surface">沟通互动</p>
+          <p class="text-sm mt-2 opacity-80">选择左侧学生开始私信</p>
         </div>
-        <div>
-          <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">处理人</label>
-          <el-input v-model="newIncident.handlerName" placeholder="经办人姓名" />
-        </div>
-      </div>
-      <template #footer>
-        <el-button @click="showNewDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitIncident">提交上报</el-button>
-      </template>
-    </el-dialog>
+      </transition>
+
+      <!-- 右键菜单 -->
+      <teleport to="body">
+        <ul v-if="contextMenu.visible"
+            :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }"
+            class="fixed z-[9999] bg-white border border-outline-variant/30 rounded-xl shadow-lg min-w-[110px] text-sm overflow-hidden shadow-black/5 flex flex-col">
+          <li class="px-4 py-2.5 hover:bg-surface-container cursor-pointer text-on-surface flex items-center gap-2 transition-colors"
+              @click="quoteMessage(contextMenu.msg)">
+            <el-icon><ChatDotRound /></el-icon>引用
+          </li>
+          <li v-if="contextMenu.msg && contextMenu.msg.senderId === teacherId && canRecall(contextMenu.msg)"
+              class="px-4 py-2.5 hover:bg-surface-container cursor-pointer text-error flex items-center gap-2 transition-colors border-t border-outline-variant/15"
+              @click="recallMessage(contextMenu.msg)">
+            <el-icon><RefreshLeft /></el-icon>撤回
+          </li>
+        </ul>
+      </teleport>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { Plus, CircleCheck } from '@element-plus/icons-vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { Search, ChatDotRound, ChatLineSquare, Close, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
-const incidents = ref([])
-const stats = ref({})
-const showNewDialog = ref(false)
-const newIncident = ref({ studentName: '', type: 'MENTAL', level: 'MEDIUM', description: '', handlerName: '' })
+const route = useRoute()
+const API = 'http://localhost:8080/api/communication'
+const teacherId = sessionStorage.getItem('userId') || 'T001'
 
-const API = 'http://localhost:8080/api/safety'
+const searchQuery = ref('')
+const activeStudentId = ref(null)
+const students = ref([])
+const allMessages = ref([])
+const chatInput = ref('')
+const chatScrollContainer = ref(null)
+const chatInputRef = ref(null)
 
-const loadData = async () => {
+// Context Menu
+const contextMenu = ref({ visible: false, x: 0, y: 0, msg: null })
+const quotingMessage = ref(null)
+
+const loadStudents = async () => {
   try {
-    const [incRes, statRes] = await Promise.all([
-      axios.get(`${API}/incidents`),
-      axios.get(`${API}/stats`)
-    ])
-    if (incRes.data.code === 200) incidents.value = incRes.data.data
-    if (statRes.data.code === 200) stats.value = statRes.data.data
+    const res = await axios.get(`${API}/students`, { params: { teacherId } })
+    if (res.data.code === 200) students.value = res.data.data
   } catch (e) { console.error(e) }
 }
 
-const updateStatus = async (id, status) => {
+const loadMessages = async (studentId) => {
   try {
-    await axios.put(`${API}/incidents/${id}/status`, { status })
-    ElMessage.success('状态已更新')
-    await loadData()
-  } catch (e) { ElMessage.error('更新失败') }
+    const res = await axios.get(`${API}/messages`, { params: { userId: teacherId, peerId: studentId } })
+    if (res.data.code === 200) {
+      allMessages.value = res.data.data
+    }
+  } catch (e) { console.error(e) }
 }
 
-const submitIncident = async () => {
+const loadUnreadCounts = async () => {
   try {
-    await axios.post(`${API}/incidents`, newIncident.value)
-    ElMessage.success('事件已上报')
-    showNewDialog.value = false
-    newIncident.value = { studentName: '', type: 'MENTAL', level: 'MEDIUM', description: '', handlerName: '' }
-    await loadData()
-  } catch (e) { ElMessage.error('上报失败') }
+    const res = await axios.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
+    if (res.data.code === 200) {
+      const contacts = res.data.data
+      contacts.forEach(c => {
+        const s = students.value.find(s => s.studentId === c.id)
+        if (s) s._unread = c.unread
+      })
+    }
+  } catch (e) { console.error(e) }
 }
 
-const levelStyle = (l) => l === 'HIGH' ? 'bg-error-container text-error border border-error/20' : l === 'MEDIUM' ? 'bg-orange-100 text-orange-600 border border-orange-200' : 'bg-green-100 text-green-700 border border-green-200'
-const levelLabel = (l) => l === 'HIGH' ? '高级预警' : l === 'MEDIUM' ? '中级预警' : '低级预警'
-const typeLabel = (t) => ({ MENTAL: '心理健康', MEDICAL: '医疗紧急', FIGHT: '打架斗殴', MISSING: '失踪走失', VIOLATION: '违规违纪' }[t] || t)
-const formatDate = (s) => s ? new Date(s).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''
+const selectStudent = async (student) => {
+  activeStudentId.value = student.studentId
+  quotingMessage.value = null
+  await loadMessages(student.studentId)
+  await nextTick()
+  setTimeout(() => scrollToBottom(), 300)
+  if (chatInputRef.value) chatInputRef.value.focus()
+}
 
-onMounted(loadData)
+const sendMessage = async () => {
+  if (!chatInput.value.trim() || !activeStudentId.value) return
+  const msg = {
+    senderId: teacherId,
+    senderRole: 'teacher',
+    receiverId: activeStudentId.value,
+    content: chatInput.value.trim(),
+    quoteId: quotingMessage.value?.id || null
+  }
+  try {
+    const res = await axios.post(`${API}/messages`, msg)
+    if (res.data.code === 200) {
+      allMessages.value.push(res.data.data)
+      chatInput.value = ''
+      quotingMessage.value = null
+      await nextTick()
+      scrollToBottom()
+    }
+  } catch (e) { ElMessage.error('发送失败') }
+}
+
+const recallMessage = async (msg) => {
+  try {
+    const res = await axios.put(`${API}/messages/${msg.id}/recall`)
+    if (res.data.code === 200) {
+      const found = allMessages.value.find(m => m.id === msg.id)
+      if (found) {
+        found.isRecalled = true
+        found.content = ''
+      }
+      ElMessage.success('消息已撤回')
+    } else {
+      ElMessage.warning(res.data.msg)
+    }
+  } catch (e) { ElMessage.error('撤回失败') }
+  closeContextMenu()
+}
+
+const canRecall = (msg) => {
+  if (!msg || !msg.sentTime) return false
+  const sent = new Date(msg.sentTime)
+  const now = new Date()
+  return (now.getTime() - sent.getTime()) < 2 * 60 * 1000
+}
+
+const getQuotedMessage = (quoteId) => {
+  return allMessages.value.find(m => m.id === quoteId && !m.isRecalled) || null
+}
+
+const getQuotedSender = (quoteId) => {
+  const msg = allMessages.value.find(m => m.id === quoteId)
+  if (!msg) return ''
+  return msg.senderId === teacherId ? '你' : (activeStudent?.value?.name || '学生')
+}
+
+const getUnreadCount = (studentId) => {
+  return allMessages.value.filter(m => m.senderId === studentId && !m.isRead && !m.isRecalled).length
+}
+
+const getLastTime = (studentId) => {
+  const msgs = allMessages.value.filter(m =>
+    (m.senderId === studentId || m.receiverId === studentId) && !m.isRecalled
+  )
+  if (msgs.length === 0) return ''
+  const last = msgs[msgs.length - 1]
+  return formatTimeShort(last.sentTime)
+}
+
+const filteredStudents = computed(() => {
+  if (!searchQuery.value) return students.value
+  const q = searchQuery.value.toLowerCase()
+  return students.value.filter(s =>
+    s.name.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q)
+  )
+})
+
+const activeStudent = computed(() => {
+  return students.value.find(s => s.studentId === activeStudentId.value) || null
+})
+
+const currentMessages = computed(() => {
+  if (!activeStudentId.value) return []
+  return allMessages.value.filter(m =>
+    (m.senderId === teacherId && m.receiverId === activeStudentId.value) ||
+    (m.senderId === activeStudentId.value && m.receiverId === teacherId)
+  )
+})
+
+const openContextMenu = (e, msg) => {
+  contextMenu.value = { visible: true, x: e.clientX, y: e.clientY, msg }
+}
+
+const closeContextMenu = () => {
+  contextMenu.value.visible = false
+}
+
+const quoteMessage = async (msg) => {
+  quotingMessage.value = msg
+  closeContextMenu()
+  await nextTick()
+  if (chatInputRef.value) chatInputRef.value.focus()
+}
+
+const cancelQuote = () => {
+  quotingMessage.value = null
+}
+
+const formatTimeShort = (s) => {
+  if (!s) return ''
+  const d = new Date(s)
+  const now = new Date()
+  const diff = now.getTime() - d.getTime()
+  if (diff < 86400000) {
+    return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  }
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+}
+
+const scrollToBottom = () => {
+  if (chatScrollContainer.value) {
+    chatScrollContainer.value.scrollTop = chatScrollContainer.value.scrollHeight
+  }
+}
+
+onMounted(async () => {
+  await loadStudents()
+  await loadUnreadCounts()
+  document.addEventListener('click', closeContextMenu)
+
+  // 处理从通知铃铛跳转过来的 studentId，延迟确保DOM就绪
+  const targetStudentId = route.query.studentId
+  if (targetStudentId) {
+    await nextTick()
+    const s = students.value.find(s => s.studentId === targetStudentId)
+    if (s) await selectStudent(s)
+  }
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeContextMenu)
+})
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+</style>

@@ -312,7 +312,7 @@
         </transition>
 
         <!-- 正常路由页面 -->
-        <transition name="fade">
+        <transition name="fade" mode="out-in">
           <div v-if="route.path !== '/student/profile'">
             <router-view v-slot="{ Component }">
               <transition name="fade" mode="out-in">
@@ -575,7 +575,7 @@ const changePwd = () => {
   pwdForm.value = { current: '', newPwd: '', confirm: '' }
 }
 const logout = () => { 
-  localStorage.removeItem('userRole'); 
+  sessionStorage.removeItem('userRole'); 
   window.location.href = '/login';
 }
 </script>
