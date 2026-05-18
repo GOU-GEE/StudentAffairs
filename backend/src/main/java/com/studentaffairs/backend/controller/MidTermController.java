@@ -2,10 +2,9 @@ package com.studentaffairs.backend.controller;
 
 import com.studentaffairs.backend.common.Result;
 import com.studentaffairs.backend.entity.MidTermAppraisal;
-import com.studentaffairs.backend.repository.MidTermAppraisalRepository;
+import com.studentaffairs.backend.service.MidTermService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -13,31 +12,30 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class MidTermController {
 
-    private final MidTermAppraisalRepository repository;
+    private final MidTermService midTermService;
 
-    public MidTermController(MidTermAppraisalRepository repository) {
-        this.repository = repository;
+    public MidTermController(MidTermService midTermService) {
+        this.midTermService = midTermService;
     }
 
     @PostMapping
     public Result<MidTermAppraisal> submit(@RequestBody MidTermAppraisal appraisal) {
-        appraisal.setSubmitTime(LocalDateTime.now());
-        return Result.success(repository.save(appraisal));
+        return Result.success(midTermService.submit(appraisal));
     }
 
     @GetMapping
     public Result<List<MidTermAppraisal>> getByStudent(@RequestParam String studentId) {
-        return Result.success(repository.findByStudentId(studentId));
+        return Result.success(midTermService.getByStudent(studentId));
     }
 
     @GetMapping("/all")
     public Result<List<MidTermAppraisal>> getAll() {
-        return Result.success(repository.findAllByOrderBySubmitTimeDesc());
+        return Result.success(midTermService.getAll());
     }
 
     @GetMapping("/{id}")
     public Result<MidTermAppraisal> getById(@PathVariable Long id) {
-        return repository.findById(id)
+        return midTermService.getById(id)
                 .map(Result::success)
                 .orElse(Result.error(404, "记录不存在"));
     }
