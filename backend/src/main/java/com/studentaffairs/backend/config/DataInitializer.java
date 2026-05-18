@@ -1,19 +1,31 @@
 package com.studentaffairs.backend.config;
 
 import com.studentaffairs.backend.entity.AcademicRecord;
+import com.studentaffairs.backend.entity.Activity;
 import com.studentaffairs.backend.entity.Announcement;
+import com.studentaffairs.backend.entity.Course;
+import com.studentaffairs.backend.entity.HonorCandidate;
+import com.studentaffairs.backend.entity.HonorProject;
 import com.studentaffairs.backend.entity.Message;
 import com.studentaffairs.backend.entity.SafetyIncident;
+import com.studentaffairs.backend.entity.SecondClassroomRecord;
 import com.studentaffairs.backend.entity.StudentApplication;
 import com.studentaffairs.backend.entity.StudentProfile;
 import com.studentaffairs.backend.entity.WorkStudyJob;
+import com.studentaffairs.backend.entity.YouthAward;
 import com.studentaffairs.backend.repository.AcademicRecordRepository;
+import com.studentaffairs.backend.repository.ActivityRepository;
 import com.studentaffairs.backend.repository.AnnouncementRepository;
+import com.studentaffairs.backend.repository.CourseRepository;
+import com.studentaffairs.backend.repository.HonorCandidateRepository;
+import com.studentaffairs.backend.repository.HonorProjectRepository;
 import com.studentaffairs.backend.repository.MessageRepository;
 import com.studentaffairs.backend.repository.SafetyIncidentRepository;
+import com.studentaffairs.backend.repository.SecondClassroomRecordRepository;
 import com.studentaffairs.backend.repository.StudentApplicationRepository;
 import com.studentaffairs.backend.repository.StudentProfileRepository;
 import com.studentaffairs.backend.repository.WorkStudyJobRepository;
+import com.studentaffairs.backend.repository.YouthAwardRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +46,13 @@ public class DataInitializer {
                                       AnnouncementRepository announcementRepository,
                                       StudentApplicationRepository applicationRepository,
                                       StudentProfileRepository profileRepository,
-                                      MessageRepository messageRepository) {
+                                      MessageRepository messageRepository,
+                                      ActivityRepository activityRepository,
+                                      YouthAwardRepository youthAwardRepository,
+                                      HonorProjectRepository honorProjectRepository,
+                                      HonorCandidateRepository honorCandidateRepository,
+                                      SecondClassroomRecordRepository secondClassroomRecordRepository,
+                                      CourseRepository courseRepository) {
         return args -> {
             // 初始化勤工助学岗位
             if (jobRepository.count() == 0) {
@@ -90,6 +108,20 @@ public class DataInitializer {
             initAnnouncements(announcementRepository);
             initApplications(applicationRepository);
             initMessages(messageRepository);
+            // 初始化课程演示数据
+            if (courseRepository.count() == 0) {
+                List<Course> courses = new ArrayList<>();
+                courses.add(createCourse("CS201", "数据结构", "必修", 4f, 64, "2025-2026-1", "张教授", "2023级软工1班、2班"));
+                courses.add(createCourse("CS202", "算法设计与分析", "必修", 3f, 48, "2025-2026-1", "李教授", "2023级软工1班、2班"));
+                courses.add(createCourse("CS301", "软件工程", "必修", 3f, 48, "2025-2026-1", "王副教授", "2023级软工2班"));
+                courses.add(createCourse("CS205", "数据库原理", "必修", 4f, 64, "2025-2026-1", "赵教授", "2023级软工1班、2班"));
+                courses.add(createCourse("EN401", "大学英语(四)", "必修", 2f, 32, "2025-2026-1", "刘讲师", "2023级软工1班、2班"));
+                courses.add(createCourse("CS250", "Python数据分析", "选修", 2f, 32, "2025-2026-1", "陈副教授", "2023级软工1班"));
+                courseRepository.saveAll(courses);
+                System.out.println("Initialized default Courses.");
+            }
+
+            initYouthData(activityRepository, youthAwardRepository, honorProjectRepository, honorCandidateRepository, secondClassroomRecordRepository);
         };
     }
 
@@ -390,5 +422,184 @@ public class DataInitializer {
 
         repo.saveAll(list);
         System.out.println("Initialized default Messages.");
+    }
+
+    private void initYouthData(ActivityRepository activityRepo,
+                               YouthAwardRepository awardRepo,
+                               HonorProjectRepository honorProjectRepo,
+                               HonorCandidateRepository honorCandidateRepo,
+                               SecondClassroomRecordRepository secondClassroomRepo) {
+        if (activityRepo.count() == 0) {
+            List<Activity> activities = new ArrayList<>();
+            Activity act1 = new Activity();
+            act1.setTitle("2024校园文化艺术节闭幕式");
+            act1.setDescription("校园文化艺术节闭幕式暨优秀作品展演，包含舞蹈、合唱、器乐等节目，展现大学生艺术风采。");
+            act1.setDate("2024-06-15"); act1.setLocation("大学生活动中心"); act1.setParticipants(120);
+            act1.setMaxParticipants(500); act1.setStatus("报名中"); act1.setCredits(2.0);
+            act1.setLevel("校级"); act1.setBgGradient("from-purple-500 to-pink-500");
+            act1.setCoverImage(""); act1.setEnrollTime("2024-05-20 ~ 2024-06-10");
+            act1.setTimeDetail("2024-06-15 18:30-21:00"); act1.setRangeName("全体学生");
+            act1.setLeaveSupport("支持请假"); act1.setCreditType("2学时"); act1.setEnrollLimit("不限");
+            activities.add(act1);
+
+            Activity act2 = new Activity();
+            act2.setTitle("软件工程专业编程马拉松");
+            act2.setDescription("48小时编程挑战赛，自由组队（2-4人），完成指定项目开发任务，评委打分评选优胜团队。");
+            act2.setDate("2024-06-20"); act2.setLocation("计算机学院实验室"); act2.setParticipants(45);
+            act2.setMaxParticipants(80); act2.setStatus("报名中"); act2.setCredits(3.0);
+            act2.setLevel("院级"); act2.setBgGradient("from-blue-500 to-cyan-500");
+            act2.setCoverImage(""); act2.setEnrollTime("2024-05-25 ~ 2024-06-18");
+            act2.setTimeDetail("2024-06-20 08:00 - 2024-06-22 08:00"); act2.setRangeName("计算机学院");
+            act2.setLeaveSupport("支持请假"); act2.setCreditType("3学时"); act2.setEnrollLimit("80人");
+            activities.add(act2);
+
+            Activity act3 = new Activity();
+            act3.setTitle("志愿者服务：社区义务支教");
+            act3.setDescription("前往北湖社区小学开展义务支教活动，辅导小学生作业，开展趣味科学实验。");
+            act3.setDate("2024-06-10"); act3.setLocation("北湖社区小学"); act3.setParticipants(30);
+            act3.setMaxParticipants(30); act3.setStatus("进行中"); act3.setCredits(1.5);
+            act3.setLevel("院级"); act3.setBgGradient("from-green-500 to-teal-500");
+            act3.setCoverImage(""); act3.setEnrollTime("2024-05-15 ~ 2024-06-05");
+            act3.setTimeDetail("2024-06-10 14:00-17:00"); act3.setRangeName("计算机学院");
+            act3.setLeaveSupport("不支持请假"); act3.setCreditType("1.5学时"); act3.setEnrollLimit("30人");
+            activities.add(act3);
+
+            Activity act4 = new Activity();
+            act4.setTitle("毕业季摄影大赛");
+            act4.setDescription("用镜头记录校园最美的瞬间，参赛作品将在图书馆一楼展厅进行为期两周的展出。");
+            act4.setDate("2024-06-01"); act4.setLocation("全校范围"); act4.setParticipants(85);
+            act4.setMaxParticipants(200); act4.setStatus("已结束"); act4.setCredits(1.0);
+            act4.setLevel("校级"); act4.setBgGradient("from-orange-500 to-red-500");
+            act4.setCoverImage(""); act4.setEnrollTime("2024-05-01 ~ 2024-05-30");
+            act4.setTimeDetail("2024-06-01 00:00 - 2024-06-30 23:59"); act4.setRangeName("全体学生");
+            act4.setLeaveSupport("不需要"); act4.setCreditType("1学时"); act4.setEnrollLimit("不限");
+            activities.add(act4);
+
+            activityRepo.saveAll(activities);
+            System.out.println("Initialized default Activities.");
+        }
+
+        if (awardRepo.count() == 0) {
+            List<YouthAward> awards = new ArrayList<>();
+            YouthAward aw1 = new YouthAward();
+            aw1.setStudentId("202301042"); aw1.setStudentName("张小明");
+            aw1.setAwardName("全国大学生数学建模竞赛一等奖"); aw1.setLevel("国家级"); aw1.setCategory("学科竞赛");
+            aw1.setAwardTime("2024-03"); aw1.setStatus("APPROVED");
+            aw1.setDescription("2023年全国大学生数学建模竞赛本科组一等奖，参赛论文《基于深度学习的城市交通流预测》。");
+            awards.add(aw1);
+
+            YouthAward aw2 = new YouthAward();
+            aw2.setStudentId("202301043"); aw2.setStudentName("李四");
+            aw2.setAwardName("蓝桥杯程序设计竞赛省二等奖"); aw2.setLevel("省部级"); aw2.setCategory("学科竞赛");
+            aw2.setAwardTime("2024-04"); aw2.setStatus("APPROVED");
+            aw2.setDescription("第十五届蓝桥杯全国软件和信息技术专业人才大赛四川赛区二等奖。");
+            awards.add(aw2);
+
+            YouthAward aw3 = new YouthAward();
+            aw3.setStudentId("202301042"); aw3.setStudentName("张小明");
+            aw3.setAwardName("校级优秀学生干部"); aw3.setLevel("校级"); aw3.setCategory("荣誉称号");
+            aw3.setAwardTime("2024-05"); aw3.setStatus("PENDING");
+            aw3.setDescription("2023-2024学年校级优秀学生干部评选。");
+            awards.add(aw3);
+
+            YouthAward aw4 = new YouthAward();
+            aw4.setStudentId("202301044"); aw4.setStudentName("王五");
+            aw4.setAwardName("校园足球联赛最佳射手"); aw4.setLevel("校级"); aw4.setCategory("文体活动");
+            aw4.setAwardTime("2024-04"); aw4.setStatus("APPROVED");
+            aw4.setDescription("2024年校园足球春季联赛最佳射手，赛季进球12个。");
+            awards.add(aw4);
+
+            YouthAward aw5 = new YouthAward();
+            aw5.setStudentId("202301042"); aw5.setStudentName("张小明");
+            aw5.setAwardName("校优秀志愿者"); aw5.setLevel("校级"); aw5.setCategory("荣誉称号");
+            aw5.setAwardTime("2024-05"); aw5.setStatus("PENDING");
+            aw5.setDescription("2023-2024学年志愿服务时长超100小时，获评校优秀志愿者。");
+            awards.add(aw5);
+
+            awardRepo.saveAll(awards);
+            System.out.println("Initialized default YouthAwards.");
+        }
+
+        if (honorProjectRepo.count() == 0) {
+            HonorProject hp1 = new HonorProject();
+            hp1.setName("2024年度校级优秀毕业生评选"); hp1.setDescription("评选2024届校级优秀毕业生，要求在校期间综合表现优异，无违纪记录。");
+            hp1.setQuota(10); hp1.setApplied(8); hp1.setDeadline("2024-06-30"); hp1.setStatus("进行中");
+            honorProjectRepo.save(hp1);
+
+            HonorProject hp2 = new HonorProject();
+            hp2.setName("2023-2024学年三好学生评选"); hp2.setDescription("评选三好学生，要求德智体全面发展，学年GPA不低于3.5。");
+            hp2.setQuota(20); hp2.setApplied(25); hp2.setDeadline("2024-07-15"); hp2.setStatus("进行中");
+            honorProjectRepo.save(hp2);
+
+            HonorProject hp3 = new HonorProject();
+            hp3.setName("2023年度国家励志奖学金评定"); hp3.setDescription("面向家庭经济困难且品学兼优的学生，奖励标准为5000元/人。");
+            hp3.setQuota(5); hp3.setApplied(12); hp3.setDeadline("2024-05-20"); hp3.setStatus("已关闭");
+            honorProjectRepo.save(hp3);
+
+            System.out.println("Initialized default HonorProjects.");
+
+            // 为项目1添加候选人
+            HonorCandidate hc1 = new HonorCandidate();
+            hc1.setProjectId(hp1.getId()); hc1.setStudentId("202301042"); hc1.setStudentName("张小明");
+            hc1.setClassName("2023级2班"); hc1.setGpa(3.85); hc1.setStatus("候选");
+            honorCandidateRepo.save(hc1);
+
+            HonorCandidate hc2 = new HonorCandidate();
+            hc2.setProjectId(hp1.getId()); hc2.setStudentId("202301044"); hc2.setStudentName("王五");
+            hc2.setClassName("2023级1班"); hc2.setGpa(3.52); hc2.setStatus("候选");
+            honorCandidateRepo.save(hc2);
+
+            // 为项目2添加候选人
+            HonorCandidate hc3 = new HonorCandidate();
+            hc3.setProjectId(hp2.getId()); hc3.setStudentId("202301042"); hc3.setStudentName("张小明");
+            hc3.setClassName("2023级2班"); hc3.setGpa(3.85); hc3.setStatus("候选");
+            honorCandidateRepo.save(hc3);
+
+            HonorCandidate hc4 = new HonorCandidate();
+            hc4.setProjectId(hp2.getId()); hc4.setStudentId("202301043"); hc4.setStudentName("李四");
+            hc4.setClassName("2023级2班"); hc4.setGpa(2.75); hc4.setStatus("候选");
+            honorCandidateRepo.save(hc4);
+
+            System.out.println("Initialized default HonorCandidates.");
+        }
+
+        if (secondClassroomRepo.count() == 0) {
+            List<SecondClassroomRecord> records = new ArrayList<>();
+            String[][] data = {
+                {"202301042", "张小明", "2023级2班", "0", "8", "志愿服务类 — 社区义务支教"},
+                {"202301042", "张小明", "2023级2班", "1", "6", "创新创业类 — 大学生创业计划大赛"},
+                {"202301042", "张小明", "2023级2班", "2", "4", "社会实践类 — 暑期三下乡"},
+                {"202301042", "张小明", "2023级2班", "3", "12", "学术讲座类 — 参加学术报告累计"},
+                {"202301043", "李四", "2023级2班", "0", "4", "志愿服务类 — 校园清洁志愿者"},
+                {"202301043", "李四", "2023级2班", "4", "3", "文体活动类 — 院篮球赛"},
+                {"202301044", "王五", "2023级1班", "0", "6", "志愿服务类 — 无偿献血活动"},
+                {"202301044", "王五", "2023级1班", "3", "8", "学术讲座类 — 参加学术报告累计"},
+                {"202301044", "王五", "2023级1班", "4", "10", "文体活动类 — 校足球联赛"},
+                {"202301044", "王五", "2023级1班", "5", "4", "技能培训类 — Python高级应用培训"},
+            };
+            for (String[] d : data) {
+                SecondClassroomRecord r = new SecondClassroomRecord();
+                r.setStudentId(d[0]); r.setStudentName(d[1]); r.setClassName(d[2]);
+                r.setCategoryIndex(Integer.parseInt(d[3])); r.setHours(Integer.parseInt(d[4]));
+                r.setReason(d[5]); r.setGrantTime(LocalDateTime.now().minusDays((long)(Math.random() * 30)));
+                records.add(r);
+            }
+            secondClassroomRepo.saveAll(records);
+            System.out.println("Initialized default SecondClassroomRecords.");
+        }
+    }
+
+    private Course createCourse(String code, String name, String type, Float credit,
+                                Integer hours, String semester, String teacher, String className) {
+        Course c = new Course();
+        c.setCode(code);
+        c.setName(name);
+        c.setType(type);
+        c.setCredit(credit);
+        c.setHours(hours);
+        c.setSemester(semester);
+        c.setTeacher(teacher);
+        c.setClassName(className);
+        return c;
     }
 }
