@@ -49,4 +49,39 @@ public class AcademicController {
     public Result<List<AcademicRecord>> getStudentRecords(@RequestParam String studentId) {
         return Result.success(academicService.getStudentRecords(studentId));
     }
+
+    /** Dashboard 统计 */
+    @GetMapping("/dashboard")
+    public Result<Map<String, Object>> getDashboard() {
+        return Result.success(academicService.getDashboardStats());
+    }
+
+    /** 获取全部成绩记录 */
+    @GetMapping("/records")
+    public Result<List<AcademicRecord>> getAllRecords() {
+        return Result.success(academicService.getAllRecords());
+    }
+
+    /** 新增成绩 */
+    @PostMapping("/records")
+    public Result<AcademicRecord> createRecord(@RequestBody AcademicRecord record) {
+        return Result.success(academicService.createRecord(record));
+    }
+
+    /** 修改成绩 */
+    @PutMapping("/records/{id}")
+    public Result<AcademicRecord> updateRecord(@PathVariable Long id, @RequestBody AcademicRecord record) {
+        return academicService.updateRecord(id, record)
+                .map(Result::success)
+                .orElse(Result.error(404, "成绩记录不存在"));
+    }
+
+    /** 删除成绩 */
+    @DeleteMapping("/records/{id}")
+    public Result<Void> deleteRecord(@PathVariable Long id) {
+        if (academicService.deleteRecord(id)) {
+            return Result.success(null);
+        }
+        return Result.error(404, "成绩记录不存在");
+    }
 }

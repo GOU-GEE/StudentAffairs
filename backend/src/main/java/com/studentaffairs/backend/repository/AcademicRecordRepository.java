@@ -21,4 +21,10 @@ public interface AcademicRecordRepository extends JpaRepository<AcademicRecord, 
 
     @Query("SELECT a.courseName, AVG(a.score) as avgScore, COUNT(a) as total FROM AcademicRecord a WHERE a.className = :className GROUP BY a.courseName")
     List<Object[]> findClassCourseStats(String className);
+
+    @Query("SELECT COUNT(DISTINCT a.studentId) FROM AcademicRecord a")
+    Long countDistinctStudents();
+
+    @Query("SELECT AVG(a.score) FROM AcademicRecord a")
+    Double calculateOverallAvgScore();
 }

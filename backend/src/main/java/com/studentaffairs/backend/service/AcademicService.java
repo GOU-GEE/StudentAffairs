@@ -103,4 +103,59 @@ public class AcademicService {
                 / Math.max(1, records.stream().mapToDouble(r -> r.getCredit()).sum()));
         return result;
     }
+
+    /** 获取全部成绩记录 */
+    public List<AcademicRecord> getAllRecords() {
+        return recordRepository.findAll();
+    }
+
+    /** Dashboard 统计 */
+    public Map<String, Object> getDashboardStats() {
+        long studentCount = recordRepository.countDistinctStudents();
+        long warningCount = recordRepository.findByIsWarningTrue().stream()
+                .map(AcademicRecord::getStudentId).distinct().count();
+        Double avgScore = recordRepository.calculateOverallAvgScore();
+        List<AcademicRecord> recentWarnings = recordRepository.findByIsWarningTrue().stream()
+                .collect(Collectors.groupingBy(AcademicRecord::getStudentId))
+                .entrySet().stream()
+                .map(e -> e.getValue().get(0))
+                .limit(10)
+                .collect(Collectors.toList());
+
+        Map<String, Object> stats = new LinkedHashMap<>();
+        stats.put("totalStudents", studentCount);
+        stats.put("warningCount", warningCount);
+        stats.put("avgScore", avgScore != null ? Math.round(avgScore * 100.0) / 100.0 : 0.0);
+        stats.put("recentWarnings", recentWarnings);
+        return stats;
+    }
+
+    /** 新增成绩 */
+    public AcademicRecord createRecord(AcademicRecord record) {
+        return recordRepository.save(record);
+    }
+
+    /** 修改成绩 */
+    public Optional<AcademicRecord> updateRecord(Long id, AcademicRecord updated) {
+        return recordRepository.findById(id).map(r -> {
+            r.setStudentId(updated.getStudentId());
+            r.setStudentName(updated.getStudentName());
+            r.setClassName(updated.getClassName());
+            r.setCourseName(updated.getCourseName());
+            r.setCourseType(updated.getCourseType());
+            r.setScore(updated.getScore());
+            r.setCredit(updated.getCredit());
+            r.setSemester(updated.getSemester());
+            return recordRepository.save(r);
+        });
+    }
+
+    /** 删除成绩 */
+    public boolean deleteRecord(Long id) {
+        if (recordRepository.existsById(id)) {
+            recordRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
