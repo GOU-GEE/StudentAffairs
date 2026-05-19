@@ -132,7 +132,7 @@ import { Medal, Trophy, Warning, ArrowRight, Stamp, InfoFilled, Search } from '@
 import request from '@/utils/request'
 
 const API = '/api/youth'
-const STUDENT_ID = '202301042'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const searchAward = ref('')
 const searchHonor = ref('')

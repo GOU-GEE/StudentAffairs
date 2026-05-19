@@ -229,7 +229,7 @@ import { ArrowRight, Document, Refresh, Calendar, Clock, Aim, TrendCharts } from
 import request from '@/utils/request'
 
 const API = '/api/career'
-const STUDENT_ID = '202301042'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 const STUDENT_NAME = '张小明'
 
 // ==================== 问卷题目 ====================

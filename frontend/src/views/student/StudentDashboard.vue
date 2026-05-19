@@ -433,7 +433,7 @@ const router = useRouter()
 const failCount = ref(0)
 const selectedSemester = ref('大二下学期')
 
-const STUDENT_ID = '202301042'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const stats = ref({ gpa: '--', totalCredits: '--', classroomHours: '--', applicationCount: '--', awards: '--' })
 

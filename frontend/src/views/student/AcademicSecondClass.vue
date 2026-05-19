@@ -184,7 +184,7 @@ import * as echarts from 'echarts'
 import request from '@/utils/request'
 
 const API = '/api/youth'
-const STUDENT_ID = '202301042'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const radarChartRef = ref(null)
 const secondClassChartRef = ref(null)

@@ -160,6 +160,7 @@ import {
 } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 const API = '/api/mid-term'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const basicInfo = {
   '姓名': '张小明',
@@ -239,7 +240,7 @@ const submitForm = () => {
     submitting.value = true
     try {
       const payload = {
-        studentId: '202301042',
+        studentId: STUDENT_ID,
         studentName: '张小明',
         className: '软工2班',
         thoughtPerformance: form.value.thoughtEval,
@@ -288,7 +289,7 @@ onMounted(() => {
   }
   const loadExisting = async () => {
     try {
-      const res = await request.get(`${API}?studentId=202301042`)
+      const res = await request.get(`${API}?studentId=${STUDENT_ID}`)
       if (res.data.code === 200 && res.data.data.length > 0) {
         isSubmitted.value = true
         localStorage.setItem('midterm_submitted', 'true')

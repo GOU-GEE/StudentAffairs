@@ -470,6 +470,8 @@ import { ElMessage } from 'element-plus'
 import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation, Medal } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
+
 const route = useRoute()
 const router = useRouter()
 const showSettings = ref(false)
@@ -496,7 +498,7 @@ const handlePrint = () => {
 
 const profileForm = ref({
   name: '张小明',
-  studentId: '202301042',
+  studentId: STUDENT_ID,
   idCard: '440106200403150032',
   idCardMasked: '440**********0032',
   college: '计算机科学学院',
