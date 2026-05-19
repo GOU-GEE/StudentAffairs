@@ -103,6 +103,12 @@ public class YouthController {
         return success(awardRepository.findAll());
     }
 
+    @PostMapping("/awards")
+    public Map<String, Object> createAward(@RequestBody YouthAward award) {
+        if (award.getStatus() == null) award.setStatus("PENDING");
+        return success(awardRepository.save(award));
+    }
+
     @PutMapping("/awards/{id}/review")
     public Map<String, Object> reviewAward(@PathVariable Long id, @RequestBody Map<String, String> body) {
         YouthAward award = awardRepository.findById(id).orElseThrow();

@@ -425,12 +425,40 @@
 
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Money, School, Guide, ChatDotRound, Calendar, ArrowRight, Location, Phone, ArrowDown, EditPen, Reading, CircleCheck, Medal, Stamp } from '@element-plus/icons-vue'
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
-const failCount = ref(0) // 设置为 0 显示安全，设置为 >=1 显示红色警示
+const failCount = ref(0)
 const selectedSemester = ref('大二下学期')
+
+const STUDENT_ID = '202301042'
+
+const stats = ref({ gpa: '--', totalCredits: '--', classroomHours: '--', applicationCount: '--', awards: '--' })
+
+const loadStats = async () => {
+  try {
+    const [academicRes, classroomRes, appRes] = await Promise.all([
+      axios.get(`http://localhost:8080/api/academic/student-records?studentId=${STUDENT_ID}`),
+      axios.get(`http://localhost:8080/api/youth/second-classroom/records?studentId=${STUDENT_ID}`),
+      axios.get(`http://localhost:8080/api/applications/student/${STUDENT_ID}`)
+    ])
+    if (academicRes.data.code === 200) {
+      const records = academicRes.data.data
+      const totalCredit = records.reduce((s, r) => s + (r.credit || 0), 0)
+      const weightedSum = records.reduce((s, r) => s + ((r.score || 0) * (r.credit || 0)), 0)
+      stats.value.gpa = totalCredit > 0 ? (weightedSum / totalCredit).toFixed(2) : '--'
+      stats.value.totalCredits = totalCredit
+    }
+    if (classroomRes.data.code === 200) {
+      stats.value.classroomHours = classroomRes.data.data.reduce((s, r) => s + (r.hours || 0), 0)
+    }
+    if (appRes.data.code === 200) {
+      stats.value.applicationCount = appRes.data.data.length
+    }
+  } catch (e) { console.error(e) }
+}
 
 const academicStats = ref({
   '大二下学期': {
@@ -467,6 +495,8 @@ const openProfile = inject('openProfile', () => {
 
 const date = new Date()
 const currentDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
+
+onMounted(loadStats)
 </script>
 
 <style scoped>

@@ -26,7 +26,7 @@
             <div class="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 bg-white hover:border-gray-400 focus-within:border-gray-500 transition-colors">
               <el-icon class="text-gray-400 flex-shrink-0" :size="15"><Medal /></el-icon>
               <input
-                v-model="form.title"
+                v-model="form.awardName"
                 class="flex-1 text-sm outline-none bg-transparent placeholder-gray-300 text-gray-700"
                 placeholder="如：2024年全国大学生数学建模竞赛省级一等奖"
               />
@@ -41,7 +41,7 @@
             <div class="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 bg-white hover:border-gray-400 transition-colors">
               <el-icon class="text-gray-400" :size="15"><Calendar /></el-icon>
               <el-date-picker
-                v-model="form.date"
+                v-model="form.awardTime"
                 type="month"
                 placeholder="选择年月"
                 format="YYYY-MM"
@@ -202,7 +202,7 @@
             <div class="flex items-start gap-3">
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2 mb-1">
-                  <h4 class="text-sm font-bold text-gray-900 leading-snug truncate">{{ item.title }}</h4>
+                  <h4 class="text-sm font-bold text-gray-900 leading-snug truncate">{{ item.awardName }}</h4>
                   <span
                     class="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
                     :class="statusBadgeStyle(item.status)"
@@ -212,7 +212,7 @@
                 <div class="flex flex-col gap-1 text-[11px] text-gray-400">
                   <div class="flex items-center gap-1">
                     <el-icon :size="10"><Calendar /></el-icon>
-                    <span>获奖时间：{{ item.date }}</span>
+                    <span>获奖时间：{{ item.awardTime }}</span>
                   </div>
                   <div class="flex items-center gap-1">
                     <el-icon :size="10"><CollectionTag /></el-icon>
@@ -238,18 +238,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
-  Document, Medal, Calendar, ArrowDown, OfficeBuilding, 
+  Document, Medal, Calendar, ArrowDown, OfficeBuilding,
   Plus, Delete, InfoFilled, Clock, CollectionTag
 } from '@element-plus/icons-vue'
+import axios from 'axios'
 
+const API = 'http://localhost:8080/api/youth'
+const STUDENT_ID = '202301042'
+const STUDENT_NAME = '张小明'
+
+const history = ref([])
 const form = ref({
-  title: '',
-  date: '',
-  level: '',
-  category: '',
+  awardName: '',
+  awardTime: '',
+  level: '校级',
+  category: '学科竞赛',
   issuer: '',
   description: ''
 })
@@ -257,6 +263,13 @@ const form = ref({
 const uploadedFiles = ref([])
 const fileInput = ref(null)
 const submitting = ref(false)
+
+const loadAwards = async () => {
+  try {
+    const res = await axios.get(`${API}/awards?studentId=${STUDENT_ID}`)
+    if (res.data.code === 200) history.value = res.data.data
+  } catch (e) { console.error(e) }
+}
 
 const triggerUpload = () => {
   fileInput.value.click()
@@ -274,7 +287,6 @@ const handleFileChange = (e) => {
       ElMessage.warning(`文件 ${file.name} 超过 5MB`)
       return
     }
-    // 模拟上传预览
     const reader = new FileReader()
     reader.onload = (e) => {
       uploadedFiles.value.push({
@@ -292,60 +304,33 @@ const removeFile = (index) => {
 }
 
 const submitAward = async () => {
-  if (!form.value.title.trim()) { ElMessage.warning('请填写获奖名称'); return }
-  if (!form.value.date) { ElMessage.warning('请选择获奖时间'); return }
+  if (!form.value.awardName.trim()) { ElMessage.warning('请填写获奖名称'); return }
+  if (!form.value.awardTime) { ElMessage.warning('请选择获奖时间'); return }
   if (!form.value.level) { ElMessage.warning('请选择获奖级别'); return }
   if (!form.value.category) { ElMessage.warning('请选择获奖类别'); return }
   if (uploadedFiles.value.length === 0) { ElMessage.warning('请上传获奖证明材料'); return }
 
   submitting.value = true
-  // 模拟 API 调用
-  await new Promise(r => setTimeout(r, 1200))
-
-  history.value.unshift({
-    id: Date.now(),
-    title: form.value.title,
-    level: form.value.level,
-    date: form.value.date,
-    status: 'PENDING',
-    reviewComment: ''
-  })
-
-  ElMessage.success('录入申请已提交，请等待辅导员审核')
-  
-  // 重置表单
-  form.value = { title: '', date: '', level: '', category: '', issuer: '', description: '' }
-  uploadedFiles.value = []
+  try {
+    const res = await axios.post(`${API}/awards`, {
+      studentId: STUDENT_ID,
+      studentName: STUDENT_NAME,
+      awardName: form.value.awardName,
+      level: form.value.level,
+      category: form.value.category,
+      awardTime: form.value.awardTime,
+      description: form.value.description,
+      status: 'PENDING'
+    })
+    if (res.data.code === 200) {
+      ElMessage.success('录入申请已提交，请等待辅导员审核')
+      loadAwards()
+      form.value = { awardName: '', awardTime: '', level: '校级', category: '学科竞赛', issuer: '', description: '' }
+      uploadedFiles.value = []
+    }
+  } catch (e) { ElMessage.error('提交失败') }
   submitting.value = false
 }
-
-// Mock 历史记录
-const history = ref([
-  {
-    id: 1,
-    title: '全国大学生英语竞赛三等奖',
-    level: '国家级',
-    date: '2024-04',
-    status: 'APPROVED',
-    reviewComment: '材料齐全，审核通过。'
-  },
-  {
-    id: 2,
-    title: '西华师范大学优秀学生干部',
-    level: '校级',
-    date: '2024-05',
-    status: 'APPROVED',
-    reviewComment: '符合条件。'
-  },
-  {
-    id: 3,
-    title: '“挑战杯”大学生创业计划竞赛校级铜奖',
-    level: '校级',
-    date: '2024-06',
-    status: 'REJECTED',
-    reviewComment: '上传的证书照片模糊，请重新上传清晰的原件扫描件。'
-  }
-])
 
 const statusLabel = (s) => ({
   PENDING: '待审核',
@@ -359,17 +344,7 @@ const statusBadgeStyle = (s) => ({
   REJECTED: 'bg-red-50 text-red-600'
 }[s] || 'bg-gray-100 text-gray-500')
 
-const statusIconBg = (s) => ({
-  PENDING: 'bg-blue-50',
-  APPROVED: 'bg-green-50',
-  REJECTED: 'bg-red-50'
-}[s] || 'bg-gray-50')
-
-const statusEmoji = (s) => ({
-  PENDING: '⏳',
-  APPROVED: '✅',
-  REJECTED: '❌'
-}[s] || '📄')
+onMounted(loadAwards)
 </script>
 
 <style scoped>

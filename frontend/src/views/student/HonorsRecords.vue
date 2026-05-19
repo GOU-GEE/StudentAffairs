@@ -127,98 +127,81 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Medal, Trophy, Warning, ArrowRight, Stamp, InfoFilled, Search } from '@element-plus/icons-vue'
+import axios from 'axios'
+
+const API = 'http://localhost:8080/api/youth'
+const STUDENT_ID = '202301042'
 
 const searchAward = ref('')
 const searchHonor = ref('')
 const searchViolation = ref('')
 
-const awards = ref([
-  {
-    id: 1,
-    title: '全国大学生数学建模竞赛省级一等奖',
-    level: '省级',
-    date: '2024-11',
-    description: '2024年全国大学生数学建模竞赛四川省一等奖',
-    iconColor: 'text-orange-400',
-    tagClass: 'bg-orange-50 text-orange-600 border border-orange-100'
-  },
-  {
-    id: 2,
-    title: '西华师范大学优秀奖学金',
-    level: '校级',
-    date: '2024-10',
-    description: '2023-2024学年第一学期优秀奖学金一等奖',
-    iconColor: 'text-blue-400',
-    tagClass: 'bg-blue-50 text-blue-600 border border-blue-100'
-  },
-  {
-    id: 3,
-    title: '“挑战杯”大学生创业计划竞赛校级铜奖',
-    level: '校级',
-    date: '2024-06',
-    description: '第十四届“挑战杯”大学生创业计划竞赛校级铜奖',
-    iconColor: 'text-orange-300',
-    tagClass: 'bg-orange-50 text-orange-600 border border-orange-100'
-  },
-  {
-    id: 4,
-    title: '西华师范大学优秀学生干部',
-    level: '校级',
-    date: '2024-05',
-    description: '2023-2024学年优秀学生干部',
-    iconColor: 'text-orange-400',
-    tagClass: 'bg-orange-50 text-orange-600 border border-orange-100'
-  },
-  {
-    id: 5,
-    title: '全国大学生英语竞赛三等奖',
-    level: '国家级',
-    date: '2024-04',
-    description: '2024年全国大学生英语竞赛三等奖',
-    iconColor: 'text-blue-300',
-    tagClass: 'bg-red-50 text-red-600 border border-red-100'
-  }
-])
+const awards = ref([])
+const honors = ref([])
+const projects = ref([])
 
-const honors = ref([
-  {
-    id: 1,
-    title: '西华师范大学三好学生',
-    level: '校级',
-    date: '2024-10',
-    description: '2023-2024学年三好学生'
-  },
-  {
-    id: 2,
-    title: '西华师范大学优秀共青团员',
-    level: '校级',
-    date: '2024-05',
-    description: '2023-2024学年优秀共青团员'
-  },
-  {
-    id: 3,
-    title: '西华师范大学优秀志愿者',
-    level: '校级',
-    date: '2024-03',
-    description: '2023年度优秀志愿者'
-  },
-  {
-    id: 4,
-    title: '西华师范大学文明寝室',
-    level: '校级',
-    date: '2023-11',
-    description: '2023-2024学年文明寝室'
-  },
-  {
-    id: 5,
-    title: '西华师范大学社会实践先进个人',
-    level: '校级',
-    date: '2023-07',
-    description: '2023年暑期社会实践先进个人'
+const levelTagClass = (level) => {
+  const m = {
+    '国家级': 'bg-red-50 text-red-600 border border-red-100',
+    '省级': 'bg-orange-50 text-orange-600 border border-orange-100',
+    '市级': 'bg-yellow-50 text-yellow-600 border border-yellow-100',
+    '校级': 'bg-blue-50 text-blue-600 border border-blue-100',
+    '院级': 'bg-green-50 text-green-600 border border-green-100'
   }
-])
+  return m[level] || 'bg-gray-50 text-gray-500'
+}
+
+const levelIconColor = (level) => {
+  const m = {
+    '国家级': 'text-red-400',
+    '省级': 'text-orange-400',
+    '市级': 'text-yellow-400',
+    '校级': 'text-blue-400',
+    '院级': 'text-green-400'
+  }
+  return m[level] || 'text-gray-400'
+}
+
+const loadData = async () => {
+  try {
+    const [aRes, pRes] = await Promise.all([
+      axios.get(`${API}/awards?studentId=${STUDENT_ID}`),
+      axios.get(`${API}/honors/projects`)
+    ])
+    if (pRes.data.code === 200) projects.value = pRes.data.data
+    if (aRes.data.code === 200) {
+      awards.value = aRes.data.data.map(a => ({
+        id: a.id,
+        title: a.awardName,
+        level: a.level,
+        date: a.awardTime,
+        description: a.description || '',
+        tagClass: levelTagClass(a.level),
+        iconColor: levelIconColor(a.level)
+      }))
+    }
+  } catch (e) { console.error(e) }
+
+  try {
+    const hRes = await axios.get(`${API}/honors/candidates/by-student?studentId=${STUDENT_ID}`)
+    if (hRes.data.code === 200) {
+      const projectMap = {}
+      projects.value.forEach(p => { projectMap[p.id] = p })
+      honors.value = hRes.data.data.map(h => {
+        const proj = projectMap[h.projectId] || {}
+        return {
+          id: h.id,
+          title: proj.name || '评优项目',
+          level: '校级',
+          date: proj.deadline || '',
+          description: `GPA ${h.gpa || '--'} | ${h.className || ''}`
+        }
+      })
+    }
+  } catch (e) { console.error(e) }
+}
 
 const violations = ref([
   {
@@ -240,28 +223,30 @@ const violations = ref([
 ])
 
 const filteredAwards = computed(() => {
-  return awards.value.filter(a => 
-    a.title.includes(searchAward.value) || 
-    a.description.includes(searchAward.value) ||
+  return awards.value.filter(a =>
+    a.title.includes(searchAward.value) ||
+    (a.description || '').includes(searchAward.value) ||
     a.level.includes(searchAward.value)
   )
 })
 
 const filteredHonors = computed(() => {
-  return honors.value.filter(h => 
-    h.title.includes(searchHonor.value) || 
-    h.description.includes(searchHonor.value) ||
+  return honors.value.filter(h =>
+    h.title.includes(searchHonor.value) ||
+    (h.description || '').includes(searchHonor.value) ||
     h.level.includes(searchHonor.value)
   )
 })
 
 const filteredViolations = computed(() => {
-  return violations.value.filter(v => 
-    v.type.includes(searchViolation.value) || 
+  return violations.value.filter(v =>
+    v.type.includes(searchViolation.value) ||
     v.description.includes(searchViolation.value) ||
     v.remark.includes(searchViolation.value)
   )
 })
+
+onMounted(loadData)
 </script>
 
 <style scoped>

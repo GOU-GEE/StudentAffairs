@@ -178,35 +178,57 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ArrowRight, Top, DataLine, CircleCheckFilled, Trophy, Service, User, Opportunity, Monitor, Star, Reading, StarFilled, Basketball, Cpu, EditPen, Connection, Guide, Tools, Flag, Headset, Medal, Goods } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
+import axios from 'axios'
+
+const API = 'http://localhost:8080/api/youth'
+const STUDENT_ID = '202301042'
 
 const radarChartRef = ref(null)
 const secondClassChartRef = ref(null)
 const trendChartRef = ref(null)
-const distributionChartRef = ref(null)
 
 let charts = []
 
 const trendType = ref('gpa')
 
-const archiveList = [
-  { name: '思想素质', req: '32', actual: '32', progress: 100, iconBg: 'bg-blue-50', iconColor: 'text-blue-500', barColor: 'bg-blue-500', icon: 'Flag', status: '已达标', statusClass: 'bg-green-100 text-green-600' },
-  { name: '文艺体育', req: '32', actual: '24', progress: 75, iconBg: 'bg-pink-50', iconColor: 'text-pink-500', barColor: 'bg-pink-500', icon: 'Headset', status: '进行中', statusClass: 'bg-blue-100 text-blue-600' },
-  { name: '创新创造', req: '16', actual: '12', progress: 75, iconBg: 'bg-purple-50', iconColor: 'text-purple-500', barColor: 'bg-purple-500', icon: 'Opportunity', status: '进行中', statusClass: 'bg-blue-100 text-blue-600' },
-  { name: '志愿服务', req: '16', actual: '24', progress: 150, iconBg: 'bg-orange-50', iconColor: 'text-orange-500', barColor: 'bg-orange-500', icon: 'Medal', status: '已达标', statusClass: 'bg-green-100 text-green-600' },
-  { name: '劳动教育', req: '32', actual: '16', progress: 50, iconBg: 'bg-green-50', iconColor: 'text-green-500', barColor: 'bg-green-500', icon: 'Goods', status: '进行中', statusClass: 'bg-blue-100 text-blue-600' },
-  { name: '技能特长', req: '16', actual: '8', progress: 50, iconBg: 'bg-yellow-50', iconColor: 'text-yellow-500', barColor: 'bg-yellow-500', icon: 'Star', status: '待加强', statusClass: 'bg-orange-100 text-orange-600' }
-]
+const records = ref([])
 
-const badgeList = [
-  { name: 'ACM成员', icon: 'Monitor', gradient: 'bg-gradient-to-br from-indigo-400 to-indigo-600' },
-  { name: '志愿先锋', icon: 'Star', gradient: 'bg-gradient-to-br from-red-400 to-red-600' },
-  { name: '学习标兵', icon: 'Reading', gradient: 'bg-gradient-to-br from-blue-400 to-blue-600' },
-  { name: '优秀学生', icon: 'StarFilled', gradient: 'bg-gradient-to-br from-yellow-400 to-yellow-600' },
-  { name: '篮球队员', icon: 'Basketball', gradient: 'bg-gradient-to-br from-green-400 to-green-600' }
-]
+const loadRecords = async () => {
+  try {
+    const res = await axios.get(`${API}/second-classroom/records?studentId=${STUDENT_ID}`)
+    if (res.data.code === 200) records.value = res.data.data
+  } catch (e) { console.error(e) }
+}
+
+const categoryNames = ['志愿服务类', '创新创业类', '社会实践类', '学术讲座类', '文体活动类', '技能培训类']
+
+const totalHours = computed(() => records.value.reduce((sum, r) => sum + (r.hours || 0), 0))
+
+const archiveNames = ['思想素质', '文艺体育', '创新创造', '志愿服务', '劳动教育', '技能特长']
+const archiveReqs = [32, 32, 16, 16, 32, 16]
+const archiveCategoryMap = [3, 4, 1, 0, 2, 5]
+
+const archiveList = computed(() => {
+  const hoursByCategory = {}
+  records.value.forEach(r => {
+    const cat = r.categoryIndex ?? 0
+    hoursByCategory[cat] = (hoursByCategory[cat] || 0) + (r.hours || 0)
+  })
+  return archiveNames.map((name, i) => {
+    const catIdx = archiveCategoryMap[i]
+    const actual = hoursByCategory[catIdx] || 0
+    const req = archiveReqs[i]
+    const progress = req > 0 ? Math.round((actual / req) * 100) : 0
+    let status, statusClass
+    if (progress >= 100) { status = '已达标'; statusClass = 'bg-green-100 text-green-600' }
+    else if (progress >= 50) { status = '进行中'; statusClass = 'bg-blue-100 text-blue-600' }
+    else { status = '待加强'; statusClass = 'bg-orange-100 text-orange-600' }
+    return { name, req: String(req), actual: String(actual), progress, status, statusClass }
+  })
+})
 
 const tableData = ref([
   { name: '数据结构', type: '专业必修', score: 95, gpa: 4.0, credits: 4, semester: '2024-2025-2', status: '优秀' },
@@ -345,6 +367,7 @@ const handleResize = () => {
 }
 
 onMounted(() => {
+  loadRecords()
   nextTick(() => {
     initCharts()
     window.addEventListener('resize', handleResize)
