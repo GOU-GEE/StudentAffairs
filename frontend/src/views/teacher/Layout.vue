@@ -80,6 +80,16 @@
             中期鉴定收集
           </router-link>
         </li>
+        <li>
+          <router-link
+            to="/teacher/career-appointments"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Calendar /></el-icon>
+            职业规划预约
+          </router-link>
+        </li>
       </ul>
 
       <div class="mt-auto px-4">
@@ -225,7 +235,7 @@ import axios from 'axios'
 import {
   Warning, Trophy, Bell, Setting, Close, Lock,
   SwitchButton, CircleCheck, TrendCharts,
-  Monitor, ChatLineRound, EditPen, DocumentChecked
+  Monitor, ChatLineRound, EditPen, DocumentChecked, Calendar
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
