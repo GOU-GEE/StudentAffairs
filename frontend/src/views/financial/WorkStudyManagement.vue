@@ -104,9 +104,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/financial-aid'
+const API = '/api/financial-aid'
 
 const jobs = ref([])
 const jobApplications = ref([])
@@ -122,7 +122,7 @@ const stats = computed(() => ({
 
 const fetchJobs = async () => {
   try {
-    const res = await axios.get(`${API}/jobs`)
+    const res = await request.get(`${API}/jobs`)
     jobs.value = res.data.data || []
   } catch {
     jobs.value = [

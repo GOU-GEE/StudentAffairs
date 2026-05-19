@@ -139,10 +139,10 @@ import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Search, ChatDotRound, ChatLineSquare, Close, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const route = useRoute()
-const API = 'http://localhost:8080/api/communication'
+const API = '/api/communication'
 const teacherId = sessionStorage.getItem('userId') || 'T001'
 
 const searchQuery = ref('')
@@ -159,14 +159,14 @@ const quotingMessage = ref(null)
 
 const loadStudents = async () => {
   try {
-    const res = await axios.get(`${API}/students`, { params: { teacherId } })
+    const res = await request.get(`${API}/students`, { params: { teacherId } })
     if (res.data.code === 200) students.value = res.data.data
   } catch (e) { console.error(e) }
 }
 
 const loadMessages = async (studentId) => {
   try {
-    const res = await axios.get(`${API}/messages`, { params: { userId: teacherId, peerId: studentId } })
+    const res = await request.get(`${API}/messages`, { params: { userId: teacherId, peerId: studentId } })
     if (res.data.code === 200) {
       allMessages.value = res.data.data
     }
@@ -175,7 +175,7 @@ const loadMessages = async (studentId) => {
 
 const loadUnreadCounts = async () => {
   try {
-    const res = await axios.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
+    const res = await request.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
     if (res.data.code === 200) {
       const contacts = res.data.data
       contacts.forEach(c => {
@@ -205,7 +205,7 @@ const sendMessage = async () => {
     quoteId: quotingMessage.value?.id || null
   }
   try {
-    const res = await axios.post(`${API}/messages`, msg)
+    const res = await request.post(`${API}/messages`, msg)
     if (res.data.code === 200) {
       allMessages.value.push(res.data.data)
       chatInput.value = ''
@@ -218,7 +218,7 @@ const sendMessage = async () => {
 
 const recallMessage = async (msg) => {
   try {
-    const res = await axios.put(`${API}/messages/${msg.id}/recall`)
+    const res = await request.put(`${API}/messages/${msg.id}/recall`)
     if (res.data.code === 200) {
       const found = allMessages.value.find(m => m.id === msg.id)
       if (found) {

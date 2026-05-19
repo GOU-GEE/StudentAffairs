@@ -223,12 +223,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import request from '@/utils/request'
 import {
   EditPen, Warning, ArrowDown, ArrowRight, Calendar, Location,
   Phone, InfoFilled, Clock, Lock
 } from '@element-plus/icons-vue'
+
+const API = '/api/applications'
+const studentId = sessionStorage.getItem('userId') || '202301042'
+const studentName = '张小明'
 
 // 请假须知
 const noticeExpanded = ref(true)
@@ -273,39 +278,37 @@ const calcDays = (start, end) => {
   return Math.max(1, Math.round(diff / 86400000) + 1)
 }
 
-// Mock 历史记录
-const leaveHistory = ref([
-  {
-    id: 1,
-    leaveType: 'HOMETOWN',
-    startDate: '2024-11-16',
-    endDate: '2024-11-17',
-    destination: '广州市天河区·家庭住址',
-    reason: '周末返乡，参加家庭事务',
-    status: 'PENDING_RETURN',
-    reviewComment: '同意，注意安全，按时返校'
-  },
-  {
-    id: 2,
-    leaveType: 'SICK',
-    startDate: '2024-10-20',
-    endDate: '2024-10-21',
-    destination: '校医院·宿舍休养',
-    reason: '发烧感冒，已就医，医嘱休息2天',
-    status: 'RETURNED',
-    reviewComment: '注意保暖，好好休息'
-  },
-  {
-    id: 3,
-    leaveType: 'PERSONAL',
-    startDate: '2024-09-15',
-    endDate: '2024-09-15',
-    destination: '图书馆',
-    reason: '参加学科竞赛',
-    status: 'RETURNED',
-    reviewComment: '同意'
+const leaveHistory = ref([])
+
+const loadHistory = async () => {
+  try {
+    const res = await request.get(`${API}/student/${studentId}`)
+    if (res.data.code === 200) {
+      leaveHistory.value = res.data.data
+        .filter(item => item.type === 'LEAVE')
+        .map(item => {
+          let detail = {}
+          try { detail = JSON.parse(item.reason) } catch (e) {}
+          return {
+            id: item.id,
+            leaveType: detail.leaveType || 'OTHER',
+            startDate: detail.startDate || '',
+            endDate: detail.endDate || '',
+            destination: detail.destination || '',
+            reason: detail.reason || item.reason,
+            status: item.status === 'APPROVED' ? 'ON_LEAVE' : item.status, // Map APPROVED to ON_LEAVE for frontend logic
+            reviewComment: item.reviewComment
+          }
+        })
+    }
+  } catch (e) {
+    console.error('Failed to load leave history', e)
   }
-])
+}
+
+onMounted(() => {
+  loadHistory()
+})
 
 const checkIn = (id) => {
   const item = leaveHistory.value.find(r => r.id === id)
@@ -323,20 +326,34 @@ const submitLeave = async () => {
     ElMessage.warning('请填写请假事由'); return
   }
   submitting.value = true
-  await new Promise(r => setTimeout(r, 800))
-  leaveHistory.value.unshift({
-    id: Date.now(),
-    leaveType: leaveForm.value.leaveType,
-    startDate: leaveForm.value.startDate,
-    endDate: leaveForm.value.endDate,
-    destination: leaveForm.value.destination || '未填写',
-    reason: leaveForm.value.reason,
-    status: 'PENDING',
-    reviewComment: ''
-  })
-  ElMessage.success('请假申请已提交，请等待辅导员审批')
-  leaveForm.value = { leaveType: 'PERSONAL', startDate: '', endDate: '', destination: '', reason: '', contact: '' }
-  submitting.value = false
+  try {
+    const payload = {
+      studentId,
+      studentName,
+      type: 'LEAVE',
+      title: `请假申请 - ${leaveTypeLabel(leaveForm.value.leaveType)}`,
+      reason: JSON.stringify({
+        leaveType: leaveForm.value.leaveType,
+        startDate: leaveForm.value.startDate,
+        endDate: leaveForm.value.endDate,
+        destination: leaveForm.value.destination,
+        reason: leaveForm.value.reason,
+        contact: leaveForm.value.contact
+      })
+    }
+    const res = await request.post(API, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('请假申请已提交，请等待辅导员审批')
+      leaveForm.value = { leaveType: 'PERSONAL', startDate: '', endDate: '', destination: '', reason: '', contact: '' }
+      loadHistory()
+    } else {
+      ElMessage.error(res.data.msg || '提交失败')
+    }
+  } catch (e) {
+    ElMessage.error('请求异常，请稍后重试')
+  } finally {
+    submitting.value = false
+  }
 }
 
 // 样式方法

@@ -83,9 +83,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled, Download, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/admin'
+const API = '/api/admin'
 
 const records = ref([])
 const searchQuery = ref('')
@@ -120,7 +120,7 @@ const stats = computed(() => {
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`${API}/grades`)
+    const res = await request.get(`${API}/grades`)
     records.value = res.data.data || []
   } catch {
     // 降级 mock

@@ -158,8 +158,8 @@ import {
   InfoFilled, UserFilled, Edit, StarFilled, UploadFilled,
   CircleCheckFilled, Timer, Check
 } from '@element-plus/icons-vue'
-import axios from 'axios'
-const API = 'http://localhost:8080/api/mid-term'
+import request from '@/utils/request'
+const API = '/api/mid-term'
 
 const basicInfo = {
   '姓名': '张小明',
@@ -247,7 +247,7 @@ const submitForm = () => {
         overallPerformance: form.value.comprehensiveEval,
         selfAssessment: questions.value.map((q, i) => `${q.title}: ${answers.value[i]}`).join('\n\n'),
       }
-      const res = await axios.post(API, payload)
+      const res = await request.post(API, payload)
       if (res.data.code === 200) {
         ElMessage.success('中期鉴定已成功提交！')
         isSubmitted.value = true
@@ -288,7 +288,7 @@ onMounted(() => {
   }
   const loadExisting = async () => {
     try {
-      const res = await axios.get(`${API}?studentId=202301042`)
+      const res = await request.get(`${API}?studentId=202301042`)
       if (res.data.code === 200 && res.data.data.length > 0) {
         isSubmitted.value = true
         localStorage.setItem('midterm_submitted', 'true')

@@ -95,6 +95,13 @@ const router = createRouter({
 // 简单的路由前置守卫模拟鉴权（Vue Router 5 API：返回 true 或路径，不再使用 next()）
 router.beforeEach((to) => {
   const role = sessionStorage.getItem('userRole')
+  const token = sessionStorage.getItem('token')
+
+  // token 过期或缺失但仍有 role 残留 — 清理并跳转登录
+  if (!token && role) {
+    sessionStorage.clear()
+    return '/login'
+  }
 
   if (to.path === '/login') {
     return true

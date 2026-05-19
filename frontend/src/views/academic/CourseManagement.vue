@@ -56,9 +56,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/courses'
+const API = '/api/courses'
 
 const courses = ref([])
 const searchQuery = ref('')
@@ -73,7 +73,7 @@ const loadCourses = async () => {
     const params = {}
     if (filterType.value) params.type = filterType.value
     if (filterSemester.value) params.semester = filterSemester.value
-    const res = await axios.get(API, { params })
+    const res = await request.get(API, { params })
     if (res.data.code === 200) courses.value = res.data.data
   } catch (e) { console.error(e) }
 }
@@ -116,11 +116,11 @@ const saveCourse = async () => {
   if (!form.value.code || !form.value.name) { ElMessage.warning('课程代码和名称为必填'); return }
   try {
     if (editingCourse.value) {
-      const res = await axios.put(`${API}/${editingCourse.value.id}`, form.value)
+      const res = await request.put(`${API}/${editingCourse.value.id}`, form.value)
       if (res.data.code === 200) { ElMessage.success('课程已更新'); loadCourses() }
       else { ElMessage.error(res.data.msg) }
     } else {
-      const res = await axios.post(API, form.value)
+      const res = await request.post(API, form.value)
       if (res.data.code === 200) { ElMessage.success('课程已添加'); loadCourses() }
     }
     dialogVisible.value = false
@@ -130,7 +130,7 @@ const saveCourse = async () => {
 const deleteCourse = async (row) => {
   try {
     await ElMessageBox.confirm(`确定删除课程「${row.name}」？`, '确认删除', { confirmButtonText:'删除', cancelButtonText:'取消', type:'warning' })
-    const res = await axios.delete(`${API}/${row.id}`)
+    const res = await request.delete(`${API}/${row.id}`)
     if (res.data.code === 200) { ElMessage.success('已删除'); loadCourses() }
   } catch (e) {}
 }

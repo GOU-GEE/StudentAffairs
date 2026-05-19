@@ -91,26 +91,45 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+const API = '/api/youth/honors'
 
 const dialogVisible = ref(false)
 const selectedProject = ref(null)
 const form = ref({ name: '', description: '', quota: 10, deadline: '' })
 
-const projects = ref([
-  { id: 1, name: '三好学生', description: '综合表现优秀，无挂科记录，无违纪行为', quota: 10, applied: 25, deadline: '2026-06-01', status: '进行中' },
-  { id: 2, name: '优秀学生干部', description: '担任学生干部满一年，工作表现突出', quota: 5, applied: 12, deadline: '2026-06-15', status: '进行中' },
-  { id: 3, name: '优秀共青团员', description: '积极参加团组织活动，发挥模范带头作用', quota: 8, applied: 18, deadline: '2026-05-30', status: '进行中' },
-])
+const projects = ref([])
+const candidates = ref([])
 
-const candidates = ref([
-  { id: 1, studentId: '202301042', studentName: '张小明', className: '软工2班', gpa: 3.85, status: '候选' },
-  { id: 2, studentId: '202301044', studentName: '王五', className: '软工1班', gpa: 3.52, status: '已入选' },
-  { id: 3, studentId: '202301046', studentName: '孙七', className: '软工2班', gpa: 3.71, status: '候选' },
-  { id: 4, studentId: '202301048', studentName: '刘芳', className: '文学院1班', gpa: 3.64, status: '候选' },
-])
+const fetchProjects = async () => {
+  try {
+    const res = await request.get(`${API}/projects`)
+    if (res.data.code === 200) {
+      projects.value = res.data.data
+    }
+  } catch (e) {
+    console.error('Failed to fetch projects', e)
+  }
+}
+
+const fetchCandidates = async (projectId) => {
+  try {
+    const res = await request.get(`${API}/projects/${projectId}/candidates`)
+    if (res.data.code === 200) {
+      candidates.value = res.data.data
+    }
+  } catch (e) {
+    console.error('Failed to fetch candidates', e)
+  }
+}
+
+onMounted(() => {
+  fetchProjects()
+})
 
 const statList = computed(() => [
   { label: '评优项目', value: projects.value.length },
@@ -124,23 +143,45 @@ const openAddDialog = () => {
   dialogVisible.value = true
 }
 
-const saveProject = () => {
+const saveProject = async () => {
   if (!form.value.name) { ElMessage.warning('项目名称为必填'); return }
-  ElMessage.success('评优项目已创建')
-  dialogVisible.value = false
+  
+  if (form.value.deadline instanceof Date) {
+    form.value.deadline = form.value.deadline.toISOString().substring(0, 10)
+  }
+  
+  try {
+    await request.post(`${API}/projects`, form.value)
+    ElMessage.success('评优项目已创建')
+    dialogVisible.value = false
+    fetchProjects()
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
 }
 
 const viewCandidates = (project) => {
   selectedProject.value = project
+  fetchCandidates(project.id)
 }
 
-const selectCandidate = (candidate) => {
-  candidate.status = '已入选'
-  ElMessage.success(`${candidate.studentName} 已入选`)
+const selectCandidate = async (candidate) => {
+  try {
+    await request.put(`${API}/candidates/${candidate.id}/select`)
+    ElMessage.success(`${candidate.studentName} 已入选`)
+    fetchCandidates(selectedProject.value.id)
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
 }
 
-const toggleProject = (project) => {
-  project.status = project.status === '进行中' ? '已关闭' : '进行中'
-  ElMessage.success(`项目已${project.status === '进行中' ? '重新开放' : '关闭'}`)
+const toggleProject = async (project) => {
+  try {
+    await request.put(`${API}/projects/${project.id}/toggle`)
+    ElMessage.success(`项目已${project.status === '进行中' ? '关闭' : '重新开放'}`)
+    fetchProjects()
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
 }
 </script>

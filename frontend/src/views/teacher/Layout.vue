@@ -231,7 +231,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import request from '@/utils/request'
 import {
   Warning, Trophy, Bell, Setting, Close, Lock,
   SwitchButton, CircleCheck, TrendCharts,
@@ -241,7 +241,7 @@ import {
 const route = useRoute()
 const router = useRouter()
 
-const API = 'http://localhost:8080/api/communication'
+const API = '/api/communication'
 const teacherId = sessionStorage.getItem('userId') || 'T001'
 
 const showSettings = ref(false)
@@ -262,7 +262,7 @@ const unreadCount = computed(() => notifications.value.filter(n => !n.read).leng
 
 const fetchMessageAlerts = async () => {
   try {
-    const res = await axios.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
+    const res = await request.get(`${API}/contacts`, { params: { userId: teacherId, role: 'teacher' } })
     if (res.data.code === 200) {
       const contacts = res.data.data
       const alerts = []

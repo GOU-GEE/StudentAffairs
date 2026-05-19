@@ -79,17 +79,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Download, Search, Document } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
-const awards = ref([
-  { id: 1, studentId: '202301042', studentName: '张小明', awardName: '全国大学生数学建模竞赛省级一等奖', level: '省级', category: '学科竞赛', awardTime: '2026-03', status: 'PENDING', description: '参加2026年全国大学生数学建模竞赛，获得省级一等奖，团队排名前5%。' },
-  { id: 2, studentId: '202301044', studentName: '王五', awardName: '挑战杯大学生创业计划大赛铜奖', level: '省级', category: '创新创业', awardTime: '2026-04', status: 'APPROVED', description: '以"校园旧书循环平台"项目参加挑战杯省级赛事，荣获铜奖。' },
-  { id: 3, studentId: '202301045', studentName: '赵六', awardName: '校园十佳歌手大赛冠军', level: '校级', category: '文体活动', awardTime: '2026-05', status: 'PENDING', description: '参加2026年度校园十佳歌手大赛，经过多轮角逐获得冠军。' },
-  { id: 4, studentId: '202301043', studentName: '李四', awardName: '优秀学生干部', level: '校级', category: '荣誉称号', awardTime: '2026-01', status: 'REJECTED', description: '因证书照片模糊，无法核验获奖信息。' },
-  { id: 5, studentId: '202301042', studentName: '张小明', awardName: '英语竞赛全国三等奖', level: '国家级', category: '学科竞赛', awardTime: '2026-04', status: 'APPROVED', description: '参加全国大学生英语竞赛，获得三等奖。' },
-])
+const API = '/api/youth/awards'
+
+const awards = ref([])
+
+const fetchAwards = async () => {
+  try {
+    const res = await request.get(API)
+    if (res.data.code === 200) {
+      awards.value = res.data.data
+    }
+  } catch (e) {
+    console.error('Failed to fetch awards', e)
+  }
+}
+
+onMounted(() => {
+  fetchAwards()
+})
 
 const searchQuery = ref('')
 const activeTab = ref('all')
@@ -121,9 +133,14 @@ const levelStyle = (l) => ({
   '院级': 'bg-gray-100 text-gray-600',
 }[l] || '')
 
-const handleReview = (award, action) => {
-  award.status = action
-  ElMessage.success(action === 'APPROVED' ? '已通过审核' : '已驳回')
+const handleReview = async (award, action) => {
+  try {
+    await request.put(`${API}/${award.id}/review`, { status: action })
+    ElMessage.success(action === 'APPROVED' ? '已通过审核' : '已驳回')
+    fetchAwards()
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
 }
 
 const viewDetail = (award) => {

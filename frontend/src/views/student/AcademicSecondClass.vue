@@ -181,9 +181,9 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ArrowRight, Top, DataLine, CircleCheckFilled, Trophy, Service, User, Opportunity, Monitor, Star, Reading, StarFilled, Basketball, Cpu, EditPen, Connection, Guide, Tools, Flag, Headset, Medal, Goods } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/youth'
+const API = '/api/youth'
 const STUDENT_ID = '202301042'
 
 const radarChartRef = ref(null)
@@ -198,7 +198,7 @@ const records = ref([])
 
 const loadRecords = async () => {
   try {
-    const res = await axios.get(`${API}/second-classroom/records?studentId=${STUDENT_ID}`)
+    const res = await request.get(`${API}/second-classroom/records?studentId=${STUDENT_ID}`)
     if (res.data.code === 200) records.value = res.data.data
   } catch (e) { console.error(e) }
 }

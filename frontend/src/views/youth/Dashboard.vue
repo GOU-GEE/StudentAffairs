@@ -52,7 +52,7 @@
             </div>
             <div class="flex-1 min-w-0">
               <h4 class="font-semibold text-[0.875rem] text-on-surface">{{ item.title }}</h4>
-              <p class="text-xs text-secondary">{{ item.time }} | {{ item.participants }}人参与</p>
+              <p class="text-xs text-secondary">{{ item.date || item.time }} | {{ item.participants }}人参与</p>
             </div>
             <span class="text-xs font-bold px-2 py-1 rounded-full" :class="item.status === '进行中' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'">{{ item.status }}</span>
           </div>
@@ -63,7 +63,11 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { Download, Timer, Calendar, Medal, Trophy } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+const API = '/api/youth'
 
 const stats = [
   { label: '总学时数', value: '4,280', desc: '已发放 3,850 + 待发放 430' },
@@ -72,10 +76,20 @@ const stats = [
   { label: '评优项目', value: 3, desc: '三好学生 / 优干 / 优秀团员' },
 ]
 
-const recentActivities = [
-  { title: '第十七届电脑文化艺术节', time: '2026-05-20', participants: 156, status: '报名中' },
-  { title: 'AI赋能未来主题讲座', time: '2026-05-18', participants: 89, status: '进行中' },
-  { title: '红色经典诵读比赛', time: '2026-05-12', participants: 45, status: '已结束' },
-  { title: '3V3 班级篮球赛', time: '2026-05-10', participants: 120, status: '已结束' },
-]
+const recentActivities = ref([])
+
+const fetchActivities = async () => {
+  try {
+    const res = await request.get(`${API}/activities`)
+    if (res.data.code === 200) {
+      recentActivities.value = res.data.data.slice(0, 4)
+    }
+  } catch (e) {
+    console.error('Failed to fetch recent activities', e)
+  }
+}
+
+onMounted(() => {
+  fetchActivities()
+})
 </script>

@@ -43,9 +43,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { VideoPlay, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/academic'
+const API = '/api/academic'
 
 const searchQuery = ref('')
 const warnings = ref([])
@@ -53,7 +53,7 @@ const config = ref({ failThreshold: 2, gpaThreshold: 2.0, declineSemesters: 2, a
 
 const loadWarnings = async () => {
   try {
-    const res = await axios.get(`${API}/warnings`)
+    const res = await request.get(`${API}/warnings`)
     if (res.data.code === 200) {
       const all = res.data.data
       const byStudent = {}
@@ -104,7 +104,7 @@ const statList = computed(() => [
 
 const runEngine = async () => {
   try {
-    const res = await axios.post(`${API}/warnings/run-engine`)
+    const res = await request.post(`${API}/warnings/run-engine`)
     if (res.data.code === 200) {
       ElMessage.success(res.data.data)
       loadWarnings()

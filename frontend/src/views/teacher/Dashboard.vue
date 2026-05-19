@@ -100,7 +100,7 @@
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position } from '@element-plus/icons-vue'
 import { ref, nextTick } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const stats = ref([
   { label: 'Total Students', value: '2,405', icon: 'User', iconColor: '#316bf3', trend: 2.5 },
@@ -133,7 +133,7 @@ const sendMessage = async () => {
   scrollToBottom()
   
   try {
-    const response = await axios.post('http://localhost:8080/api/ai/chat', { message: text })
+    const response = await request.post('/api/ai/chat', { message: text })
     if (response.data.code === 200) {
       chatMessages.value.push({ text: response.data.data, isUser: false })
     } else {

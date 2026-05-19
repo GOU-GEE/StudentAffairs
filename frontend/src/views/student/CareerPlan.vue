@@ -226,9 +226,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { ArrowRight, Document, Refresh, Calendar, Clock, Aim, TrendCharts } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/career'
+const API = '/api/career'
 const STUDENT_ID = '202301042'
 const STUDENT_NAME = '张小明'
 
@@ -364,7 +364,7 @@ const runMatching = async () => {
   if (!r.holland||!r.mbti||!r.values||!r.skills) { ElMessage.warning('请先在右侧"生涯测评工具"中完成全部四项测评'); return }
   matching.value = true
   try {
-    const res = await axios.post(`${API}/match`, {
+    const res = await request.post(`${API}/match`, {
       hollandScores:r.holland, mbtiType:r.mbti,
       valueScores:VDS.map(d=>r.values[d]), skillScores:SDS.map(d=>r.skills[d]),
     })
@@ -376,13 +376,13 @@ const runMatching = async () => {
 // ==================== 预约 ====================
 const apptForm = ref({ teacherId:'T001',appointmentTime:'',reason:'' })
 const loadAppointments = async () => {
-  try { const res=await axios.get(`${API}/appointments?studentId=${STUDENT_ID}`); if(res.data.code===200) appointments.value=res.data.data; updateStats() } catch(e){}
+  try { const res=await request.get(`${API}/appointments?studentId=${STUDENT_ID}`); if(res.data.code===200) appointments.value=res.data.data; updateStats() } catch(e){}
 }
 const submitAppointment = async () => {
   if(!apptForm.value.appointmentTime||!apptForm.value.reason){ ElMessage.warning('请填写预约时间和咨询原因'); return }
   submittingAppt.value=true
   try {
-    const res=await axios.post(`${API}/appointments`,{ studentId:STUDENT_ID,studentName:STUDENT_NAME,teacherId:apptForm.value.teacherId,appointmentTime:apptForm.value.appointmentTime,reason:apptForm.value.reason })
+    const res=await request.post(`${API}/appointments`,{ studentId:STUDENT_ID,studentName:STUDENT_NAME,teacherId:apptForm.value.teacherId,appointmentTime:apptForm.value.appointmentTime,reason:apptForm.value.reason })
     if(res.data.code===200){ ElMessage.success('预约已提交'); showAppointmentForm.value=false; apptForm.value={teacherId:'T001',appointmentTime:'',reason:''}; loadAppointments() }
   } catch(e){ ElMessage.error('提交失败') }
   submittingAppt.value=false

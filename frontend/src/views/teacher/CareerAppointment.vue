@@ -68,9 +68,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Calendar } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/career'
+const API = '/api/career'
 const TEACHER_ID = sessionStorage.getItem('userId') || 'T001'
 
 const filterStatus = ref('')
@@ -79,7 +79,7 @@ const appointments = ref([])
 
 const loadAppointments = async () => {
   try {
-    const res = await axios.get(`${API}/appointments/teacher/${TEACHER_ID}`)
+    const res = await request.get(`${API}/appointments/teacher/${TEACHER_ID}`)
     if (res.data.code === 200) appointments.value = res.data.data
   } catch (e) { console.error(e) }
 }
@@ -95,14 +95,14 @@ const selectAppointment = (a) => { activeId.value = a.id }
 
 const handleAccept = async () => {
   try {
-    const res = await axios.put(`${API}/appointments/${activeId.value}/accept`)
+    const res = await request.put(`${API}/appointments/${activeId.value}/accept`)
     if (res.data.code === 200) { ElMessage.success('已接受预约'); loadAppointments() }
   } catch (e) { ElMessage.error('操作失败') }
 }
 
 const handleReject = async () => {
   try {
-    const res = await axios.put(`${API}/appointments/${activeId.value}/reject`)
+    const res = await request.put(`${API}/appointments/${activeId.value}/reject`)
     if (res.data.code === 200) { ElMessage.success('已拒绝预约'); loadAppointments() }
   } catch (e) { ElMessage.error('操作失败') }
 }

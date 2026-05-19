@@ -69,9 +69,6 @@
               <div>
                 <div class="flex items-center gap-3 mb-1">
                   <h3 class="text-base font-bold text-on-surface tracking-tight truncate">{{ activity.title }}</h3>
-                  <div class="flex gap-1.5 flex-shrink-0">
-                    <span v-for="tag in activity.tags" :key="tag" class="px-1.5 py-0.5 bg-surface-container-low text-secondary text-[10px] font-semibold rounded border border-outline-variant/20">{{ tag }}</span>
-                  </div>
                 </div>
                 <p class="text-xs text-secondary leading-relaxed line-clamp-1 mb-2">
                   {{ activity.desc }}
@@ -86,11 +83,12 @@
             
             <!-- 右侧操作 -->
             <div class="flex flex-col items-center justify-center border-l border-outline-variant/15 pl-5 min-w-[100px] flex-shrink-0">
-              <span class="text-[11px] font-bold text-secondary mb-1">{{ activity.tags[0] || '活动学时' }}</span>
+              <span class="text-[11px] font-bold text-secondary mb-1">{{ activity.creditType || '活动学时' }}</span>
               <span class="text-[1.35rem] font-black leading-none mb-2" :class="statusConfig[activity.status].textColor">{{ activity.hours }} <span class="text-[10px] font-bold">学时</span></span>
               <button class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm"
-                :class="statusConfig[activity.status].btnClass">
-                {{ statusConfig[activity.status].btnText }}
+                :class="activity.status === 'enrolling' && activity.participants >= activity.maxParticipants ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : statusConfig[activity.status].btnClass"
+                :disabled="activity.status === 'enrolling' && activity.participants >= activity.maxParticipants">
+                {{ activity.status === 'enrolling' && activity.participants >= activity.maxParticipants ? '名额已满' : statusConfig[activity.status].btnText }}
               </button>
             </div>
           </div>
@@ -152,7 +150,7 @@
           <div class="flex-1 overflow-hidden flex flex-col gap-1">
             <div v-for="myEvent in myEvents.filter(e => e.status === 'completed').slice(0, 4)" :key="myEvent.id" class="flex justify-between items-center py-3 border-b border-outline-variant/10 last:border-0 group cursor-pointer">
               <span class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors truncate pr-4">{{ myEvent.title }}</span>
-              <span class="text-xs font-semibold text-secondary flex-shrink-0">{{ myEvent.dateShort }}</span>
+              <span class="text-xs font-semibold text-secondary flex-shrink-0">{{ myEvent.deadline }}</span>
             </div>
           </div>
         </div>
@@ -177,10 +175,7 @@
             <div v-else class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-800"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
             <div class="absolute bottom-4 left-5 pr-5">
-               <h3 class="text-white text-xl font-bold leading-tight drop-shadow-md mb-2">{{ selectedActivity.title }}</h3>
-               <div class="flex gap-2 flex-wrap">
-                 <span v-for="tag in selectedActivity.tags" :key="tag" class="px-1.5 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold rounded shadow-sm">{{ tag }}</span>
-               </div>
+               <h3 class="text-white text-xl font-bold leading-tight drop-shadow-md">{{ selectedActivity.title }}</h3>
             </div>
           </div>
           
@@ -212,8 +207,8 @@
                 <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.leave || '支持' }}</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-secondary font-medium text-[13px] mb-1.5">报名人数</span>
-                <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.enrollLimit || '不限' }}</span>
+                <span class="text-secondary font-medium text-[13px] mb-1.5">活动地点</span>
+                <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.location || '学校内' }}</span>
               </div>
               
               <div class="col-span-2 flex flex-col">
@@ -236,11 +231,12 @@
           <div class="mt-auto p-5 bg-white border-t border-outline-variant/10 flex gap-4 items-center shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)] z-20">
             <div class="flex flex-col items-center justify-center min-w-[70px]">
               <span class="text-secondary font-medium text-xs mb-0.5">已报/上限</span>
-              <span class="font-bold text-on-surface text-[14px]">{{ parseInt(selectedActivity.participantText) || 0 }}/{{ selectedActivity.enrollLimit || '不限' }}</span>
+              <span class="font-bold text-on-surface text-[14px]">{{ selectedActivity.participants || 0 }}/{{ selectedActivity.enrollLimit || '不限' }}</span>
             </div>
             <button class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all"
-              :class="statusConfig[selectedActivity.status].btnClass">
-              {{ statusConfig[selectedActivity.status].btnText }}
+              :class="selectedActivity.status === 'enrolling' && selectedActivity.participants >= selectedActivity.maxParticipants ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : statusConfig[selectedActivity.status].btnClass"
+              :disabled="selectedActivity.status === 'enrolling' && selectedActivity.participants >= selectedActivity.maxParticipants">
+              {{ selectedActivity.status === 'enrolling' && selectedActivity.participants >= selectedActivity.maxParticipants ? '名额已满' : statusConfig[selectedActivity.status].btnText }}
             </button>
           </div>
         </div>
@@ -460,8 +456,11 @@
 </style>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ArrowRight, ArrowDown, Search, Filter, Clock, Location, ArrowLeft, Timer, ZoomIn, DataLine, Close, User, Star, Share } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+const API = '/api/youth/activities'
 
 const activeTab = ref('all')
 const showCalendarDialog = ref(false)
@@ -471,9 +470,9 @@ const searchQuery = ref('')
 const filteredEvents = computed(() => {
   return events.value.filter(activity => {
     const matchTab = activeTab.value === 'all' || activity.status === activeTab.value
-    const matchSearch = !searchQuery.value || 
-      activity.title.includes(searchQuery.value) || 
-      activity.desc.includes(searchQuery.value) || 
+    const matchSearch = !searchQuery.value ||
+      activity.title.includes(searchQuery.value) ||
+      activity.desc.includes(searchQuery.value) ||
       activity.tags.some(tag => tag.includes(searchQuery.value))
     return matchTab && matchSearch
   })
@@ -488,8 +487,6 @@ const selectActivity = (event, domEvent) => {
   const container = document.getElementById('activity-grid')
   const itemRect = domEvent.currentTarget.getBoundingClientRect()
   const containerRect = container.getBoundingClientRect()
-  // Calculate dynamic offset so the detail panel top aligns precisely with the clicked card
-  // Min limit to 0 to prevent overflowing upwards if there are weird paddings
   detailOffsetTop.value = Math.max(0, itemRect.top - containerRect.top)
 }
 
@@ -500,176 +497,60 @@ const closeDetail = () => {
 const tabs = [
   { label: '全部活动', value: 'all' },
   { label: '报名中', value: 'enrolling' },
-  { label: '待参加', value: 'waiting' },
   { label: '进行中', value: 'ongoing' },
   { label: '已完成', value: 'completed' },
 ]
 
-// 状态配置项，统一样式
 const statusConfig = {
   'enrolling': { label: '报名中', bg: 'bg-blue-500', textSmall: 'text-blue-500', textColor: 'text-blue-600', btnClass: 'bg-blue-600 text-white hover:bg-blue-700', btnText: '立即报名' },
-  'waiting': { label: '待参加', bg: 'bg-orange-500', textSmall: 'text-orange-500', textColor: 'text-orange-500', btnClass: 'bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100', btnText: '查看详情' },
   'ongoing': { label: '进行中', bg: 'bg-green-500', textSmall: 'text-green-500', textColor: 'text-green-500', btnClass: 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100', btnText: '签到打卡' },
   'completed': { label: '已完成', bg: 'bg-gray-400', textSmall: 'text-gray-500', textColor: 'text-gray-500', btnClass: 'bg-surface-container-low text-secondary border border-outline-variant/30 hover:bg-surface-container', btnText: '查看证书' },
 }
 
-// 模拟活动数据
-const events = ref([
-  {
-    id: 1,
-    status: 'enrolling',
-    title: '红色经典诵读比赛',
-    image: '/default-event.png',
-    tags: ['思想政治', '校级', '线下活动'],
-    time: '2024-05-25 14:00',
-    location: '行政楼报告厅',
-    desc: '传承红色基因，弘扬爱国精神，展现新时代大学生风采。',
-    deadlineText: '报名截止',
-    deadline: '2024-05-23',
-    hours: 2,
-    participantText: '234 人已报名'
-  },
-  {
-    id: 2,
-    status: 'enrolling',
-    title: 'AI赋能未来：大学生科技创新讲座',
-    image: '/default-event.png',
-    tags: ['学术科技', '校级', '线上活动'],
-    time: '2024-05-28 19:00',
-    location: '腾讯会议',
-    desc: '邀请行业专家分享AI前沿技术与应用，探索科技创新之路。',
-    deadlineText: '报名截止',
-    deadline: '2024-05-27',
-    hours: 1,
-    participantText: '166 人已报名'
-  },
-  {
-    id: 3,
-    status: 'waiting',
-    title: '校园3V3篮球赛',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600&auto=format&fit=crop',
-    tags: ['文体艺术', '院级', '线下活动'],
-    time: '2024-05-30 09:00',
-    location: '西区篮球场',
-    desc: '挥洒汗水，燃烧青春，团队协作，勇夺冠军！',
-    deadlineText: '活动时间',
-    deadline: '05-30至06-02',
-    hours: 3,
-    participantText: '已报名'
-  },
-  {
-    id: 4,
-    status: 'ongoing',
-    title: '校园环境美化志愿服务活动',
-    image: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=600&auto=format&fit=crop',
-    tags: ['志愿公益', '校级', '线下活动'],
-    time: '2024-05-18 08:30',
-    location: '图书馆周边',
-    desc: '美化校园环境，创建绿色校园，从我做起。',
-    deadlineText: '活动时间',
-    deadline: '05-18',
-    hours: 1,
-    participantText: '已签到'
-  },
-  {
-    id: 5,
-    status: 'completed',
-    title: '走进乡村：社会实践调研活动',
-    image: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?q=80&w=600&auto=format&fit=crop',
-    tags: ['社会实践', '校级', '线下活动'],
-    time: '2024-04-28 08:00',
-    location: '南充市某村',
-    desc: '深入乡村开展调研，了解乡村发展现状与需求。',
-    deadlineText: '活动时间',
-    deadline: '04-28至04-30',
-    hours: 4,
-    participantText: '已完成'
-  },
-  {
-    id: 6,
-    status: 'enrolling',
-    title: '青年志愿者招募培训',
-    image: '/default-event.png',
-    tags: ['志愿公益', '校级', '线上活动'],
-    time: '2024-06-01 09:00',
-    location: '腾讯会议',
-    desc: '培养新时代青年志愿服务精神。',
-    deadlineText: '报名截止',
-    deadline: '2024-05-30',
-    hours: 1,
-    participantText: '80 人已报名',
-    level: '院级',
-    range: '全院学生',
-    leave: '支持',
-    enrollLimit: '200 人',
-    creditType: '志愿公益项目学分',
-    enrollTime: '2026.05.20 08:00-2026.05.30 18:00',
-    timeDetail: '2026.06.01 09:00-2026.06.01 11:30'
+const mapActivity = (a) => {
+  const statusMap = { '报名中': 'enrolling', '进行中': 'ongoing', '已结束': 'completed' }
+  const s = statusMap[a.status] || 'enrolling'
+  const image = a.coverImage || ''
+  const tags = [a.level || '校级', a.location || ''].filter(Boolean)
+  return {
+    id: a.id,
+    status: s,
+    title: a.title,
+    image,
+    tags,
+    time: a.timeDetail || a.date || '',
+    location: a.location || '',
+    desc: a.description || '',
+    deadlineText: a.status === '报名中' ? '报名截止' : '活动时间',
+    deadline: a.enrollTime || a.date || '',
+    hours: a.credits || 0,
+    participantText: `${a.participants || 0} 人已报名`,
+    participants: a.participants || 0,
+    maxParticipants: a.maxParticipants || 9999,
+    level: a.level,
+    range: a.rangeName || '学校内',
+    leave: a.leaveSupport,
+    enrollLimit: a.enrollLimit,
+    creditType: a.creditType,
+    enrollTime: a.enrollTime,
+    timeDetail: a.timeDetail,
   }
-])
+}
 
-const myEvents = ref([
-  {
-    id: 101,
-    status: 'waiting',
-    title: '校园3V3篮球赛',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=300&auto=format&fit=crop',
-    timeShort: '09:00',
-    dateShort: '05-30',
-    location: '西区篮球场',
-    hours: 3
-  },
-  {
-    id: 102,
-    status: 'ongoing',
-    title: '校园环境美化志愿服务活动',
-    image: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=300&auto=format&fit=crop',
-    timeShort: '08:30',
-    dateShort: '05-18',
-    location: '图书馆周边',
-    hours: 1
-  },
-  {
-    id: 103,
-    status: 'completed',
-    title: '走进乡村：社会实践调研活动',
-    image: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?q=80&w=300&auto=format&fit=crop',
-    timeShort: '08:00',
-    dateShort: '04-28',
-    location: '南充市某村',
-    hours: 4
-  },
-  {
-    id: 104,
-    status: 'completed',
-    title: '春季田径运动会',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=300&auto=format&fit=crop',
-    timeShort: '08:00',
-    dateShort: '04-15',
-    location: '田径场',
-    hours: 8
-  },
-  {
-    id: 105,
-    status: 'completed',
-    title: '大学生英语演讲比赛',
-    image: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=300&auto=format&fit=crop',
-    timeShort: '14:00',
-    dateShort: '03-22',
-    location: '报告厅',
-    hours: 2
-  },
-  {
-    id: 106,
-    status: 'completed',
-    title: '编程马拉松：校园黑客松',
-    image: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?q=80&w=300&auto=format&fit=crop',
-    timeShort: '09:00',
-    dateShort: '03-10',
-    location: '图书馆',
-    hours: 12
-  }
-])
+const events = ref([])
+
+const loadActivities = async () => {
+  try {
+    const res = await request.get(API)
+    if (res.data.code === 200) {
+      events.value = res.data.data.map(mapActivity)
+    }
+  } catch (e) { console.error('加载活动失败', e) }
+}
+
+onMounted(loadActivities)
+
+const myEvents = computed(() => events.value.filter(e => e.status === 'completed' || e.status === 'ongoing'))
 
 // 简单的日历逻辑模拟
 const calendarActivities = {

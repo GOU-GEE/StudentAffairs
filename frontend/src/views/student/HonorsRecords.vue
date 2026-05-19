@@ -129,9 +129,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Medal, Trophy, Warning, ArrowRight, Stamp, InfoFilled, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/youth'
+const API = '/api/youth'
 const STUDENT_ID = '202301042'
 
 const searchAward = ref('')
@@ -167,8 +167,8 @@ const levelIconColor = (level) => {
 const loadData = async () => {
   try {
     const [aRes, pRes] = await Promise.all([
-      axios.get(`${API}/awards?studentId=${STUDENT_ID}`),
-      axios.get(`${API}/honors/projects`)
+      request.get(`${API}/awards?studentId=${STUDENT_ID}`),
+      request.get(`${API}/honors/projects`)
     ])
     if (pRes.data.code === 200) projects.value = pRes.data.data
     if (aRes.data.code === 200) {
@@ -185,7 +185,7 @@ const loadData = async () => {
   } catch (e) { console.error(e) }
 
   try {
-    const hRes = await axios.get(`${API}/honors/candidates/by-student?studentId=${STUDENT_ID}`)
+    const hRes = await request.get(`${API}/honors/candidates/by-student?studentId=${STUDENT_ID}`)
     if (hRes.data.code === 200) {
       const projectMap = {}
       projects.value.forEach(p => { projectMap[p.id] = p })

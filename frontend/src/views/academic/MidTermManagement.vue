@@ -68,9 +68,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { DocumentChecked, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/mid-term'
+const API = '/api/mid-term'
 
 const searchQuery = ref('')
 const detailVisible = ref(false)
@@ -79,7 +79,7 @@ const list = ref([])
 
 const loadList = async () => {
   try {
-    const res = await axios.get(`${API}/all`)
+    const res = await request.get(`${API}/all`)
     if (res.data.code === 200) list.value = res.data.data
   } catch (e) { console.error(e) }
 }

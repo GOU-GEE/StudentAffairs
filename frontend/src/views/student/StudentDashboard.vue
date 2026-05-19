@@ -427,7 +427,7 @@
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Money, School, Guide, ChatDotRound, Calendar, ArrowRight, Location, Phone, ArrowDown, EditPen, Reading, CircleCheck, Medal, Stamp } from '@element-plus/icons-vue'
 import { ref, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const router = useRouter()
 const failCount = ref(0)
@@ -440,9 +440,9 @@ const stats = ref({ gpa: '--', totalCredits: '--', classroomHours: '--', applica
 const loadStats = async () => {
   try {
     const [academicRes, classroomRes, appRes] = await Promise.all([
-      axios.get(`http://localhost:8080/api/academic/student-records?studentId=${STUDENT_ID}`),
-      axios.get(`http://localhost:8080/api/youth/second-classroom/records?studentId=${STUDENT_ID}`),
-      axios.get(`http://localhost:8080/api/applications/student/${STUDENT_ID}`)
+      request.get(`/api/academic/student-records?studentId=${STUDENT_ID}`),
+      request.get(`/api/youth/second-classroom/records?studentId=${STUDENT_ID}`),
+      request.get(`/api/applications/student/${STUDENT_ID}`)
     ])
     if (academicRes.data.code === 200) {
       const records = academicRes.data.data

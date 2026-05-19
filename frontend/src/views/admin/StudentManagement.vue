@@ -98,9 +98,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled, Plus, Search } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/admin'
+const API = '/api/admin'
 
 const students = ref([])
 const searchQuery = ref('')
@@ -127,7 +127,7 @@ const filteredStudents = computed(() => {
 
 const fetchStudents = async () => {
   try {
-    const res = await axios.get(`${API}/students`)
+    const res = await request.get(`${API}/students`)
     students.value = res.data.data || []
   } catch {
     // 降级 mock
@@ -177,10 +177,10 @@ const handleSave = async () => {
   }
   try {
     if (isEdit.value) {
-      await axios.put(`${API}/students/${editingId.value}`, payload)
+      await request.put(`${API}/students/${editingId.value}`, payload)
       ElMessage.success('学生信息已更新')
     } else {
-      await axios.post(`${API}/students`, payload)
+      await request.post(`${API}/students`, payload)
       ElMessage.success('学生信息已添加')
     }
     dialogVisible.value = false
@@ -198,7 +198,7 @@ const handleDelete = (row) => {
     type: 'warning',
   }).then(async () => {
     try {
-      await axios.delete(`${API}/students/${row.id}`)
+      await request.delete(`${API}/students/${row.id}`)
       ElMessage.success('已删除')
     } catch {
       ElMessage.success('演示模式：删除成功')

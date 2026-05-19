@@ -236,12 +236,16 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ChatDotRound, ChatLineSquare, EditPen, Close, User, Clock, Picture, Paperclip, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/communication'
+const route = useRoute()
+const router = useRouter()
+
+const API = '/api/communication'
 const studentId = sessionStorage.getItem('userId') || '202301042'
 const teacherId = 'T001'
 const teacherName = '李老师'
@@ -298,7 +302,7 @@ const activeNotification = computed(() => {
 // 通知数据加载
 const loadNotifications = async () => {
   try {
-    const res = await axios.get(`${API}/announcements`)
+    const res = await request.get(`${API}/announcements`)
     if (res.data.code === 200) {
       notifications.value = res.data.data.map(n => ({
         ...n,
@@ -311,7 +315,7 @@ const loadNotifications = async () => {
 // 聊天消息加载
 const loadChatMessages = async () => {
   try {
-    const res = await axios.get(`${API}/messages`, { params: { userId: studentId, peerId: teacherId } })
+    const res = await request.get(`${API}/messages`, { params: { userId: studentId, peerId: teacherId } })
     if (res.data.code === 200) {
       chatMessages.value = res.data.data
     }
@@ -359,7 +363,7 @@ const sendChat = async () => {
     quoteId: quotingMessage.value?.id || null
   }
   try {
-    const res = await axios.post(`${API}/messages`, msg)
+    const res = await request.post(`${API}/messages`, msg)
     if (res.data.code === 200) {
       chatMessages.value.push(res.data.data)
       chatInput.value = ''
@@ -381,7 +385,7 @@ const canRecall = (msg) => {
 
 const recallMessage = async (msg) => {
   try {
-    const res = await axios.put(`${API}/messages/${msg.id}/recall`)
+    const res = await request.put(`${API}/messages/${msg.id}/recall`)
     if (res.data.code === 200) {
       const found = chatMessages.value.find(m => m.id === msg.id)
       if (found) {
@@ -447,12 +451,28 @@ onMounted(async () => {
   await Promise.all([loadNotifications(), loadChatMessages()])
   document.addEventListener('click', closeContextMenu)
 
-  // 默认选中第一条未读通知
-  const firstUnread = notifications.value.find(n => !n.isRead)
-  if (firstUnread) {
-    selectNotification(firstUnread.id)
-  } else if (notifications.value.length > 0) {
-    selectNotification(notifications.value[0].id)
+  if (route.query.notifId) {
+    const targetId = parseInt(route.query.notifId)
+    if (notifications.value.find(n => n.id === targetId)) {
+      selectNotification(targetId)
+    }
+  } else {
+    // 默认选中第一条未读通知
+    const firstUnread = notifications.value.find(n => !n.isRead)
+    if (firstUnread) {
+      selectNotification(firstUnread.id)
+    } else if (notifications.value.length > 0) {
+      selectNotification(notifications.value[0].id)
+    }
+  }
+})
+
+watch(() => route.query.notifId, (newId) => {
+  if (newId) {
+    const targetId = parseInt(newId)
+    if (notifications.value.find(n => n.id === targetId)) {
+      selectNotification(targetId)
+    }
   }
 })
 

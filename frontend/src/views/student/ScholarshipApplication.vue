@@ -260,8 +260,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import request from '@/utils/request'
+
+const API = '/api/applications'
+const studentId = sessionStorage.getItem('userId') || '202301042'
+const studentName = '张小明'
 import {
   Document, ArrowDown, ArrowRight, InfoFilled, Clock, Calendar
 } from '@element-plus/icons-vue'
@@ -281,37 +286,34 @@ const form = ref({
 
 const submitting = ref(false)
 
-// Mock 历史记录
-const history = ref([
-  {
-    id: 1,
-    title: '2024–2025学年国家励志奖学金申请',
-    status: 'PENDING',
-    applyTime: '2025-03-28 14:32:18',
-    summary: '本学期学习成绩优异，GPA 3.85，专业排名前10%，积极参加社会实践活动，特申请国家励志奖学金。'
-  },
-  {
-    id: 2,
-    title: '2024–2025学年优秀学生奖学金申请',
-    status: 'APPROVED',
-    applyTime: '2024-11-15 09:12:33',
-    summary: '学习成绩优异，综合素质突出，积极参与各类活动。'
-  },
-  {
-    id: 3,
-    title: '2023–2024学年国家励志奖学金申请',
-    status: 'APPROVED',
-    applyTime: '2023-10-20 16:45:21',
-    summary: '学习成绩优异，GPA 3.72，专业排名前15%。'
-  },
-  {
-    id: 4,
-    title: '2023–2024学年困难补助申请',
-    status: 'APPROVED',
-    applyTime: '2023-09-05 11:20:10',
-    summary: '家庭经济困难，生活上存在一定压力，特申请困难补助。'
+const history = ref([])
+
+const loadHistory = async () => {
+  try {
+    const res = await request.get(`${API}/student/${studentId}`)
+    if (res.data.code === 200) {
+      history.value = res.data.data
+        .filter(item => item.type === 'SCHOLARSHIP')
+        .map(item => {
+          let detail = {}
+          try { detail = JSON.parse(item.reason) } catch (e) {}
+          return {
+            id: item.id,
+            title: item.title,
+            status: item.status,
+            applyTime: item.applyTime ? item.applyTime.replace('T', ' ').substring(0, 19) : '',
+            summary: detail.statement || item.reason
+          }
+        })
+    }
+  } catch (e) {
+    console.error('Failed to load scholarship history', e)
   }
-])
+}
+
+onMounted(() => {
+  loadHistory()
+})
 
 const submitScholarship = async () => {
   if (!form.value.scholarType) {
@@ -321,7 +323,6 @@ const submitScholarship = async () => {
     ElMessage.warning('请填写个人申请陈述'); return
   }
   submitting.value = true
-  await new Promise(r => setTimeout(r, 900))
 
   const typeMap = {
     nat_scholarship: '国家奖学金',
@@ -330,25 +331,32 @@ const submitScholarship = async () => {
     school_scholarship: '学校奖学金',
     school_aid: '学校助学金'
   }
-  const now = new Date()
-  const pad = n => String(n).padStart(2, '0')
-  const applyTime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
 
-  history.value.unshift({
-    id: Date.now(),
-    title: `${now.getFullYear()}–${now.getFullYear()+1}学年${typeMap[form.value.scholarType]}申请`,
-    status: 'PENDING',
-    applyTime,
-    summary: form.value.statement
-  })
-
-  ElMessage.success('申请已提交，请耐心等待审核！')
-  form.value = {
-    scholarType: '', gpa: '', rank: '', total: '',
-    familyIncome: '', povertyLevel: 'none',
-    honors: '', volunteer: '', statement: ''
+  try {
+    const payload = {
+      studentId,
+      studentName,
+      type: 'SCHOLARSHIP',
+      title: `${new Date().getFullYear()}–${new Date().getFullYear()+1}学年${typeMap[form.value.scholarType]}申请`,
+      reason: JSON.stringify(form.value)
+    }
+    const res = await request.post(API, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('申请已提交，请耐心等待审核！')
+      form.value = {
+        scholarType: '', gpa: '', rank: '', total: '',
+        familyIncome: '', povertyLevel: 'none',
+        honors: '', volunteer: '', statement: ''
+      }
+      loadHistory()
+    } else {
+      ElMessage.error(res.data.msg || '提交失败')
+    }
+  } catch (e) {
+    ElMessage.error('请求异常，请稍后重试')
+  } finally {
+    submitting.value = false
   }
-  submitting.value = false
 }
 
 const statusLabel = (s) => ({

@@ -73,9 +73,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled, Search, Plus } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/academic'
+const API = '/api/academic'
 
 const records = ref([])
 const searchQuery = ref('')
@@ -88,7 +88,7 @@ const form = ref({ studentId:'', studentName:'', className:'', courseName:'', co
 
 const loadRecords = async () => {
   try {
-    const res = await axios.get(`${API}/records`)
+    const res = await request.get(`${API}/records`)
     if (res.data.code === 200) records.value = res.data.data
   } catch (e) { console.error(e) }
 }
@@ -134,10 +134,10 @@ const saveGrade = async () => {
   }
   try {
     if (editingRecord.value) {
-      const res = await axios.put(`${API}/records/${editingRecord.value.id}`, form.value)
+      const res = await request.put(`${API}/records/${editingRecord.value.id}`, form.value)
       if (res.data.code === 200) { ElMessage.success('已更新'); loadRecords() }
     } else {
-      const res = await axios.post(`${API}/records`, form.value)
+      const res = await request.post(`${API}/records`, form.value)
       if (res.data.code === 200) { ElMessage.success('已添加'); loadRecords() }
     }
     editDialogVisible.value = false
@@ -147,7 +147,7 @@ const saveGrade = async () => {
 const deleteGrade = async (row) => {
   try {
     await ElMessageBox.confirm(`确定删除 ${row.studentName} 的 ${row.courseName} 成绩？`, '确认删除', { confirmButtonText:'删除', cancelButtonText:'取消', type:'warning' })
-    const res = await axios.delete(`${API}/records/${row.id}`)
+    const res = await request.delete(`${API}/records/${row.id}`)
     if (res.data.code === 200) { ElMessage.success('已删除'); loadRecords() }
   } catch (e) {}
 }

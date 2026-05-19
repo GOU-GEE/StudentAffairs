@@ -464,10 +464,11 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation, Medal } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
 const route = useRoute()
 const router = useRouter()
@@ -532,17 +533,43 @@ const copyPhone = (phone) => {
   })
 }
 
-const notifications = ref([
-  { id: 1, tag: '审批结果', tagStyle: 'bg-green-100 text-green-700', time: '05-03 17:30', title: '您的请假申请已通过审批', content: '辅导员李老师已批准您 11月16日至11月17日的返乡假。请注意按时返校销假。', read: false, expanded: false, path: '/student/applications/leave' },
-  { id: 2, tag: '系统通知', tagStyle: 'bg-blue-100 text-blue-700', time: '05-03 09:00', title: '2024年度国家奖学金申请通道已开放', content: '本次申请截止日期为 2024年11月30日，请尽快前往「我的申请 → 奖助学金」提交材料。', read: false, expanded: false, path: '/student/applications/scholarship' },
-  { id: 3, tag: '校园公告', tagStyle: 'bg-orange-100 text-orange-700', time: '05-02 14:00', title: '【重要】本周五下午校园消防演练通知', content: '本周五（11月22日）下午 3:00 起，全校开展消防演练，请同学们配合有序疏散。', read: true, expanded: false, path: '/student/campus-life' },
-])
+const notifications = ref([])
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 
-const unreadCount = ref(notifications.value.filter(n => !n.read).length)
+const fetchNotifications = async () => {
+  try {
+    const res = await request.get('/api/communication/announcements')
+    if (res.data.code === 200) {
+      const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
+      notifications.value = res.data.data.map(a => {
+        const d = new Date(a.publishTime)
+        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        return {
+          id: a.id,
+          tag: a.type === 'NOTICE' ? '辅导员通知' : '系统公告',
+          tagStyle: a.type === 'NOTICE' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700',
+          time: timeStr,
+          title: a.title,
+          content: a.content,
+          read: readIds.includes(a.id),
+          expanded: false,
+          path: `/student/campus-life?notifId=${a.id}`
+        }
+      })
+    }
+  } catch (e) { console.error('Failed to load notifications', e) }
+}
 
 const toggleNotif = (n) => {
   n.expanded = !n.expanded
-  if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length }
+  if (!n.read) {
+    n.read = true
+    const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
+    if (!readIds.includes(n.id)) {
+      readIds.push(n.id)
+      localStorage.setItem('student_read_notifs', JSON.stringify(readIds))
+    }
+  }
   if (n.path) {
     if (n.path.includes('?tab=')) {
       const tab = n.path.split('?tab=')[1];
@@ -555,12 +582,18 @@ const toggleNotif = (n) => {
 }
 const markAllRead = () => {
   notifications.value.forEach(n => n.read = true)
-  unreadCount.value = 0
+  const allIds = notifications.value.map(n => n.id)
+  localStorage.setItem('student_read_notifs', JSON.stringify(allIds))
 }
 
 // 点击外部关闭通知
 const closeNotif = () => { notifOpen.value = false }
-onMounted(() => document.addEventListener('click', closeNotif))
+onMounted(() => {
+  document.addEventListener('click', closeNotif)
+  fetchNotifications()
+  // Poll for new notifications
+  setInterval(fetchNotifications, 30000)
+})
 onUnmounted(() => document.removeEventListener('click', closeNotif))
 
 // 路由切换时关闭档案

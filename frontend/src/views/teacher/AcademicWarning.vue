@@ -86,7 +86,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { Refresh, CircleCheck } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import request from '@/utils/request'
 import * as echarts from 'echarts'
 
 const barChartRef = ref(null)
@@ -96,27 +96,27 @@ const allRecords = ref([])
 const engineRunning = ref(false)
 let barChart = null
 
-const API = 'http://localhost:8080/api/academic'
+const API = '/api/academic'
 
 const loadDistribution = async () => {
   try {
-    const res = await axios.get(`${API}/class-distribution`, { params: { className: selectedClass.value } })
+    const res = await request.get(`${API}/class-distribution`, { params: { className: selectedClass.value } })
     if (res.data.code === 200) renderBarChart(res.data.data)
   } catch (e) { console.error(e) }
 }
 
 const loadWarnings = async () => {
   try {
-    const res = await axios.get(`${API}/warnings`)
+    const res = await request.get(`${API}/warnings`)
     if (res.data.code === 200) warningStudents.value = res.data.data
   } catch (e) { console.error(e) }
 }
 
 const loadAllRecords = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/api/academic/student-records', { params: { studentId: '202301043' } })
-    const res2 = await axios.get('http://localhost:8080/api/academic/student-records', { params: { studentId: '202301042' } })
-    const res3 = await axios.get('http://localhost:8080/api/academic/student-records', { params: { studentId: '202301044' } })
+    const res = await request.get('/api/academic/student-records', { params: { studentId: '202301043' } })
+    const res2 = await request.get('/api/academic/student-records', { params: { studentId: '202301042' } })
+    const res3 = await request.get('/api/academic/student-records', { params: { studentId: '202301044' } })
     if (res.data.code === 200) allRecords.value = [...res.data.data, ...res2.data.data, ...res3.data.data]
   } catch (e) { console.error(e) }
 }
@@ -124,7 +124,7 @@ const loadAllRecords = async () => {
 const runEngine = async () => {
   engineRunning.value = true
   try {
-    const res = await axios.post(`${API}/warnings/run-engine`)
+    const res = await request.post(`${API}/warnings/run-engine`)
     ElMessage.success(res.data.data)
     await loadWarnings()
   } catch (e) {

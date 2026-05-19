@@ -77,9 +77,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/admin'
+const API = '/api/admin'
 
 const accounts = ref([])
 const dialogVisible = ref(false)
@@ -101,7 +101,7 @@ const stats = computed(() => {
 
 const fetchAccounts = async () => {
   try {
-    const res = await axios.get(`${API}/accounts`)
+    const res = await request.get(`${API}/accounts`)
     accounts.value = res.data.data || []
   } catch {
     accounts.value = [
@@ -124,7 +124,7 @@ const handleCreate = async () => {
     return
   }
   try {
-    await axios.post(`${API}/accounts`, form.value)
+    await request.post(`${API}/accounts`, form.value)
     ElMessage.success('账号创建成功')
   } catch {
     ElMessage.success('演示模式：账号创建成功，默认密码 123456')

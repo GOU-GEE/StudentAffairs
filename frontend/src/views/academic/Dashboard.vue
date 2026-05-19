@@ -39,10 +39,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Download, DataAnalysis, Warning, Reading, TrendCharts } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 const router = useRouter()
-const API = 'http://localhost:8080/api/academic'
+const API = '/api/academic'
 
 const stats = ref([
   { label: '学生总数', value: '--', desc: '' },
@@ -54,7 +54,7 @@ const warningStudents = ref([])
 
 onMounted(async () => {
   try {
-    const dashRes = await axios.get(`${API}/dashboard`)
+    const dashRes = await request.get(`${API}/dashboard`)
     if (dashRes.data.code === 200) {
       const d = dashRes.data.data
       stats.value = [

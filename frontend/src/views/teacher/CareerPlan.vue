@@ -84,9 +84,9 @@
 import { ref, onMounted } from 'vue'
 import { Check, Bell, Delete, Top, Close } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/communication'
+const API = '/api/communication'
 const publisherId = sessionStorage.getItem('userId') || 'T001'
 const publisherName = sessionStorage.getItem('userName') || '李老师'
 
@@ -96,7 +96,7 @@ const viewingAnnouncement = ref(null)
 
 const loadAnnouncements = async () => {
   try {
-    const res = await axios.get(`${API}/announcements`, { params: { publisherId } })
+    const res = await request.get(`${API}/announcements`, { params: { publisherId } })
     if (res.data.code === 200) announcements.value = res.data.data
   } catch (e) { console.error(e) }
 }
@@ -111,7 +111,7 @@ const publishAnnouncement = async () => {
     return
   }
   try {
-    await axios.post(`${API}/announcements`, {
+    await request.post(`${API}/announcements`, {
       title: form.value.title,
       content: form.value.content,
       publisherName,
@@ -133,7 +133,7 @@ const deleteAnnouncement = async (id) => {
       type: 'warning'
     })
     if (viewingAnnouncement.value?.id === id) viewingAnnouncement.value = null
-    await axios.delete(`${API}/announcements/${id}`)
+    await request.delete(`${API}/announcements/${id}`)
     ElMessage.success('公告已删除')
     await loadAnnouncements()
   } catch (e) {

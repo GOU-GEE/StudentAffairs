@@ -156,11 +156,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import request from '@/utils/request'
 import { 
   Warning, Camera, List, Calendar, Clock 
 } from '@element-plus/icons-vue'
+
+const API = '/api/safety/incidents'
+const studentId = sessionStorage.getItem('userId') || '202301042'
+const studentName = '张小明'
 
 const tabs = [
   { id: 'late', name: '晚归登记' },
@@ -174,11 +179,37 @@ const lateForm = ref({ time: '', reason: '' })
 const outForm = ref({ destination: '', range: [], reason: '' })
 const emergencyForm = ref({ type: '', location: '', desc: '' })
 
-const records = ref([
-  { id: 1, type: 'late', typeText: '晚归登记', title: '预计23:30返回 (图书馆闭馆延时)', status: 'APPROVED', date: '2025-05-10', statusTime: '已确认' },
-  { id: 2, type: 'out', typeText: '外出报备', title: '成都市武侯区 (周末返家)', status: 'PENDING', date: '2025-05-12', statusTime: '待审批' },
-  { id: 3, type: 'emergency', typeText: '异常上报', title: '西二教 304 教室窗户无法关闭', status: 'COMPLETED', date: '2025-04-28', statusTime: '已处理' }
-])
+const records = ref([])
+
+const loadHistory = async () => {
+  try {
+    const res = await request.get(API)
+    if (res.data.code === 200) {
+      records.value = res.data.data
+        .filter(item => item.studentId === studentId)
+        .map(item => {
+          let detail = {}
+          try { detail = JSON.parse(item.description) } catch (e) {}
+          
+          return {
+            id: item.id,
+            type: item.type === 'LATE' ? 'late' : 'emergency',
+            typeText: item.type === 'LATE' ? '晚归登记' : '异常上报',
+            title: detail.title || item.description,
+            status: item.status,
+            date: item.reportTime ? item.reportTime.replace('T', ' ').substring(0, 10) : '',
+            statusTime: item.status === 'OPEN' ? '待处理' : (item.status === 'PROCESSING' ? '处理中' : '已关闭')
+          }
+        })
+    }
+  } catch (e) {
+    console.error('Failed to load safety history', e)
+  }
+}
+
+onMounted(() => {
+  loadHistory()
+})
 
 const statusLabel = (s) => ({
   PENDING: '审核中',
@@ -207,39 +238,40 @@ const submitReport = async () => {
   }
 
   submitting.value = true
-  await new Promise(r => setTimeout(r, 1000))
 
   let title = ''
   if (activeTab.value === 'late') title = `预计 ${lateForm.value.time} 返回 (${lateForm.value.reason.substring(0, 10)}...)`
   else if (activeTab.value === 'out') title = `${outForm.value.destination} (${outForm.value.reason.substring(0, 10)}...)`
   else title = `${emergencyForm.value.location} - ${emergencyForm.value.desc.substring(0, 10)}...`
 
-  const newRecord = {
-    id: Date.now(),
-    type: activeTab.value,
-    typeText: tabs.find(t => t.id === activeTab.value).name,
-    title,
-    status: activeTab.value === 'emergency' ? 'PENDING' : 'APPROVED',
-    date: today,
-    statusTime: activeTab.value === 'emergency' ? '待处理' : '已确认',
-    student: '张小明',
-    dorm: '南区 8 栋 304'
+  try {
+    const payload = {
+      studentId,
+      studentName,
+      type: activeTab.value === 'late' ? 'LATE' : emergencyForm.value.type || 'OTHER',
+      level: activeTab.value === 'emergency' ? 'HIGH' : 'LOW',
+      description: JSON.stringify({
+        title,
+        ...lateForm.value,
+        ...outForm.value,
+        ...emergencyForm.value
+      })
+    }
+    const res = await request.post(API, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('报备信息已成功提交！')
+      loadHistory()
+      lateForm.value = { time: '', reason: '' }
+      outForm.value = { destination: '', range: [], reason: '' }
+      emergencyForm.value = { type: '', location: '', desc: '' }
+    } else {
+      ElMessage.error(res.data.msg || '提交失败')
+    }
+  } catch (e) {
+    ElMessage.error('请求异常，请稍后重试')
+  } finally {
+    submitting.value = false
   }
-
-  records.value.unshift(newRecord)
-  
-  // Persist for teacher
-  const allReports = JSON.parse(localStorage.getItem('safety_reports') || '[]')
-  allReports.unshift(newRecord)
-  localStorage.setItem('safety_reports', JSON.stringify(allReports))
-
-  ElMessage.success('报备信息已成功提交！')
-  submitting.value = false
-  
-  // 重置表单
-  lateForm.value = { time: '', reason: '' }
-  outForm.value = { destination: '', range: [], reason: '' }
-  emergencyForm.value = { type: '', location: '', desc: '' }
 }
 </script>
 

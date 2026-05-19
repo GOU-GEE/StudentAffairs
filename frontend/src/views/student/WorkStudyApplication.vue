@@ -159,8 +159,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import request from '@/utils/request'
+
+const API = '/api/applications'
+const studentId = sessionStorage.getItem('userId') || '202301042'
+const studentName = '张小明'
 import { 
   Document, Check, InfoFilled, Clock, Calendar, ArrowRight 
 } from '@element-plus/icons-vue'
@@ -181,11 +186,34 @@ const form = ref({
 
 const submitting = ref(false)
 
-const history = ref([
-  { id: 101, jobName: '图书馆管理员', department: '校图书馆', status: 'PENDING', applyTime: '2025-05-08' },
-  { id: 102, jobName: '食堂学生监督员', department: '后勤保障处', status: 'REJECTED', applyTime: '2025-03-12' },
-  { id: 103, jobName: '校运会志愿者助理', department: '体育部', status: 'APPROVED', applyTime: '2024-10-15' }
-])
+const history = ref([])
+
+const loadHistory = async () => {
+  try {
+    const res = await request.get(`${API}/student/${studentId}`)
+    if (res.data.code === 200) {
+      history.value = res.data.data
+        .filter(item => item.type === 'WORK_STUDY')
+        .map(item => {
+          let detail = {}
+          try { detail = JSON.parse(item.reason) } catch (e) {}
+          return {
+            id: item.id,
+            jobName: detail.jobName || item.title,
+            department: detail.department || '',
+            status: item.status,
+            applyTime: item.applyTime ? item.applyTime.replace('T', ' ').substring(0, 10) : ''
+          }
+        })
+    }
+  } catch (e) {
+    console.error('Failed to load work study history', e)
+  }
+}
+
+onMounted(() => {
+  loadHistory()
+})
 
 const statusLabel = (s) => ({
   PENDING: '审核中',
@@ -205,33 +233,36 @@ const submitApplication = async () => {
   if (form.value.statement.length < 50) { ElMessage.warning('申请陈述请不少于50字'); return }
 
   submitting.value = true
-  await new Promise(r => setTimeout(r, 1200))
   
   const job = availableJobs.find(j => j.id === form.value.selectedJob)
-  const now = new Date()
-  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`
-
-  const newApp = {
-    id: Date.now(),
-    jobName: job.name,
-    department: job.department,
-    status: 'PENDING',
-    applyTime: dateStr,
-    student: '张小明',
-    major: '计算机科学',
-    motivation: form.value.statement
-  }
-
-  history.value.unshift(newApp)
   
-  // Persist for teacher
-  const allApps = JSON.parse(localStorage.getItem('work_study_apps') || '[]')
-  allApps.unshift(newApp)
-  localStorage.setItem('work_study_apps', JSON.stringify(allApps))
-
-  ElMessage.success('您的岗位申请已成功提交，请关注审核通知！')
-  form.value = { selectedJob: null, availableHours: '', experience: '', statement: '' }
-  submitting.value = false
+  try {
+    const payload = {
+      studentId,
+      studentName,
+      type: 'WORK_STUDY',
+      title: `勤工助学申请 - ${job.name}`,
+      reason: JSON.stringify({
+        jobName: job.name,
+        department: job.department,
+        availableHours: form.value.availableHours,
+        experience: form.value.experience,
+        statement: form.value.statement
+      })
+    }
+    const res = await request.post(API, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('您的岗位申请已成功提交，请关注审核通知！')
+      form.value = { selectedJob: null, availableHours: '', experience: '', statement: '' }
+      loadHistory()
+    } else {
+      ElMessage.error(res.data.msg || '提交失败')
+    }
+  } catch (e) {
+    ElMessage.error('请求异常，请稍后重试')
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 

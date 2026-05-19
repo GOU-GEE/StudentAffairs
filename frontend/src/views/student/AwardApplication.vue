@@ -244,9 +244,9 @@ import {
   Document, Medal, Calendar, ArrowDown, OfficeBuilding,
   Plus, Delete, InfoFilled, Clock, CollectionTag
 } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const API = 'http://localhost:8080/api/youth'
+const API = '/api/youth'
 const STUDENT_ID = '202301042'
 const STUDENT_NAME = '张小明'
 
@@ -266,7 +266,7 @@ const submitting = ref(false)
 
 const loadAwards = async () => {
   try {
-    const res = await axios.get(`${API}/awards?studentId=${STUDENT_ID}`)
+    const res = await request.get(`${API}/awards?studentId=${STUDENT_ID}`)
     if (res.data.code === 200) history.value = res.data.data
   } catch (e) { console.error(e) }
 }
@@ -312,7 +312,7 @@ const submitAward = async () => {
 
   submitting.value = true
   try {
-    const res = await axios.post(`${API}/awards`, {
+    const res = await request.post(`${API}/awards`, {
       studentId: STUDENT_ID,
       studentName: STUDENT_NAME,
       awardName: form.value.awardName,

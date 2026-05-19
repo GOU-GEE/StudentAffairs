@@ -65,10 +65,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Search, DocumentChecked } from '@element-plus/icons-vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
-const MIDTERM_API = 'http://localhost:8080/api/mid-term'
-const COMM_API = 'http://localhost:8080/api/communication'
+const MIDTERM_API = '/api/mid-term'
+const COMM_API = '/api/communication'
 const teacherId = sessionStorage.getItem('userId') || 'T001'
 
 const searchQuery = ref('')
@@ -78,14 +78,14 @@ const allAppraisals = ref([])
 
 const loadStudents = async () => {
   try {
-    const res = await axios.get(`${COMM_API}/students`, { params: { teacherId } })
+    const res = await request.get(`${COMM_API}/students`, { params: { teacherId } })
     if (res.data.code === 200) students.value = res.data.data
   } catch (e) { console.error(e) }
 }
 
 const loadAppraisals = async () => {
   try {
-    const res = await axios.get(`${MIDTERM_API}/all`)
+    const res = await request.get(`${MIDTERM_API}/all`)
     if (res.data.code === 200) allAppraisals.value = res.data.data
   } catch (e) { console.error(e) }
 }

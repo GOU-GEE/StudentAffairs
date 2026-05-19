@@ -99,9 +99,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled, Search, Star, Picture, Sunny, Help, School, EditPen } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+const API = '/api/youth/second-classroom'
 
 const searchQuery = ref('')
 const grantDialogVisible = ref(false)
@@ -119,12 +122,35 @@ const categories = [
   { name: '技能特长', icon: EditPen, color: '#06b6d4', bgClass: 'bg-cyan-100', total: 60, distributed: 25 },
 ].map(c => ({ ...c, percent: Math.round(c.distributed / c.total * 100) }))
 
-const students = ref([
-  { id: 1, studentId: '202301042', studentName: '张小明', className: '软工2班', hours: [20, 15, 12, 35, 10, 8] },
-  { id: 2, studentId: '202301043', studentName: '李四', className: '软工2班', hours: [10, 8, 5, 15, 12, 0] },
-  { id: 3, studentId: '202301044', studentName: '王五', className: '软工1班', hours: [15, 20, 8, 20, 8, 5] },
-  { id: 4, studentId: '202301045', studentName: '赵六', className: '软工1班', hours: [12, 5, 3, 10, 6, 2] },
-])
+const students = ref([])
+const rawRecords = ref([])
+
+const fetchRecords = async () => {
+  try {
+    const res = await request.get(`${API}/records`)
+    if (res.data.code === 200) {
+      rawRecords.value = res.data.data
+      aggregateStudents(res.data.data)
+    }
+  } catch (e) {
+    console.error('Failed to fetch records', e)
+  }
+}
+
+const aggregateStudents = (records) => {
+  const map = {}
+  records.forEach(r => {
+    if (!map[r.studentId]) {
+      map[r.studentId] = { studentId: r.studentId, studentName: r.studentName, className: r.className, hours: [0, 0, 0, 0, 0, 0] }
+    }
+    map[r.studentId].hours[r.categoryIndex] += r.hours
+  })
+  students.value = Object.values(map)
+}
+
+onMounted(() => {
+  fetchRecords()
+})
 
 const filteredRecords = computed(() => {
   if (!searchQuery.value) return students.value
@@ -148,11 +174,24 @@ const openGrantDialog = (student) => {
   grantDialogVisible.value = true
 }
 
-const confirmGrant = () => {
+const confirmGrant = async () => {
   if (grantStudent.value) {
-    grantStudent.value.hours[grantForm.value.category] += grantForm.value.hours
-    ElMessage.success(`已为 ${grantStudent.value.studentName} 发放 ${grantForm.value.hours} 学时`)
+    try {
+      const payload = {
+        studentId: grantStudent.value.studentId,
+        studentName: grantStudent.value.studentName,
+        className: grantStudent.value.className,
+        categoryIndex: grantForm.value.category,
+        hours: grantForm.value.hours,
+        reason: grantForm.value.reason
+      }
+      await request.post(`${API}/grant`, payload)
+      ElMessage.success(`已为 ${grantStudent.value.studentName} 发放 ${grantForm.value.hours} 学时`)
+      fetchRecords()
+      grantDialogVisible.value = false
+    } catch (e) {
+      ElMessage.error('发放失败')
+    }
   }
-  grantDialogVisible.value = false
 }
 </script>
