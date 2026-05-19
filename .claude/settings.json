@@ -76,7 +76,10 @@
       "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs add frontend/src/views/student/AwardApplication.vue frontend/src/views/student/MidTermAppraisal.vue frontend/src/views/youth/ActivityManagement.vue)",
       "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs commit -m 'fix: sessionStorage not accessible in Vue template, use script-level uploadHeaders')",
       "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs add -A)",
-      "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs commit -m \"fix: set course table to 11 rows per page with fixed height\")"
+      "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs commit -m \"fix: set course table to 11 rows per page with fixed height\")",
+      "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs add frontend/src/views/teacher/FinancialAid.vue)",
+      "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs commit -m \"feat: rewrite teacher FinancialAid with mock demo data, match scholarship review layout\")",
+      "Bash(git -C /Users/goulijun/Documents/project/StudentAffairs commit -m \"feat: add batch switching dropdown to teacher financial aid page\")"
     ]
   }
 }

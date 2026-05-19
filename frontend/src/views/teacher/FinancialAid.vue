@@ -28,8 +28,21 @@
       </div>
       <div class="w-px h-10 bg-gray-100 flex-shrink-0"></div>
       <div class="flex items-center gap-4 flex-1 justify-end min-w-0">
-        <span class="text-xs text-gray-400">本次奖学金评定批次</span>
-        <span class="text-sm font-bold text-gray-900">2025-2026学年春季学期</span>
+        <span class="text-xs text-gray-400">当前批次</span>
+        <el-dropdown trigger="click" @command="handleBatchChange">
+          <button class="flex-shrink-0 px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
+            {{ currentBatch }} <el-icon><ArrowDown /></el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="国家奖学金">国家奖学金</el-dropdown-item>
+              <el-dropdown-item command="国家励志奖学金">国家励志奖学金</el-dropdown-item>
+              <el-dropdown-item command="国家助学金">国家助学金</el-dropdown-item>
+              <el-dropdown-item divided command="学校奖学金">学校奖学金</el-dropdown-item>
+              <el-dropdown-item command="学校助学金">学校助学金</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
         <button class="flex-shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors flex items-center gap-1.5">
           <el-icon :size="14"><Download /></el-icon>导出数据
         </button>
@@ -161,12 +174,18 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, User, Download } from '@element-plus/icons-vue'
+import { Search, User, Download, ArrowDown } from '@element-plus/icons-vue'
 
 const searchText = ref('')
 const activeFilter = ref('all')
 const selectedStudent = ref(null)
 const reviewComment = ref('')
+const currentBatch = ref('国家励志奖学金')
+
+const handleBatchChange = (batch) => {
+  currentBatch.value = batch
+  ElMessage.success('已切换至：' + batch)
+}
 
 // Mock 学生申请数据
 const students = ref([
