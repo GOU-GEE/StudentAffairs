@@ -21,7 +21,8 @@ const router = createRouter({
         { path: 'academic-warning', name: 'TeacherAcademicWarning', meta: { title: '学业预警支持' }, component: () => import('../views/teacher/AcademicWarning.vue') },
         { path: 'career-plan', name: 'TeacherCareerPlan', meta: { title: '发布通知' }, component: () => import('../views/teacher/CareerPlan.vue') },
         { path: 'safety-monitoring', name: 'TeacherSafetyMonitoring', meta: { title: '安全监控中心' }, component: () => import('../views/teacher/SafetyMonitoring.vue') },
-        { path: 'communication', name: 'TeacherCommunication', meta: { title: '沟通互动' }, component: () => import('../views/teacher/Communication.vue') }
+        { path: 'communication', name: 'TeacherCommunication', meta: { title: '沟通互动' }, component: () => import('../views/teacher/Communication.vue') },
+        { path: 'mid-term', name: 'TeacherMidTerm', meta: { title: '中期鉴定收集' }, component: () => import('../views/teacher/MidTermManagement.vue') }
       ]
     },
     {
