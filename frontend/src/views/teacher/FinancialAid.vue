@@ -28,10 +28,13 @@
       </div>
       <div class="w-px h-10 bg-gray-100 flex-shrink-0"></div>
       <div class="flex items-center gap-4 flex-1 justify-end min-w-0">
-        <span class="text-xs text-gray-400">当前批次</span>
+        <div class="flex flex-col items-end min-w-0">
+          <span class="text-sm font-bold text-gray-900 truncate">{{ currentBatch }}</span>
+          <span class="text-xs text-gray-400 mt-0.5">{{ currentBatchTime }}</span>
+        </div>
         <el-dropdown trigger="click" @command="handleBatchChange">
-          <button class="flex-shrink-0 px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
-            {{ currentBatch }} <el-icon><ArrowDown /></el-icon>
+          <button class="flex-shrink-0 px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
+            {{ currentBatch === '国家励志奖学金' && isInitial ? '切换批次' : '切换批次' }} <el-icon><ArrowDown /></el-icon>
           </button>
           <template #dropdown>
             <el-dropdown-menu>
@@ -43,9 +46,6 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <button class="flex-shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors flex items-center gap-1.5">
-          <el-icon :size="14"><Download /></el-icon>导出数据
-        </button>
       </div>
     </div>
 
@@ -122,16 +122,10 @@
             </div>
             <!-- 获得的荣誉 -->
             <div class="pt-3 border-t border-gray-100">
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">获得的荣誉</p>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">获得的荣誉</p>
               <div v-if="selectedStudent.honors.length === 0" class="text-xs text-gray-400">暂无荣誉记录</div>
-              <div v-else class="space-y-2">
-                <div v-for="(h, i) in selectedStudent.honors" :key="i" class="flex items-start gap-2 bg-amber-50 rounded-lg px-3 py-2">
-                  <el-icon :size="14" class="text-amber-500 mt-0.5 flex-shrink-0"><Medal /></el-icon>
-                  <div>
-                    <p class="text-sm font-semibold text-gray-800">{{ h.name }}</p>
-                    <p class="text-xs text-gray-400">{{ h.level }} · {{ h.date }}</p>
-                  </div>
-                </div>
+              <div v-else class="space-y-1.5">
+                <p v-for="(h, i) in selectedStudent.honors" :key="i" class="text-sm text-gray-700">{{ h.name }}<span class="text-xs text-gray-400 ml-2">{{ h.level }} · {{ h.date }}</span></p>
               </div>
             </div>
             <!-- 审核意见 -->
@@ -158,12 +152,17 @@
                     class="w-full h-full border-none outline-none bg-transparent resize-none text-sm text-gray-700 placeholder-gray-300"></textarea>
         </div>
         <div class="px-4 py-4 border-t border-gray-100 flex-shrink-0 flex items-center gap-2">
-          <button @click="review('REJECTED')"
-                  class="flex-1 py-2.5 border-2 border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
-                  :disabled="!selectedStudent || selectedStudent.status !== '待审核'">不通过</button>
-          <button @click="review('APPROVED')"
-                  class="flex-1 py-2.5 bg-gray-900 rounded-xl text-sm font-bold text-white hover:bg-gray-700 transition-colors"
-                  :disabled="!selectedStudent || selectedStudent.status !== '待审核'">通过</button>
+          <template v-if="selectedStudent?.status === '待审核'">
+            <button @click="review('REJECTED')"
+                    class="flex-1 py-2.5 border-2 border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors">不通过</button>
+            <button @click="review('APPROVED')"
+                    class="flex-1 py-2.5 bg-gray-900 rounded-xl text-sm font-bold text-white hover:bg-gray-700 transition-colors">通过</button>
+          </template>
+          <template v-else-if="selectedStudent?.status === '已通过' || selectedStudent?.status === '未通过'">
+            <button @click="reReview"
+                    class="flex-1 py-2.5 border-2 border-blue-200 rounded-xl text-sm font-bold text-blue-600 hover:bg-blue-50 transition-colors">重新审批</button>
+          </template>
+          <div v-else class="flex-1 text-center text-xs text-gray-400">请选择学生</div>
         </div>
       </div>
     </div>
@@ -173,7 +172,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, User, Download, ArrowDown, Medal } from '@element-plus/icons-vue'
+import { Search, User, ArrowDown } from '@element-plus/icons-vue'
 
 const searchText = ref('')
 const activeFilter = ref('all')
@@ -252,6 +251,16 @@ const stats = computed(() => [
   { label: '未通过', value: students.value.filter(s => s.status === '未通过').length, color: 'text-red-500' },
 ])
 
+const BATCH_TIMES = {
+  '国家奖学金': '2025年秋季学期奖学金评定',
+  '国家励志奖学金': '2025年秋季学期奖学金评定',
+  '国家助学金': '2025年秋季学期助学金评定',
+  '学校奖学金': '2026年春季学期奖学金评定',
+  '学校助学金': '2026年春季学期助学金评定',
+}
+
+const currentBatchTime = computed(() => BATCH_TIMES[currentBatch.value] || '')
+
 const review = (status) => {
   if (!selectedStudent.value) { ElMessage.warning('请先选择学生'); return }
   selectedStudent.value.status = status === 'APPROVED' ? '已通过' : '未通过'
@@ -260,6 +269,16 @@ const review = (status) => {
   selectedStudent.value.reviewTime = new Date().toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
   ElMessage.success(status === 'APPROVED' ? '已通过' : '已驳回')
   reviewComment.value = ''
+}
+
+const reReview = () => {
+  if (!selectedStudent.value) return
+  selectedStudent.value.status = '待审核'
+  selectedStudent.value.reviewComment = ''
+  selectedStudent.value.reviewerName = ''
+  selectedStudent.value.reviewTime = ''
+  reviewComment.value = ''
+  ElMessage.success('已退回待审核列表')
 }
 
 const statusColor = (s) => ({ '待审核':'text-orange-500', '已通过':'text-green-600', '未通过':'text-red-500' }[s] || 'text-gray-400')
