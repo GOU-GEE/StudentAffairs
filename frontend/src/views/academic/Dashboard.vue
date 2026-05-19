@@ -16,9 +16,9 @@
       <div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15">
         <h3 class="text-[1.125rem] font-semibold text-on-surface mb-4">快捷操作</h3>
         <div class="grid grid-cols-2 gap-3">
-          <button @click="$router.push('/academic/grades')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><DataAnalysis /></el-icon><span class="text-sm font-semibold text-on-surface">成绩管理</span><span class="text-xs text-secondary">录入与导入</span></button>
-          <button @click="$router.push('/academic/warnings')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><Warning /></el-icon><span class="text-sm font-semibold text-on-surface">学业预警</span><span class="text-xs text-secondary">预警配置</span></button>
-          <button @click="$router.push('/academic/courses')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><Reading /></el-icon><span class="text-sm font-semibold text-on-surface">课程管理</span><span class="text-xs text-secondary">课程安排</span></button>
+          <button @click="router.push('/academic/grades')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><DataAnalysis /></el-icon><span class="text-sm font-semibold text-on-surface">成绩管理</span><span class="text-xs text-secondary">录入与导入</span></button>
+          <button @click="router.push('/academic/warnings')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><Warning /></el-icon><span class="text-sm font-semibold text-on-surface">学业预警</span><span class="text-xs text-secondary">预警配置</span></button>
+          <button @click="router.push('/academic/courses')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><Reading /></el-icon><span class="text-sm font-semibold text-on-surface">课程管理</span><span class="text-xs text-secondary">课程安排</span></button>
           <button class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15"><el-icon :size="28" color="#8b5cf6"><TrendCharts /></el-icon><span class="text-sm font-semibold text-on-surface">统计分析</span><span class="text-xs text-secondary">学业数据</span></button>
         </div>
       </div>
@@ -36,17 +36,41 @@
   </div>
 </template>
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Download, DataAnalysis, Warning, Reading, TrendCharts } from '@element-plus/icons-vue'
-const stats = [
-  { label: '学生总数', value: '3,560', desc: '覆盖 12 个学院' },
-  { label: '课程总数', value: 48, desc: '必修 32 + 选修 16' },
-  { label: '预警学生', value: 8, desc: '严重 2 + 一般 6' },
-  { label: '平均 GPA', value: '3.05', desc: '较上学期 +0.12' },
-]
-const warningStudents = [
-  { name: '李四', studentId: '202301043', className: '软工2班', failedCount: 2, level: '严重' },
-  { name: '钱七', studentId: '202301050', className: '软工1班', failedCount: 3, level: '严重' },
-  { name: '周八', studentId: '202301047', className: '计科3班', failedCount: 1, level: '一般' },
-  { name: '吴九', studentId: '202301051', className: '网工2班', failedCount: 1, level: '一般' },
-]
+import axios from 'axios'
+
+const router = useRouter()
+const API = 'http://localhost:8080/api/academic'
+
+const stats = ref([
+  { label: '学生总数', value: '--', desc: '' },
+  { label: '课程总数', value: '--', desc: '' },
+  { label: '预警学生', value: '--', desc: '' },
+  { label: '平均分', value: '--', desc: '' },
+])
+const warningStudents = ref([])
+
+onMounted(async () => {
+  try {
+    const dashRes = await axios.get(`${API}/dashboard`)
+    if (dashRes.data.code === 200) {
+      const d = dashRes.data.data
+      stats.value = [
+        { label: '学生总数', value: d.totalStudents, desc: '已录入成绩的学生' },
+        { label: '课程总数', value: d.totalCourses || '--', desc: '' },
+        { label: '预警学生', value: d.warningCount, desc: '' },
+        { label: '平均分', value: d.avgScore, desc: '全体学生均分' },
+      ]
+      warningStudents.value = (d.recentWarnings || []).map(w => ({
+        name: w.studentName,
+        studentId: w.studentId,
+        className: w.className,
+        failedCount: '--',
+        level: w.isWarning ? '一般' : '正常',
+      }))
+    }
+  } catch (e) { console.error(e) }
+})
 </script>
