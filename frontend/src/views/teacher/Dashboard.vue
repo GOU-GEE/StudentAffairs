@@ -1,120 +1,552 @@
 <template>
-  <div class="h-full flex flex-col">
-    <!-- Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
+  <div class="h-full flex flex-col gap-6 font-sans">
+    
+    <!-- 1. Top Five Stats Cards Row -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
       
-      <!-- 1. Stats Overview -->
-      <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div v-for="(stat, idx) in stats" :key="idx" class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_2px_8px_rgba(25,28,30,0.02)] hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-[0.875rem] font-semibold text-secondary uppercase tracking-wider">{{ stat.label }}</span>
-            <span class="text-xs px-2 py-0.5 rounded-full font-bold" :class="stat.trend > 0 ? 'text-green-600 bg-green-100' : 'text-error bg-error-container'">
-              {{ stat.trend > 0 ? '+' : '' }}{{ stat.trend }}%
-            </span>
+      <!-- Card 1: 所带学生 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100/80 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex items-center justify-between relative overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div class="z-10">
+          <span class="text-xs font-semibold text-gray-500 block mb-1">所带学生</span>
+          <h3 class="text-3xl font-extrabold text-gray-800 leading-tight">{{ dashboardStats.totalStudents }}</h3>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">较上周 +5</span>
           </div>
-          <h3 class="text-[2.5rem] font-bold text-on-surface mt-2">{{ stat.value }}</h3>
-          
-          <div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 group-hover:opacity-20 transition-all duration-300">
-             <el-icon :size="80" :color="stat.iconColor"><component :is="stat.icon" /></el-icon>
-          </div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center z-10">
+          <el-icon :size="20"><User /></el-icon>
+        </div>
+        <div class="absolute -right-4 -bottom-6 text-gray-100/40 pointer-events-none group-hover:scale-110 transition-transform duration-300">
+          <el-icon :size="80"><User /></el-icon>
         </div>
       </div>
 
-      <div class="md:col-span-12 flex items-center gap-3 mb-4">
-        <button @click="exportData" class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
-          <el-icon :size="14"><Download /></el-icon>导出报表
-        </button>
-        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-          <el-icon :size="14"><UploadFilled /></el-icon>导入数据
-        </button>
-      </div>
-
-      <!-- 2. Focus Students (重点关注) -->
-      <div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] flex flex-col h-[450px]">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight">近期关注学生</h3>
-          <button class="text-[0.875rem] font-semibold text-secondary hover:text-primary transition-colors">查看全部</button>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-          <div v-for="i in 5" :key="i" class="bg-surface rounded-xl p-4 cursor-pointer hover:bg-surface-container transition-colors border border-outline-variant/15 flex gap-4 items-center">
-            <div class="relative">
-              <div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant">
-                <img :src="`https://i.pravatar.cc/150?u=${i}`" class="w-full h-full object-cover">
-              </div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <h4 class="font-semibold text-[0.875rem] text-on-surface">张三 {{ i }}</h4>
-                <span class="text-[0.6875rem] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/30">软工2班</span>
-              </div>
-              <p class="text-[0.875rem] text-secondary truncate">学号: 2023000{{ i }} | 近期缺课次数异常</p>
-            </div>
-            <div>
-              <span v-if="i === 1" class="text-[0.6875rem] font-bold px-2 py-1 rounded bg-error-container text-error uppercase border border-error/20">学业预警</span>
-              <span v-else-if="i === 2" class="text-[0.6875rem] font-bold px-2 py-1 rounded bg-orange-100 text-orange-600 uppercase border border-orange-200">违纪记录</span>
-              <span v-else class="text-[0.6875rem] font-bold px-2 py-1 rounded bg-blue-100 text-tertiary-container uppercase border border-blue-200">困难审核</span>
-            </div>
+      <!-- Card 2: 请假申请 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100/80 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex items-center justify-between relative overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div class="z-10">
+          <span class="text-xs font-semibold text-gray-500 block mb-1">请假申请</span>
+          <h3 class="text-3xl font-extrabold text-gray-800 leading-tight">{{ dashboardStats.pendingLeaves }}</h3>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">待处理</span>
           </div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center z-10">
+          <el-icon :size="20"><Document /></el-icon>
+        </div>
+        <div class="absolute -right-4 -bottom-6 text-gray-100/40 pointer-events-none group-hover:scale-110 transition-transform duration-300">
+          <el-icon :size="80"><Document /></el-icon>
         </div>
       </div>
 
-      <!-- 3. AI Assistant Panel (AI 辅导员分身) -->
-      <div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_12px_40px_rgba(25,28,30,0.06)] flex flex-col h-[450px] relative">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-ai-primary/10 rounded-full blur-[40px] pointer-events-none"></div>
-        <div class="flex items-center gap-2 mb-6 relative z-10">
-          <div class="w-8 h-8 rounded-lg bg-ai-primary text-white flex items-center justify-center shadow-lg shadow-ai-primary/30">
-            <el-icon class="animate-pulse"><MagicStick /></el-icon>
-          </div>
-          <h3 class="text-[1.375rem] font-semibold text-on-surface tracking-tight">AI 辅导员分身</h3>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar text-[0.875rem] relative z-10" ref="chatBox">
-          <div v-for="(msg, idx) in chatMessages" :key="idx" 
-               :class="['rounded-xl p-3 inline-block max-w-[85%] whitespace-pre-wrap leading-relaxed', 
-                        msg.isUser ? 'bg-primary text-on-primary-fixed rounded-tr-none self-end ml-auto border border-primary' : 'bg-surface-container rounded-tl-none border border-outline-variant/20']">
-            {{ msg.text }}
-          </div>
-          <div v-if="isTyping" class="bg-surface-container rounded-xl p-3 rounded-tl-none border border-outline-variant/20 inline-flex items-center gap-2">
-            <el-icon class="animate-spin text-ai-primary"><Loading /></el-icon>
-            <span class="text-secondary text-[0.75rem]">正在调用大模型生成...</span>
+      <!-- Card 3: 预警学生 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100/80 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex items-center justify-between relative overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div class="z-10">
+          <span class="text-xs font-semibold text-gray-500 block mb-1">预警学生</span>
+          <h3 class="text-3xl font-extrabold text-gray-800 leading-tight">{{ dashboardStats.warningCount }}</h3>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">待关注</span>
           </div>
         </div>
+        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center z-10">
+          <el-icon :size="20"><Warning /></el-icon>
+        </div>
+        <div class="absolute -right-4 -bottom-6 text-gray-100/40 pointer-events-none group-hover:scale-110 transition-transform duration-300">
+          <el-icon :size="80"><Warning /></el-icon>
+        </div>
+      </div>
 
-        <div class="mt-4 relative z-10">
-          <input type="text" v-model="userInput" @keyup.enter="sendMessage" placeholder="输入指令 (如: 分析本班成绩分布)..." 
-                 class="w-full bg-surface border border-outline-variant/30 rounded-xl px-4 py-3 pr-12 text-[0.875rem] focus:outline-none focus:ring-1 focus:ring-ai-primary focus:border-ai-primary transition-all text-on-surface placeholder-outline shadow-inner">
-          <button @click="sendMessage" :disabled="isTyping || !userInput.trim()" 
-                  class="absolute right-1.5 top-1.5 p-2 rounded-lg bg-ai-primary text-white hover:bg-ai-primary-light transition-colors disabled:opacity-50 shadow-md shadow-ai-primary/20">
-            <el-icon><Position /></el-icon>
-          </button>
+      <!-- Card 4: 待办事务 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100/80 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex items-center justify-between relative overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div class="z-10">
+          <span class="text-xs font-semibold text-gray-500 block mb-1">待办事务</span>
+          <h3 class="text-3xl font-extrabold text-gray-800 leading-tight">15</h3>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">待处理</span>
+          </div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center z-10">
+          <el-icon :size="20"><Calendar /></el-icon>
+        </div>
+        <div class="absolute -right-4 -bottom-6 text-gray-100/40 pointer-events-none group-hover:scale-110 transition-transform duration-300">
+          <el-icon :size="80"><Calendar /></el-icon>
+        </div>
+      </div>
+
+      <!-- Card 5: 本周活动 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100/80 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex items-center justify-between relative overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div class="z-10">
+          <span class="text-xs font-semibold text-gray-500 block mb-1">本周活动</span>
+          <h3 class="text-3xl font-extrabold text-gray-800 leading-tight">3</h3>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">已发布</span>
+          </div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center z-10">
+          <el-icon :size="20"><Trophy /></el-icon>
+        </div>
+        <div class="absolute -right-4 -bottom-6 text-gray-100/40 pointer-events-none group-hover:scale-110 transition-transform duration-300">
+          <el-icon :size="80"><Trophy /></el-icon>
         </div>
       </div>
 
     </div>
+
+    <!-- 2. Bento Grid Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left side grid: 4 balanced cards (col-span-8) -->
+      <div class="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Card 1: 重要提醒 -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col justify-between h-[250px] hover:shadow-md transition-all duration-300">
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">重要提醒</h3>
+            </div>
+            
+            <div class="space-y-3.5">
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-gray-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  <span>有 3 名学生触发学业预警</span>
+                </div>
+                <span class="text-gray-400">10 分钟前</span>
+              </div>
+              
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-gray-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>有 2 名学生提交了心理咨询预约</span>
+                </div>
+                <span class="text-gray-400">25 分钟前</span>
+              </div>
+              
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-gray-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                  <span>春季运动会报名进行中</span>
+                </div>
+                <span class="text-gray-400">1 小时前</span>
+              </div>
+              
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-gray-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  <span>毕业生就业材料提交截止提醒</span>
+                </div>
+                <span class="text-gray-400">3 小时前</span>
+              </div>
+            </div>
+          </div>
+          
+          <button @click="navigateTo('/teacher/communication')" class="w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 mt-2 flex items-center justify-center gap-1 group">
+            查看全部提醒
+            <el-icon class="group-hover:translate-x-0.5 transition-transform"><ArrowRight /></el-icon>
+          </button>
+        </div>
+
+        <!-- Card 2: 学生状态概览 -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col justify-between h-[250px] hover:shadow-md transition-all duration-300">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">学生状态概览</h3>
+              <el-dropdown trigger="click">
+                <span class="text-xs text-gray-400 cursor-pointer flex items-center gap-0.5 hover:text-gray-600 transition-colors">
+                  本学期 <el-icon :size="10"><ArrowRight class="rotate-90" /></el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>本学期</el-dropdown-item>
+                    <el-dropdown-item>上学期</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 mt-2">
+              <!-- Center absolute text overlay wrapper -->
+              <div class="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
+                <div ref="statusChartRef" class="w-full h-full"></div>
+                <div class="absolute flex flex-col items-center justify-center pointer-events-none">
+                  <span class="text-xl font-extrabold text-gray-800 leading-none">{{ dashboardStats.totalStudents }}</span>
+                  <span class="text-[9px] text-gray-400 mt-1 font-medium">总人数</span>
+                </div>
+              </div>
+
+              <!-- Compact Legend Details -->
+              <div class="flex-1 grid grid-cols-2 gap-x-2 gap-y-2 text-[10px] text-gray-500 font-medium">
+                <div class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span>
+                  <span class="truncate">正常</span>
+                  <span class="text-gray-800 font-bold ml-auto">186人</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] bg-blue-50 text-blue-500 px-1 rounded font-semibold ml-auto">75.0%</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0"></span>
+                  <span class="truncate">学业预警</span>
+                  <span class="text-gray-800 font-bold ml-auto">32人</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] bg-orange-50 text-orange-500 px-1 rounded font-semibold ml-auto">12.9%</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></span>
+                  <span class="truncate">心理关注</span>
+                  <span class="text-gray-800 font-bold ml-auto">18人</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] bg-purple-50 text-purple-500 px-1 rounded font-semibold ml-auto">7.3%</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></span>
+                  <span class="truncate">经济困难</span>
+                  <span class="text-gray-800 font-bold ml-auto">12人</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] bg-rose-50 text-rose-500 px-1 rounded font-semibold ml-auto">4.8%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button @click="navigateTo('/teacher/academic-warning')" class="w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center justify-center gap-1 group">
+            查看详情
+            <el-icon class="group-hover:translate-x-0.5 transition-transform"><ArrowRight /></el-icon>
+          </button>
+        </div>
+
+        <!-- Card 3: 预警情况分布 -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col justify-between h-[250px] hover:shadow-md transition-all duration-300">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">预警情况分布</h3>
+              <el-dropdown trigger="click">
+                <span class="text-xs text-gray-400 cursor-pointer flex items-center gap-0.5 hover:text-gray-600 transition-colors">
+                  本学期 <el-icon :size="10"><ArrowRight class="rotate-90" /></el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>本学期</el-dropdown-item>
+                    <el-dropdown-item>上学期</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+
+            <!-- Custom Elegant Progress List -->
+            <div class="space-y-3 mt-1.5">
+              
+              <!-- Progress 1: 学业预警 -->
+              <div class="flex flex-col gap-1 text-[11px] font-medium text-gray-500">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                    <span>学业预警</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">32 人</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                  <div class="h-full bg-orange-500 rounded-full transition-all duration-500" style="width: 64%"></div>
+                </div>
+              </div>
+
+              <!-- Progress 2: 心理预警 -->
+              <div class="flex flex-col gap-1 text-[11px] font-medium text-gray-500">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                    <span>心理预警</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">18 人</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                  <div class="h-full bg-purple-500 rounded-full transition-all duration-500" style="width: 36%"></div>
+                </div>
+              </div>
+
+              <!-- Progress 3: 违纪预警 -->
+              <div class="flex flex-col gap-1 text-[11px] font-medium text-gray-500">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                    <span>违纪预警</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">8 人</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                  <div class="h-full bg-rose-500 rounded-full transition-all duration-500" style="width: 16%"></div>
+                </div>
+              </div>
+
+              <!-- Progress 4: 就业预警 -->
+              <div class="flex flex-col gap-1 text-[11px] font-medium text-gray-500">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    <span>就业预警</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">6 人</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                  <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 12%"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <button @click="navigateTo('/teacher/academic-warning')" class="w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center justify-center gap-1 group">
+            查看预警详情
+            <el-icon class="group-hover:translate-x-0.5 transition-transform"><ArrowRight /></el-icon>
+          </button>
+        </div>
+
+        <!-- Card 4: 事务处理进度 -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col justify-between h-[250px] hover:shadow-md transition-all duration-300">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">事务处理进度</h3>
+              <el-dropdown trigger="click">
+                <span class="text-xs text-gray-400 cursor-pointer flex items-center gap-0.5 hover:text-gray-600 transition-colors">
+                  本周 <el-icon :size="10"><ArrowRight class="rotate-90" /></el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>本周</el-dropdown-item>
+                    <el-dropdown-item>本月</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 mt-2">
+              <!-- Gauge Center layout -->
+              <div class="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
+                <div ref="progressChartRef" class="w-full h-full"></div>
+                <div class="absolute flex flex-col items-center justify-center pointer-events-none">
+                  <span class="text-xl font-extrabold text-gray-800 leading-none">72%</span>
+                  <span class="text-[9px] text-gray-400 mt-1 font-medium">已完成</span>
+                </div>
+              </div>
+
+              <!-- Task stats list -->
+              <div class="flex-1 space-y-2.5 text-[11px] text-gray-500 font-medium">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>已完成</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">36 件</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    <span>进行中</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">14 件</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                    <span>待处理</span>
+                  </div>
+                  <span class="text-gray-800 font-bold">10 件</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button @click="navigateTo('/teacher/financial-aid')" class="w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center justify-center gap-1 group">
+            查看全部事务
+            <el-icon class="group-hover:translate-x-0.5 transition-transform"><ArrowRight /></el-icon>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Right Column: AI Counselor Assistant (col-span-4) -->
+      <div class="md:col-span-4 bg-gradient-to-br from-indigo-50/40 via-white to-purple-50/20 rounded-2xl p-6 border border-indigo-100/40 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col h-[524px] justify-between relative overflow-hidden group hover:shadow-md transition-all duration-300">
+        <!-- Glow top corner decorator -->
+        <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+
+        <div>
+          <!-- Header and Custom AI Avatar -->
+          <div class="flex items-start justify-between mb-4 relative z-10">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+                <el-icon class="animate-pulse"><MagicStick /></el-icon>
+              </div>
+              <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">AI 辅导员助手</h3>
+            </div>
+            
+            <!-- Sleek SVG 3D AI Robot -->
+            <div class="relative w-12 h-12 flex-shrink-0">
+              <div class="absolute inset-0 bg-indigo-400/15 rounded-full blur-sm animate-pulse"></div>
+              <svg class="w-full h-full relative" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="22" fill="#EEF2FF"/>
+                <rect x="20" y="24" width="24" height="15" rx="4" fill="#312E81"/>
+                <circle cx="27" cy="31" r="2.5" fill="#38BDF8"/>
+                <circle cx="37" cy="31" r="2.5" fill="#38BDF8"/>
+                <path d="M28 35H36" stroke="#EEF2FF" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M14 32C14 22.0589 22.0589 14 32 14C41.9411 14 50 22.0589 50 32" stroke="#6366F1" stroke-width="3" stroke-linecap="round"/>
+                <rect x="10" y="28" width="5" height="8" rx="2.5" fill="#6366F1"/>
+                <rect x="49" y="28" width="5" height="8" rx="2.5" fill="#6366F1"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Welcome Screen (Mutually Exclusive with Chat Stream) -->
+          <div v-if="showWelcome" class="space-y-4 relative z-10">
+            <div class="space-y-1">
+              <h4 class="font-extrabold text-[0.875rem] text-gray-800">您好，我是您的 AI 助手</h4>
+              <p class="text-[0.75rem] text-gray-400 leading-relaxed">
+                我可以帮助分析学生数据、生成工作建议、解答业务问题，让您的工作更高效~
+              </p>
+            </div>
+
+            <!-- Pre-filled prompt cards grid -->
+            <div class="grid grid-cols-1 gap-2.5 max-h-[290px] overflow-y-auto pr-1.5 custom-scrollbar">
+              <div v-for="(p, idx) in quickPrompts" :key="idx" 
+                   @click="selectPrompt(p.prompt)"
+                   class="bg-white/80 backdrop-blur-sm border rounded-xl p-3 cursor-pointer transition-all duration-300 flex items-center justify-between group/card shadow-[0_2px_10px_rgba(0,0,0,0.01)]"
+                   :class="p.color">
+                <div class="flex-1 min-w-0 pr-2">
+                  <div class="flex items-center gap-1.5 mb-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+                    <h5 class="font-bold text-[0.75rem] text-gray-700 truncate">{{ p.title }}</h5>
+                  </div>
+                  <p class="text-[10px] text-gray-400 truncate">{{ p.desc }}</p>
+                </div>
+                <el-icon class="text-indigo-400 group-hover/card:translate-x-0.5 group-hover/card:text-indigo-600 transition-all" :size="12"><ArrowRight /></el-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Console State -->
+          <div v-else class="flex flex-col h-[380px] bg-white/60 border border-indigo-50/50 backdrop-blur-sm rounded-xl p-3 relative z-10">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-2 flex-shrink-0">
+              <span class="text-[10px] font-bold text-indigo-600">服务问答会话</span>
+              <button @click="resetToWelcome" class="text-[9px] font-bold text-gray-400 hover:text-gray-600 hover:underline">返回首页</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto space-y-3.5 pr-1.5 custom-scrollbar" ref="chatBox">
+              <div v-for="(msg, idx) in chatMessages" :key="idx" 
+                   :class="['rounded-xl px-3 py-2 text-xs leading-relaxed max-w-[85%] whitespace-pre-wrap flex flex-col', 
+                            msg.isUser ? 'bg-indigo-600 text-white rounded-tr-none ml-auto border border-indigo-600' : 'bg-gray-50 border border-gray-100 text-gray-700 rounded-tl-none']">
+                {{ msg.text }}
+              </div>
+              
+              <!-- Typing Status -->
+              <div v-if="isTyping" class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 rounded-tl-none inline-flex items-center gap-2 max-w-[80%]">
+                <el-icon class="animate-spin text-indigo-500"><Loading /></el-icon>
+                <span class="text-gray-400 text-[10px]">AI 助手正在为您分析并生成建议...</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="relative z-10 mt-3 pt-3 border-t border-gray-100/50">
+          <input type="text" 
+                 v-model="userInput" 
+                 @keyup.enter="sendMessage" 
+                 placeholder="输入您的指令或提问..." 
+                 class="w-full bg-white border border-gray-200/80 rounded-xl pl-4 pr-12 py-3 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-gray-800 placeholder-gray-400 shadow-inner">
+          <button @click="sendMessage" 
+                  :disabled="isTyping || !userInput.trim()" 
+                  class="absolute right-1.5 top-[18px] p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:bg-gray-300 shadow-md shadow-indigo-100 flex items-center justify-center">
+            <el-icon :size="12"><Promotion /></el-icon>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position } from '@element-plus/icons-vue'
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Calendar, ArrowRight, Promotion } from '@element-plus/icons-vue'
+import * as echarts from 'echarts'
 import request from '@/utils/request'
-import { exportToCSV } from '@/utils/export'
 
-const stats = ref([
-  { label: 'Total Students', value: '2,405', icon: User, iconColor: '#316bf3', trend: 2.5 },
-  { label: 'Weekly Incidents', value: '12', icon: Warning, iconColor: '#ba1a1a', trend: -15.2 },
-  { label: 'Pending Approvals', value: '38', icon: Document, iconColor: '#f59e0b', trend: 8.1 },
-  { label: 'Awards & Honors', value: '156', icon: Trophy, iconColor: '#10b981', trend: 12.5 },
-])
+const router = useRouter()
 
+// Stats state with fallbacks
+const dashboardStats = ref({
+  totalStudents: 248,
+  pendingLeaves: 8,
+  warningCount: 12
+})
+
+// Quick prompts configured exactly from user mock
+const quickPrompts = [
+  {
+    title: '学生画像分析',
+    desc: '多维度分析学生特点、行为偏好、成长轨迹',
+    prompt: '请帮我分析本班学生的画像特征，包括行为偏好与成长轨迹。',
+    color: 'border-indigo-100/50 hover:bg-indigo-50/15'
+  },
+  {
+    title: '学业预警分析',
+    desc: '智能识别学业风险，提供干预建议',
+    prompt: '如何对本班级中触发学业预警的学生进行干预？请提供建议。',
+    color: 'border-blue-100/50 hover:bg-blue-50/15'
+  },
+  {
+    title: '谈心谈话建议',
+    desc: '提供谈心话题建议和沟通策略',
+    prompt: '请为挂科较多的学生提供谈心谈话的主题建议与沟通策略。',
+    color: 'border-purple-100/50 hover:bg-purple-50/15'
+  },
+  {
+    title: '活动方案生成',
+    desc: '根据需求生成活动方案和流程',
+    prompt: '请帮我生成一份针对大二学年的心理主题班会活动策划方案。',
+    color: 'border-pink-100/50 hover:bg-pink-50/15'
+  }
+]
+
+// Chat states
 const userInput = ref('')
 const isTyping = ref(false)
 const chatBox = ref(null)
+const showWelcome = ref(true)
 const chatMessages = ref([
-  { text: '您好，我是您的专属数字分身。系统检测到张三1近期存在挂科风险，是否需要我为您生成谈话大纲？', isUser: false }
+  { text: '您好，我是您的 AI 助理。我可以帮您分析本班学生特征、生成学业干预方案、或者为您草拟谈心谈话指南。您可以在左侧快捷菜单点选，或在此直接输入您的问题。', isUser: false }
 ])
+
+// Chart DOM refs
+const statusChartRef = ref(null)
+const progressChartRef = ref(null)
+
+let statusChartInstance = null
+let progressChartInstance = null
+
+// Navigation router helper
+const navigateTo = (path) => {
+  router.push(path)
+}
+
+// Pre-fill prompt click
+const selectPrompt = (promptText) => {
+  userInput.value = promptText
+  showWelcome.value = false
+  sendMessage()
+}
+
+// Reset chat pane
+const resetToWelcome = () => {
+  showWelcome.value = true
+}
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -123,10 +555,12 @@ const scrollToBottom = async () => {
   }
 }
 
+// AI Message Submission
 const sendMessage = async () => {
   if (!userInput.value.trim() || isTyping.value) return
   
   const text = userInput.value
+  showWelcome.value = false
   chatMessages.value.push({ text, isUser: true })
   userInput.value = ''
   isTyping.value = true
@@ -140,29 +574,140 @@ const sendMessage = async () => {
       chatMessages.value.push({ text: 'AI 服务遇到问题：' + response.data.msg, isUser: false })
     }
   } catch (error) {
-    chatMessages.value.push({ text: '网络请求失败，请确保后端服务已启动。', isUser: false })
+    chatMessages.value.push({ text: '网络请求超时，请确保后端服务正常运行中。', isUser: false })
   } finally {
     isTyping.value = false
     scrollToBottom()
   }
 }
 
-onMounted(async () => {
+// Donut chart generator
+const initStatusChart = () => {
+  if (!statusChartRef.value) return
+  if (statusChartInstance) {
+    statusChartInstance.dispose()
+  }
+  statusChartInstance = echarts.init(statusChartRef.value)
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b}: {c}人 ({d}%)'
+    },
+    series: [
+      {
+        name: '学生状态',
+        type: 'pie',
+        radius: ['68%', '90%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 4,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: { show: false },
+        labelLine: { show: false },
+        data: [
+          { value: 186, name: '正常', itemStyle: { color: '#3b82f6' } },
+          { value: 32, name: '学业预警', itemStyle: { color: '#f97316' } },
+          { value: 18, name: '心理关注', itemStyle: { color: '#a855f7' } },
+          { value: 12, name: '经济困难', itemStyle: { color: '#f43f5e' } }
+        ]
+      }
+    ]
+  }
+  statusChartInstance.setOption(option)
+}
+
+// Semi-donut Progress chart generator
+const initProgressChart = () => {
+  if (!progressChartRef.value) return
+  if (progressChartInstance) {
+    progressChartInstance.dispose()
+  }
+  progressChartInstance = echarts.init(progressChartRef.value)
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b}: {c}件 ({d}%)'
+    },
+    series: [
+      {
+        name: '事务进度',
+        type: 'pie',
+        radius: ['68%', '90%'],
+        startAngle: 180, // Half circle
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 4,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: { show: false },
+        labelLine: { show: false },
+        data: [
+          { value: 36, name: '已完成', itemStyle: { color: '#10b981' } },
+          { value: 14, name: '进行中', itemStyle: { color: '#3b82f6' } },
+          { value: 10, name: '待处理', itemStyle: { color: '#e2e8f0' } }
+        ]
+      }
+    ]
+  }
+  progressChartInstance.setOption(option)
+}
+
+// Handle resizing dynamically
+const handleResize = () => {
+  if (statusChartInstance) statusChartInstance.resize()
+  if (progressChartInstance) progressChartInstance.resize()
+}
+
+// Load real statistics
+const loadDashboardStats = async () => {
   try {
-    const res = await request.get('/api/academic/dashboard')
-    if (res.data.code === 200) {
-      const d = res.data.data
-      stats.value[0].value = String(d.totalStudents || 0)
-      stats.value[2].value = String(d.warningCount || 0)
+    const [academicRes, applicationsRes] = await Promise.all([
+      request.get('/api/academic/dashboard'),
+      request.get('/api/applications/pending')
+    ])
+    if (academicRes.data.code === 200) {
+      const d = academicRes.data.data
+      dashboardStats.value.totalStudents = d.totalStudents || 248
+      dashboardStats.value.warningCount = d.warningCount || 12
     }
-  } catch(e) {}
+    if (applicationsRes.data.code === 200) {
+      dashboardStats.value.pendingLeaves = applicationsRes.data.data.length || 8
+    }
+  } catch (e) {
+    console.warn('Dashboard stats fallback utilized successfully')
+  }
+}
+
+onMounted(async () => {
+  await loadDashboardStats()
+  initStatusChart()
+  initProgressChart()
+  window.addEventListener('resize', handleResize)
 })
 
-const exportData = () => {
-  exportToCSV('辅导员工作报表.csv',
-    ['指标','数值','变化趋势'],
-    stats.value.map(s => ({ '指标':s.label, '数值':s.value, '变化趋势':(s.trend > 0 ? '+' : '') + s.trend + '%' }))
-  )
-  ElMessage.success('导出成功')
-}
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+  if (statusChartInstance) statusChartInstance.dispose()
+  if (progressChartInstance) progressChartInstance.dispose()
+})
 </script>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.3);
+}
+</style>
