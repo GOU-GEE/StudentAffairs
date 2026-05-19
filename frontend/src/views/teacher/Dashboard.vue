@@ -103,10 +103,10 @@ import { ref, nextTick } from 'vue'
 import request from '@/utils/request'
 
 const stats = ref([
-  { label: 'Total Students', value: '2,405', icon: 'User', iconColor: '#316bf3', trend: 2.5 },
-  { label: 'Weekly Incidents', value: '12', icon: 'Warning', iconColor: '#ba1a1a', trend: -15.2 },
-  { label: 'Pending Approvals', value: '38', icon: 'Document', iconColor: '#f59e0b', trend: 8.1 },
-  { label: 'Awards & Honors', value: '156', icon: 'Trophy', iconColor: '#10b981', trend: 12.5 },
+  { label: 'Total Students', value: '2,405', icon: User, iconColor: '#316bf3', trend: 2.5 },
+  { label: 'Weekly Incidents', value: '12', icon: Warning, iconColor: '#ba1a1a', trend: -15.2 },
+  { label: 'Pending Approvals', value: '38', icon: Document, iconColor: '#f59e0b', trend: 8.1 },
+  { label: 'Awards & Honors', value: '156', icon: Trophy, iconColor: '#10b981', trend: 12.5 },
 ])
 
 const userInput = ref('')
