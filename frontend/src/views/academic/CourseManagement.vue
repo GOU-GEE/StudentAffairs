@@ -1,14 +1,14 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <button @click="openAddDialog" class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon :size="14"><Plus /></el-icon>新增课程
-      </button>
-    </teleport>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div v-for="(stat, idx) in statList" :key="idx" class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15">
         <span class="text-xs font-bold text-secondary uppercase tracking-wider">{{ stat.label }}</span><h3 class="text-2xl font-bold text-on-surface mt-1">{{ stat.value }}</h3>
       </div>
+    </div>
+    <div class="flex items-center gap-3 mb-4">
+      <button @click="openAddDialog" class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon :size="14"><Plus /></el-icon>新增课程
+      </button>
     </div>
     <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15 mb-6 flex items-center gap-4">
       <el-input v-model="searchQuery" placeholder="搜索课程名称..." class="max-w-xs" clearable><template #prefix><el-icon><Search /></el-icon></template></el-input>

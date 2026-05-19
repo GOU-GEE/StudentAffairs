@@ -1,9 +1,5 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <!-- No batch actions needed - view only -->
-    </teleport>
-
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div v-for="(stat, idx) in stats" :key="idx" class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15">
