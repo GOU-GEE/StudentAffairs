@@ -1,197 +1,278 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div v-for="(stat, idx) in statsRecord" :key="idx" class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15">
-        <span class="text-xs font-bold text-secondary uppercase tracking-wider">{{ stat.label }}</span>
-        <h3 class="text-2xl font-bold text-on-surface mt-1">{{ stat.value }}</h3>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-3 mb-4">
-      <button @click="openBatchDialog" class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon :size="14"><UploadFilled /></el-icon>批量发放学时
-      </button>
-    </div>
-
-    <!-- Category Progress -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <div v-for="cat in categories" :key="cat.name" class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="cat.bgClass">
-          <el-icon :size="24" :color="cat.color"><component :is="cat.icon" /></el-icon>
-        </div>
-        <div class="flex-1">
-          <div class="flex justify-between mb-1">
-            <span class="text-sm font-semibold text-on-surface">{{ cat.name }}</span>
-            <span class="text-xs text-secondary">{{ cat.distributed }}/{{ cat.total }} 学时</span>
+    <!-- 底部主内容：左栏活动列表，右栏活动详情 -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 flex-1 min-h-0">
+      <!-- 左侧：活动列表 -->
+      <div class="xl:col-span-8 flex flex-col bg-white rounded-3xl px-6 pt-4 pb-6 border border-outline-variant/20 shadow-sm">
+        <!-- 导航 Tabs 与 搜索栏 -->
+        <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3 flex-shrink-0">
+          <div class="flex items-center gap-2">
+            <button v-for="tab in tabs" :key="tab.value"
+              @click="activeTab = tab.value"
+              class="px-3 py-2 text-sm font-semibold transition-colors rounded-lg"
+              :class="activeTab === tab.value ? 'bg-surface-container-high text-on-surface' : 'text-secondary hover:bg-surface-container-low hover:text-on-surface'">
+              {{ tab.label }}
+            </button>
           </div>
-          <el-progress :percentage="cat.percent" :stroke-width="8" :color="cat.color" />
+          <div class="flex items-center gap-4">
+            <span class="text-xs font-bold text-secondary">共 {{ filteredActivities.length }} 条活动</span>
+            <div class="relative w-64 flex items-center">
+              <span class="absolute left-3 flex items-center text-outline"><el-icon><Search /></el-icon></span>
+              <input v-model="searchQuery" type="text" placeholder="搜索活动名称、关键字..." class="w-full pl-9 pr-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-xs font-medium focus:outline-none focus:border-emerald-500 transition-all">
+            </div>
+          </div>
         </div>
+
+        <!-- 活动列表 -->
+        <div class="flex flex-col gap-4 mt-4 overflow-y-auto custom-scrollbar pr-2 flex-1 min-h-0">
+          <div v-for="activity in filteredActivities" :key="activity.id"
+               @click="selectActivity(activity)"
+               class="rounded-2xl p-3 border border-outline-variant/20 hover:shadow-md transition-shadow flex gap-4 cursor-pointer bg-surface-container-lowest"
+               :class="selectedActivity?.id === activity.id ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30 group/card'">
+
+            <!-- 左侧图片 -->
+            <div class="w-[100px] h-[100px] rounded-xl overflow-hidden flex-shrink-0 relative">
+              <img :src="activity.image" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-300" :alt="activity.title">
+              <div class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white shadow-sm" :class="statusConfig[activity.status].bg">
+                {{ statusConfig[activity.status].label }}
+              </div>
+            </div>
+
+            <!-- 中间内容 -->
+            <div class="flex-1 flex flex-col justify-between py-0.5 min-w-0">
+              <div>
+                <h3 class="text-base font-bold text-on-surface tracking-tight truncate mb-2">{{ activity.title }}</h3>
+                <p class="text-xs text-secondary leading-relaxed line-clamp-1 mb-2">{{ activity.desc }}</p>
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-secondary font-medium">
+                  <span class="flex items-center gap-1.5 whitespace-nowrap"><el-icon><Clock /></el-icon> {{ activity.time }}</span>
+                  <span class="flex items-center gap-1.5 whitespace-nowrap"><el-icon><Location /></el-icon> {{ activity.location }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧操作 -->
+            <div class="flex flex-col items-center justify-center border-l border-outline-variant/15 pl-5 min-w-[100px] flex-shrink-0">
+              <span class="text-[11px] font-bold text-secondary mb-1">{{ activity.creditType || '活动学时' }}</span>
+              <span class="text-[1.35rem] font-black leading-none mb-2 text-emerald-600">{{ activity.hours }} <span class="text-[10px] font-bold">学时</span></span>
+              <button v-if="grantedIds.includes(activity.id)"
+                class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-gray-100 text-gray-400 cursor-default">
+                已发放
+              </button>
+              <button v-else @click.stop="grantHours(activity)"
+                class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-emerald-500 text-white hover:bg-emerald-600">
+                发放学时
+              </button>
+            </div>
+          </div>
+          <div v-if="filteredActivities.length === 0" class="py-20 text-center text-gray-400 text-sm">
+            暂无活动记录
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧区域 -->
+      <div class="xl:col-span-4">
+        <transition name="fade-slide" mode="out-in">
+          <!-- 默认占位 -->
+          <div v-if="!selectedActivity" class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm p-8 flex flex-col items-center justify-center h-full min-h-[400px]">
+            <div class="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6">
+              <el-icon :size="36" class="text-emerald-500"><Timer /></el-icon>
+            </div>
+            <h3 class="text-lg font-bold text-on-surface mb-2">第二课堂学时发放</h3>
+            <p class="text-sm text-secondary text-center leading-relaxed max-w-[240px]">
+              请在左侧选择一项已发布的活动，点击「发放学时」为学生录入第二课堂学时。
+            </p>
+          </div>
+
+          <!-- 活动详情 -->
+          <div v-else class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col relative">
+            <!-- 封面图 -->
+            <div class="h-[180px] w-full relative bg-surface-container-low">
+              <!-- 关闭按钮 -->
+              <div class="absolute top-4 right-4 z-20 flex gap-2">
+                <button @click="selectedActivity = null" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-colors shadow-sm">
+                  <el-icon><Close /></el-icon>
+                </button>
+              </div>
+              <img v-if="selectedActivity.image && !selectedActivity.image.includes('default')" :src="selectedActivity.image" class="w-full h-full object-cover">
+              <div v-else class="w-full h-full bg-gradient-to-br from-emerald-600 to-teal-800"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div class="absolute bottom-4 left-5 pr-5 flex items-center gap-3">
+                <h3 class="text-white text-xl font-bold leading-tight drop-shadow-md">{{ selectedActivity.title }}</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white shadow-sm" :class="statusConfig[selectedActivity.status].bg">
+                  {{ statusConfig[selectedActivity.status].label }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 详情内容区 -->
+            <div class="p-6 flex flex-col gap-6 overflow-y-auto flex-1">
+              <div class="grid grid-cols-2 gap-y-5 gap-x-6 text-base p-1">
+                <div class="col-span-2 flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">报名时间</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.enrollTime || '--' }}</span>
+                </div>
+                <div class="col-span-2 flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">活动时间</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.timeDetail || selectedActivity.time || '--' }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">活动级别</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.level || '--' }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">参与范围</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.range || '--' }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">活动请假</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.leave || '--' }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">活动地点</span>
+                  <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.location || '--' }}</span>
+                </div>
+                <div class="col-span-2 flex flex-col">
+                  <span class="text-secondary font-medium text-[13px] mb-1.5">学分设置</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-on-surface text-[15px]">{{ selectedActivity.creditType || '--' }}</span>
+                    <span class="text-[13px] text-secondary font-medium ml-1">学时 {{ (selectedActivity.hours || 0).toFixed(1) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-[15px] font-bold text-on-surface mb-2 flex items-center gap-1.5"><div class="w-1.5 h-4 bg-emerald-500 rounded-full"></div>活动详情</h4>
+                <p class="text-[14px] text-secondary leading-relaxed text-justify">{{ selectedActivity.desc }}</p>
+              </div>
+            </div>
+
+            <!-- 底部操作栏 -->
+            <div class="mt-auto p-5 bg-white border-t border-outline-variant/10 flex gap-4 items-center shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)] z-20">
+              <div class="flex flex-col items-center justify-center min-w-[70px]">
+                <span class="text-secondary font-medium text-xs mb-0.5">已报</span>
+                <span class="font-bold text-on-surface text-[14px]">{{ selectedActivity.participants || 0 }}人</span>
+              </div>
+              <button v-if="grantedIds.includes(selectedActivity.id)"
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-gray-200 text-gray-400 cursor-default">
+                已发放学时
+              </button>
+              <button v-else @click="grantHours(selectedActivity)"
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-emerald-500 text-white hover:bg-emerald-600">
+                立即发放学时
+              </button>
+            </div>
+          </div>
+        </transition>
       </div>
     </div>
 
-    <!-- Student Hours Table -->
-    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 overflow-hidden flex-1">
-      <div class="px-6 py-4 border-b border-outline-variant/10 flex items-center gap-4">
-        <h3 class="text-[1.125rem] font-semibold text-on-surface">学生学时记录</h3>
-        <el-input v-model="searchQuery" placeholder="搜索学号、姓名..." class="max-w-xs" clearable>
-          <template #prefix><el-icon><Search /></el-icon></template>
-        </el-input>
-      </div>
-      <el-table :data="filteredRecords" style="width: 100%" height="100%" stripe>
-        <el-table-column prop="studentId" label="学号" width="120" />
-        <el-table-column prop="studentName" label="姓名" width="100" />
-        <el-table-column prop="className" label="班级" width="120" />
-        <el-table-column label="思想素质" width="90"><template #default="{ row }"><span>{{ row.hours[0] }}</span></template></el-table-column>
-        <el-table-column label="文艺体育" width="90"><template #default="{ row }"><span>{{ row.hours[1] }}</span></template></el-table-column>
-        <el-table-column label="创新创造" width="90"><template #default="{ row }"><span>{{ row.hours[2] }}</span></template></el-table-column>
-        <el-table-column label="志愿服务" width="90"><template #default="{ row }"><span>{{ row.hours[3] }}</span></template></el-table-column>
-        <el-table-column label="劳动教育" width="90"><template #default="{ row }"><span>{{ row.hours[4] }}</span></template></el-table-column>
-        <el-table-column label="技能特长" width="90"><template #default="{ row }"><span>{{ row.hours[5] }}</span></template></el-table-column>
-        <el-table-column label="合计" width="80"><template #default="{ row }"><span class="font-bold text-emerald-600">{{ row.hours.reduce((a,b) => a+b, 0) }}</span></template></el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
-          <template #default="{ row }">
-            <button @click="openGrantDialog(row)" class="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">发放学时</button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <!-- Grant Dialog -->
-    <el-dialog v-model="grantDialogVisible" title="发放第二课堂学时" width="480px" destroy-on-close>
-      <div class="space-y-4">
-        <div class="bg-surface-container-low rounded-xl p-3 text-sm">
-          <span class="font-bold text-secondary">学生：</span>{{ grantStudent?.studentName }} ({{ grantStudent?.studentId }})
-        </div>
-        <el-form label-position="top">
-          <el-form-item label="学时类别" required>
-            <el-select v-model="grantForm.category" class="w-full">
-              <el-option v-for="(cat, idx) in categoryNames" :key="idx" :label="cat" :value="idx" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="学时数" required>
-            <el-input-number v-model="grantForm.hours" :min="1" :max="50" class="w-full" />
-          </el-form-item>
-          <el-form-item label="发放说明">
-            <el-input v-model="grantForm.reason" type="textarea" :rows="2" placeholder="如：参与校园志愿服务4小时" />
-          </el-form-item>
-        </el-form>
-      </div>
-      <template #footer>
-        <button @click="grantDialogVisible = false" class="px-4 py-2 text-secondary hover:text-on-surface transition-colors text-sm mr-3">取消</button>
-        <button @click="confirmGrant" class="px-6 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">确认发放</button>
-      </template>
-    </el-dialog>
-
-    <!-- Batch Dialog -->
-    <el-dialog v-model="batchDialogVisible" title="批量发放学时" width="480px" destroy-on-close>
-      <div class="text-center py-8">
-        <el-icon :size="56" color="#10b981"><UploadFilled /></el-icon>
-        <p class="text-sm text-secondary mt-4 mb-2">支持 Excel (.xlsx) 格式</p>
-        <p class="text-xs text-outline mb-6">模板格式：学号、姓名、学时类别、学时数、说明</p>
-        <div class="border-2 border-dashed border-outline-variant/40 rounded-xl p-8 hover:border-emerald-500/40 transition-colors cursor-pointer bg-surface-container-low">
-          <p class="text-sm text-secondary">拖拽文件或 <span class="text-emerald-600 font-semibold">点击选择</span></p>
-        </div>
-        <button @click="batchDialogVisible = false; ElMessage.success('演示：成功为 12 名学生发放 48 学时')" class="mt-6 px-6 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">确认导入</button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { UploadFilled, Search, Star, Picture, Sunny, Help, School, EditPen } from '@element-plus/icons-vue'
+import { Search, Clock, Location, Timer, Close } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
-const API = '/api/youth/second-classroom'
+const API = '/api/youth/activities'
 
+const activeTab = ref('ungranted')
 const searchQuery = ref('')
-const grantDialogVisible = ref(false)
-const batchDialogVisible = ref(false)
-const grantStudent = ref(null)
-const grantForm = ref({ category: 3, hours: 2, reason: '' })
-const categoryNames = ['思想素质', '文艺体育', '创新创造', '志愿服务', '劳动教育', '技能特长']
+const selectedActivity = ref(null)
+const grantedIds = ref([])
 
-const categories = [
-  { name: '思想素质', icon: Star, color: '#f59e0b', bgClass: 'bg-amber-100', total: 120, distributed: 85 },
-  { name: '文艺体育', icon: Picture, color: '#8b5cf6', bgClass: 'bg-purple-100', total: 100, distributed: 62 },
-  { name: '创新创造', icon: Sunny, color: '#3b82f6', bgClass: 'bg-blue-100', total: 80, distributed: 45 },
-  { name: '志愿服务', icon: Help, color: '#10b981', bgClass: 'bg-emerald-100', total: 160, distributed: 120 },
-  { name: '劳动教育', icon: School, color: '#ef4444', bgClass: 'bg-red-100', total: 100, distributed: 48 },
-  { name: '技能特长', icon: EditPen, color: '#06b6d4', bgClass: 'bg-cyan-100', total: 60, distributed: 25 },
-].map(c => ({ ...c, percent: Math.round(c.distributed / c.total * 100) }))
+const tabs = [
+  { label: '未发放', value: 'ungranted' },
+  { label: '已发放', value: 'granted' },
+]
 
-const students = ref([])
-const rawRecords = ref([])
+const statusConfig = {
+  'enrolling': { label: '报名中', bg: 'bg-blue-500' },
+  'ongoing': { label: '进行中', bg: 'bg-green-500' },
+  'completed': { label: '已完成', bg: 'bg-gray-400' },
+}
 
-const fetchRecords = async () => {
+const mapActivity = (a) => {
+  const statusMap = { '报名中': 'enrolling', '进行中': 'ongoing', '已结束': 'completed' }
+  const s = statusMap[a.status] || 'enrolling'
+  return {
+    id: a.id,
+    status: s,
+    title: a.title,
+    image: a.coverImage || '',
+    time: a.date || '',
+    location: a.location || '',
+    desc: a.description || '',
+    hours: a.credits || 0,
+    level: a.level,
+    range: a.rangeName || '学校内',
+    leave: a.leaveSupport,
+    enrollLimit: a.enrollLimit,
+    creditType: a.creditType,
+    enrollTime: a.enrollTime,
+    timeDetail: a.timeDetail,
+    participants: a.participants || 0,
+  }
+}
+
+const activities = ref([])
+
+const loadActivities = async () => {
   try {
-    const res = await request.get(`${API}/records`)
+    const res = await request.get(API)
     if (res.data.code === 200) {
-      rawRecords.value = res.data.data
-      aggregateStudents(res.data.data)
+      activities.value = res.data.data.map(mapActivity)
     }
-  } catch (e) {
-    console.error('Failed to fetch records', e)
-  }
+  } catch (e) { console.error('加载活动失败', e) }
 }
 
-const aggregateStudents = (records) => {
-  const map = {}
-  records.forEach(r => {
-    if (!map[r.studentId]) {
-      map[r.studentId] = { studentId: r.studentId, studentName: r.studentName, className: r.className, hours: [0, 0, 0, 0, 0, 0] }
-    }
-    map[r.studentId].hours[r.categoryIndex] += r.hours
+onMounted(loadActivities)
+
+const filteredActivities = computed(() => {
+  return activities.value.filter(a => {
+    const isGranted = grantedIds.value.includes(a.id)
+    const matchTab = activeTab.value === 'ungranted' ? !isGranted : isGranted
+    const matchSearch = !searchQuery.value ||
+      a.title.includes(searchQuery.value) ||
+      a.desc.includes(searchQuery.value)
+    return matchTab && matchSearch
   })
-  students.value = Object.values(map)
+})
+
+const selectActivity = (activity) => {
+  selectedActivity.value = activity
 }
 
-onMounted(() => {
-  fetchRecords()
-})
-
-const filteredRecords = computed(() => {
-  if (!searchQuery.value) return students.value
-  const q = searchQuery.value.toLowerCase()
-  return students.value.filter(s => s.studentId.includes(q) || s.studentName.includes(q))
-})
-
-const statsRecord = computed(() => {
-  const total = students.value.reduce((a, s) => a + s.hours.reduce((x, y) => x + y, 0), 0)
-  return [
-    { label: '已发放总学时', value: total },
-    { label: '覆盖学生数', value: students.value.length },
-    { label: '学时类别', value: '6类' },
-    { label: '本月新增', value: 128 },
-  ]
-})
-
-const openGrantDialog = (student) => {
-  grantStudent.value = student
-  grantForm.value = { category: 3, hours: 2, reason: '' }
-  grantDialogVisible.value = true
-}
-
-const confirmGrant = async () => {
-  if (grantStudent.value) {
-    try {
-      const payload = {
-        studentId: grantStudent.value.studentId,
-        studentName: grantStudent.value.studentName,
-        className: grantStudent.value.className,
-        categoryIndex: grantForm.value.category,
-        hours: grantForm.value.hours,
-        reason: grantForm.value.reason
-      }
-      await request.post(`${API}/grant`, payload)
-      ElMessage.success(`已为 ${grantStudent.value.studentName} 发放 ${grantForm.value.hours} 学时`)
-      fetchRecords()
-      grantDialogVisible.value = false
-    } catch (e) {
-      ElMessage.error('发放失败')
-    }
+const grantHours = async (activity) => {
+  try {
+    await request.post('/api/youth/second-classroom/grant-batch', {
+      activityId: activity.id,
+      hours: activity.hours || 2,
+      reason: `参与活动"${activity.title}"获得学时`
+    })
+  } catch (e) { /* demo: ignore backend errors */ }
+  if (!grantedIds.value.includes(activity.id)) {
+    grantedIds.value.push(activity.id)
   }
+  ElMessage.success(`已为 ${activity.participants || 0} 名报名学生发放 ${activity.hours || 0} 学时`)
 }
 </script>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  width: 100%;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+</style>

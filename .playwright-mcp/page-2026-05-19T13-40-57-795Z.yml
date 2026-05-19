@@ -1,0 +1,79 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "第二课堂学时" [ref=e12] [cursor=pointer]:
+          - /url: /youth/second-classroom
+          - img [ref=e14]
+          - text: 第二课堂学时
+      - listitem [ref=e18]:
+        - link "活动发布管理" [ref=e19] [cursor=pointer]:
+          - /url: /youth/activities
+          - img [ref=e21]
+          - text: 活动发布管理
+      - listitem [ref=e23]:
+        - link "获奖情况审核" [ref=e24] [cursor=pointer]:
+          - /url: /youth/awards
+          - img [ref=e26]
+          - text: 获奖情况审核
+    - generic [ref=e30]:
+      - generic [ref=e31]: 系统状态
+      - generic [ref=e34]: 后端服务正常
+      - generic [ref=e37]: 团委/第二课堂模式
+  - generic [ref=e38]:
+    - banner [ref=e39]:
+      - heading "获奖情况审核" [level=2] [ref=e41]
+      - generic [ref=e42]:
+        - button "1" [ref=e44]:
+          - img [ref=e46]
+          - generic [ref=e50]: "1"
+        - button [ref=e51]:
+          - img [ref=e53]
+        - generic [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]: 团
+          - generic [ref=e57]: 第二课堂/团委
+    - main [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e62]:
+            - img [ref=e65]
+            - textbox "搜索获奖名称或姓名..." [ref=e67]
+          - generic [ref=e69]:
+            - button "全部 8" [ref=e70]
+            - button "待审核 5" [ref=e71]
+            - button "已通过 2" [ref=e72]
+            - button "已驳回 1" [ref=e73]
+          - generic [ref=e75]:
+            - generic [ref=e76] [cursor=pointer]:
+              - generic [ref=e77]: 2024年全国大学生数学建模竞赛省级一等奖
+              - generic [ref=e78]: 张小明 · 202301001
+            - generic [ref=e79] [cursor=pointer]:
+              - generic [ref=e80]: 蓝桥杯全国软件和信息技术专业人才大赛省级二等奖
+              - generic [ref=e81]: 李小丽 · 202301002
+            - generic [ref=e82] [cursor=pointer]:
+              - generic [ref=e83]: 全国大学生英语竞赛国家级三等奖
+              - generic [ref=e84]: 王五 · 202301003
+            - generic [ref=e85] [cursor=pointer]:
+              - generic [ref=e86]: 校园程序设计大赛校级一等奖
+              - generic [ref=e87]: 赵六 · 202301004
+            - generic [ref=e88] [cursor=pointer]:
+              - generic [ref=e89]: 全国大学生创新创业训练计划项目国家级立项
+              - generic [ref=e90]: 周燕 · 202301005
+            - generic [ref=e91] [cursor=pointer]:
+              - generic [ref=e92]: 四川省大学生艺术节舞蹈类省级二等奖
+              - generic [ref=e93]: 钱七 · 202301006
+            - generic [ref=e94] [cursor=pointer]:
+              - generic [ref=e95]: 社区志愿服务优秀志愿者校级表彰
+              - generic [ref=e96]: 孙八 · 202301007
+            - generic [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]: ACM-ICPC国际大学生程序设计竞赛亚洲区域赛银奖
+              - generic [ref=e99]: 吴十 · 202301008
+        - generic [ref=e101]:
+          - img [ref=e103]
+          - paragraph [ref=e106]: 获奖情况审核
+          - paragraph [ref=e107]: 选择左侧申请查看详情

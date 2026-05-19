@@ -1,0 +1,79 @@
+[  327423ms] [WARNING] [Vue warn]: Property "visiblePasswords" was accessed during render but is not defined on instance. 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  327424ms] [WARNING] [Vue warn]: Unhandled error during execution of render function 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  327424ms] [ERROR] TypeError: Cannot read properties of undefined (reading 'has')
+    at http://localhost:5173/src/views/admin/RoleManagement.vue?t=1779209679756:186:71
+    at renderList (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:3854:59)
+    at Proxy._sfc_render (http://localhost:5173/src/views/admin/RoleManagement.vue?t=1779209679756:178:65)
+    at renderComponentRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:4707:35)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5598:22)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:419:16)
+    at http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2108:43
+    at Array.forEach (<anonymous>)
+    at rerender (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2101:24)
+    at Object.rerender (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2158:11) @ http://localhost:5173/@vite/client:509
+[  327424ms] [WARNING] [HMR] Something went wrong during Vue component hot-reload. Full reload required. @ http://localhost:5173/@vite/client:509
+[  336941ms] [WARNING] [Vue warn]: Property "visiblePasswords" was accessed during render but is not defined on instance. 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  336942ms] [WARNING] [Vue warn]: Unhandled error during execution of render function 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  336942ms] [WARNING] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  336947ms] TypeError: Cannot read properties of undefined (reading 'has')
+    at http://localhost:5173/src/views/admin/RoleManagement.vue?t=1779209689285:186:71
+    at renderList (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:3854:59)
+    at Proxy._sfc_render (http://localhost:5173/src/views/admin/RoleManagement.vue?t=1779209689285:178:65)
+    at renderComponentRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:4707:35)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5553:41)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:419:16)
+    at setupRenderEffect (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5624:3)
+    at mountComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5508:10)
+    at processComponent (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5488:8)
+    at patch (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5283:28)
+[  347485ms] [WARNING] [Vue warn]: Unhandled error during execution of scheduler flush 
+  at <RoleManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/financials" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  347489ms] TypeError: Cannot read properties of null (reading 'component')
+    at locateNonHydratedAsyncRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:6013:40)
+    at locateNonHydratedAsyncRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:6015:14)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5572:35)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:419:16)
+    at http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2137:21
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:1883:31)
+    at flushJobs (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2032:5)

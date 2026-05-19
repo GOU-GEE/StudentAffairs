@@ -10,13 +10,6 @@
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/youth" exact-active-class="!text-emerald-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><HomeFilled /></el-icon>
-            团委管理首页
-          </router-link>
-        </li>
-        <li>
           <router-link to="/youth/second-classroom" active-class="!text-emerald-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
             <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Timer /></el-icon>
@@ -35,13 +28,6 @@
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
             <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Medal /></el-icon>
             获奖情况审核
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/youth/honors" active-class="!text-emerald-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Trophy /></el-icon>
-            评优评奖管理
           </router-link>
         </li>
       </ul>
@@ -156,7 +142,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
-import { HomeFilled, Timer, Calendar, Medal, Trophy, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
+import { Timer, Calendar, Medal, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()

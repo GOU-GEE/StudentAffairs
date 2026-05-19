@@ -51,17 +51,20 @@ const router = createRouter({
       path: '/admin',
       component: () => import('../views/admin/Layout.vue'),
       children: [
-        { path: '', name: 'AdminDashboard', meta: { title: '管理后台首页' }, component: () => import('../views/admin/Dashboard.vue') },
-        { path: 'students', name: 'AdminStudents', meta: { title: '学生信息管理' }, component: () => import('../views/admin/StudentManagement.vue') },
-        { path: 'grades', name: 'AdminGrades', meta: { title: '成绩信息管理' }, component: () => import('../views/admin/GradeManagement.vue') },
-        { path: 'accounts', name: 'AdminAccounts', meta: { title: '账号管理' }, component: () => import('../views/admin/AccountManagement.vue') }
+        { path: '', redirect: '/admin/admins' },
+        { path: 'admins', name: 'AdminAdmins', meta: { title: '管理员管理', roleKey: 'admin', idLabel: '账号' }, component: () => import('../views/admin/RoleManagement.vue') },
+        { path: 'teachers', name: 'AdminTeachers', meta: { title: '辅导员管理', roleKey: 'teacher', idLabel: '教职工号' }, component: () => import('../views/admin/RoleManagement.vue') },
+        { path: 'financials', name: 'AdminFinancials', meta: { title: '资助中心管理', roleKey: 'financial', idLabel: '账号' }, component: () => import('../views/admin/RoleManagement.vue') },
+        { path: 'youths', name: 'AdminYouths', meta: { title: '团委管理', roleKey: 'youth', idLabel: '账号' }, component: () => import('../views/admin/RoleManagement.vue') },
+        { path: 'academics', name: 'AdminAcademics', meta: { title: '教务管理', roleKey: 'academic', idLabel: '账号' }, component: () => import('../views/admin/RoleManagement.vue') },
+        { path: 'students', name: 'AdminStudents', meta: { title: '学生管理', roleKey: 'student', idLabel: '学号' }, component: () => import('../views/admin/RoleManagement.vue') },
       ]
     },
     {
       path: '/financial',
       component: () => import('../views/financial/Layout.vue'),
       children: [
-        { path: '', name: 'FinancialDashboard', meta: { title: '资助管理首页' }, component: () => import('../views/financial/Dashboard.vue') },
+        { path: '', redirect: '/financial/scholarships' },
         { path: 'scholarships', name: 'FinancialScholarships', meta: { title: '奖助学金审批' }, component: () => import('../views/financial/ScholarshipReview.vue') },
         { path: 'work-study', name: 'FinancialWorkStudy', meta: { title: '勤工助学管理' }, component: () => import('../views/financial/WorkStudyManagement.vue') },
         { path: 'poverty', name: 'FinancialPoverty', meta: { title: '困难认定管理' }, component: () => import('../views/financial/PovertyManagement.vue') }
@@ -71,22 +74,19 @@ const router = createRouter({
       path: '/youth',
       component: () => import('../views/youth/Layout.vue'),
       children: [
-        { path: '', name: 'YouthDashboard', meta: { title: '团委管理首页' }, component: () => import('../views/youth/Dashboard.vue') },
+        { path: '', redirect: '/youth/second-classroom' },
         { path: 'second-classroom', name: 'YouthSecondClassroom', meta: { title: '第二课堂学时' }, component: () => import('../views/youth/SecondClassroom.vue') },
         { path: 'activities', name: 'YouthActivities', meta: { title: '活动发布管理' }, component: () => import('../views/youth/ActivityManagement.vue') },
-        { path: 'awards', name: 'YouthAwards', meta: { title: '获奖情况审核' }, component: () => import('../views/youth/AwardReview.vue') },
-        { path: 'honors', name: 'YouthHonors', meta: { title: '评优评奖管理' }, component: () => import('../views/youth/HonorsManagement.vue') }
+        { path: 'awards', name: 'YouthAwards', meta: { title: '获奖情况审核' }, component: () => import('../views/youth/AwardReview.vue') }
       ]
     },
     {
       path: '/academic',
       component: () => import('../views/academic/Layout.vue'),
       children: [
-        { path: '', name: 'AcademicDashboard', meta: { title: '教务管理首页' }, component: () => import('../views/academic/Dashboard.vue') },
+        { path: '', redirect: '/academic/grades' },
         { path: 'grades', name: 'AcademicGrades', meta: { title: '成绩管理' }, component: () => import('../views/academic/GradeManagement.vue') },
-        { path: 'warnings', name: 'AcademicWarnings', meta: { title: '学业预警' }, component: () => import('../views/academic/AcademicWarning.vue') },
-        { path: 'mid-term', name: 'AcademicMidTerm', meta: { title: '中期鉴定管理' }, component: () => import('../views/academic/MidTermManagement.vue') },
-        { path: 'courses', name: 'AcademicCourses', meta: { title: '课程管理' }, component: () => import('../views/academic/CourseManagement.vue') }
+        { path: 'courses', name: 'AcademicCourses', meta: { title: '导入培养方案' }, component: () => import('../views/academic/CourseManagement.vue') }
       ]
     }
   ]

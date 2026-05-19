@@ -1,0 +1,85 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "奖助学金审批" [ref=e12] [cursor=pointer]:
+          - /url: /financial/scholarships
+          - img [ref=e14]
+          - text: 奖助学金审批
+      - listitem [ref=e16]:
+        - link "勤工助学管理" [ref=e17] [cursor=pointer]:
+          - /url: /financial/work-study
+          - img [ref=e19]
+          - text: 勤工助学管理
+      - listitem [ref=e21]:
+        - link "困难认定管理" [ref=e22] [cursor=pointer]:
+          - /url: /financial/poverty
+          - img [ref=e24]
+          - text: 困难认定管理
+    - generic [ref=e27]:
+      - generic [ref=e28]: 系统状态
+      - generic [ref=e31]: 后端服务正常
+      - generic [ref=e34]: 资助管理中心模式
+  - generic [ref=e35]:
+    - banner [ref=e36]:
+      - heading "困难认定管理" [level=2] [ref=e38]
+      - generic [ref=e39]:
+        - button "1" [ref=e41]:
+          - img [ref=e43]
+          - generic [ref=e47]: "1"
+        - button [ref=e48]:
+          - img [ref=e50]
+        - generic [ref=e52] [cursor=pointer]:
+          - generic [ref=e53]: 资
+          - generic [ref=e54]: 资助管理中心
+    - main [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e59]:
+            - img [ref=e62]
+            - textbox "搜索姓名或学号..." [ref=e64]
+          - generic [ref=e66]:
+            - button "全部 6" [ref=e67]
+            - button "A档 1" [ref=e68]
+            - button "B档 1" [ref=e69]
+            - button "C档 1" [ref=e70]
+          - generic [ref=e72]:
+            - generic [ref=e73] [cursor=pointer]:
+              - generic [ref=e74]:
+                - generic [ref=e75]: 张小明
+                - generic [ref=e76]: A档
+              - generic [ref=e77]: 202301001 · 计算机科学学院
+            - generic [ref=e78] [cursor=pointer]:
+              - generic [ref=e79]:
+                - generic [ref=e80]: 李小丽
+                - generic [ref=e81]: B档
+              - generic [ref=e82]: 202301015 · 软件工程学院
+            - generic [ref=e83] [cursor=pointer]:
+              - generic [ref=e84]:
+                - generic [ref=e85]: 王五
+                - generic [ref=e86]: C档
+              - generic [ref=e87]: 202301042 · 电子信息工程学院
+            - generic [ref=e88] [cursor=pointer]:
+              - generic [ref=e89]:
+                - generic [ref=e90]: 赵六
+                - generic [ref=e91]: 待认定
+              - generic [ref=e92]: 202301056 · 数学与信息学院
+            - generic [ref=e93] [cursor=pointer]:
+              - generic [ref=e94]:
+                - generic [ref=e95]: 周燕
+                - generic [ref=e96]: 待认定
+              - generic [ref=e97]: 202301078 · 计算机科学学院
+            - generic [ref=e98] [cursor=pointer]:
+              - generic [ref=e99]:
+                - generic [ref=e100]: 孙八
+                - generic [ref=e101]: 待认定
+              - generic [ref=e102]: 202301089 · 数据科学与大数据技术学院
+        - generic [ref=e104]:
+          - img [ref=e106]
+          - paragraph [ref=e108]: 困难认定管理
+          - paragraph [ref=e109]: 选择左侧学生查看详细信息

@@ -10,33 +10,15 @@
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
-          <router-link to="/academic" exact-active-class="!text-purple-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><HomeFilled /></el-icon>教务管理首页
-          </router-link>
-        </li>
-        <li>
           <router-link to="/academic/grades" active-class="!text-purple-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
             <el-icon :size="20" class="group-hover:scale-110 transition-transform"><DataAnalysis /></el-icon>成绩管理
           </router-link>
         </li>
         <li>
-          <router-link to="/academic/warnings" active-class="!text-purple-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Warning /></el-icon>学业预警
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/academic/mid-term" active-class="!text-purple-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><DocumentChecked /></el-icon>中期鉴定管理
-          </router-link>
-        </li>
-        <li>
           <router-link to="/academic/courses" active-class="!text-purple-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group">
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Reading /></el-icon>课程管理
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Reading /></el-icon>导入培养方案
           </router-link>
         </li>
       </ul>
@@ -111,7 +93,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
-import { HomeFilled, DataAnalysis, Warning, DocumentChecked, Reading, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
+import { DataAnalysis, Reading, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
 const route = useRoute(); const router = useRouter()
 const showSettings = ref(false); const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' }); const notifOpen = ref(false)

@@ -12,16 +12,6 @@
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
         <li>
           <router-link
-            to="/financial"
-            exact-active-class="!text-amber-600 font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><HomeFilled /></el-icon>
-            资助管理首页
-          </router-link>
-        </li>
-        <li>
-          <router-link
             to="/financial/scholarships"
             active-class="!text-amber-600 font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
@@ -182,7 +172,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
-import { HomeFilled, Trophy, Briefcase, Stamp, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
+import { Trophy, Briefcase, Stamp, Bell, Setting, Close, Lock, SwitchButton, CircleCheck } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()

@@ -1,0 +1,60 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "成绩管理" [ref=e12] [cursor=pointer]:
+          - /url: /academic/grades
+          - img [ref=e14]
+          - text: 成绩管理
+      - listitem [ref=e16]:
+        - link "导入培养方案" [ref=e17] [cursor=pointer]:
+          - /url: /academic/courses
+          - img [ref=e19]
+          - text: 导入培养方案
+    - generic [ref=e23]:
+      - generic [ref=e24]: 系统状态
+      - generic [ref=e27]: 后端服务正常
+      - generic [ref=e30]: 教务管理模式
+  - generic [ref=e31]:
+    - banner [ref=e32]:
+      - heading "导入培养方案" [level=2] [ref=e34]
+      - generic [ref=e35]:
+        - button "1" [ref=e37]:
+          - img [ref=e39]
+          - generic [ref=e43]: "1"
+        - button [ref=e44]:
+          - img [ref=e46]
+        - generic [ref=e48] [cursor=pointer]:
+          - generic [ref=e49]: 教
+          - generic [ref=e50]: 教务管理
+    - main [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e55]:
+            - img [ref=e58]
+            - textbox "搜索专业名称..." [ref=e60]
+          - generic [ref=e62]:
+            - generic [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]: 计算机科学与技术
+              - generic [ref=e65]: 10 门课程
+            - generic [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]: 软件工程
+              - generic [ref=e68]: 7 门课程
+            - generic [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]: 人工智能
+              - generic [ref=e71]: 8 门课程
+            - generic [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: 信息管理与信息系统
+              - generic [ref=e74]: 7 门课程
+            - generic [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]: 数据科学与大数据技术
+              - generic [ref=e77]: 8 门课程
+        - generic [ref=e79]:
+          - img [ref=e81]
+          - paragraph [ref=e84]: 导入培养方案
+          - paragraph [ref=e85]: 选择左侧专业查看课程列表

@@ -62,6 +62,10 @@ public class DataInitializer {
                 job1.setQuota(2);
                 job1.setCurrentCount(0);
                 job1.setStatus("ACTIVE");
+                job1.setHourlyRate(20.0);
+                job1.setLocation("校本部图书馆总馆");
+                job1.setRequirements("负责图书整理、日常借还咨询与阅览室秩序维护，做事细心认真。");
+                job1.setWorkTime("每周一至周五下午 14:00 - 18:00 分班轮值");
 
                 WorkStudyJob job2 = new WorkStudyJob();
                 job2.setTitle("计算机学院机房维护");
@@ -69,6 +73,10 @@ public class DataInitializer {
                 job2.setQuota(5);
                 job2.setCurrentCount(3);
                 job2.setStatus("ACTIVE");
+                job2.setHourlyRate(22.5);
+                job2.setLocation("理科楼 A 栋 3 楼机房");
+                job2.setRequirements("协助系统管理员进行机房软硬件日常巡检、故障登记及基本维护，计算机相关专业优先。");
+                job2.setWorkTime("每周六、周日全天灵活排班");
 
                 jobRepository.saveAll(List.of(job1, job2));
                 System.out.println("Initialized default WorkStudyJobs.");

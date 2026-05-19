@@ -10,44 +10,14 @@
         </div>
       </div>
       <ul class="flex flex-col gap-2 font-medium tracking-tight text-[0.875rem]">
-        <li>
+        <li v-for="nav in navItems" :key="nav.path">
           <router-link
-            to="/admin"
-            exact-active-class="!text-error font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><HomeFilled /></el-icon>
-            管理后台首页
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/admin/students"
+            :to="nav.path"
             active-class="!text-error font-bold"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
           >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><User /></el-icon>
-            学生信息管理
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/admin/grades"
-            active-class="!text-error font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><DataAnalysis /></el-icon>
-            成绩信息管理
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/admin/accounts"
-            active-class="!text-error font-bold"
-            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
-          >
-            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Avatar /></el-icon>
-            账号管理
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><component :is="nav.icon" /></el-icon>
+            {{ nav.label }}
           </router-link>
         </li>
       </ul>
@@ -188,9 +158,18 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import {
-  HomeFilled, User, DataAnalysis, Avatar, Bell, Setting, Close, Lock,
+  User, Briefcase, Money, Timer, Reading, School, Bell, Setting, Close, Lock,
   SwitchButton, CircleCheck
 } from '@element-plus/icons-vue'
+
+const navItems = [
+  { path: '/admin/admins', label: '管理员管理', icon: User },
+  { path: '/admin/teachers', label: '辅导员管理', icon: Briefcase },
+  { path: '/admin/financials', label: '资助中心管理', icon: Money },
+  { path: '/admin/youths', label: '团委管理', icon: Timer },
+  { path: '/admin/academics', label: '教务管理', icon: Reading },
+  { path: '/admin/students', label: '学生管理', icon: School },
+]
 
 const route = useRoute()
 const router = useRouter()

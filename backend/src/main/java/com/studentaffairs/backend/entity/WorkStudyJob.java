@@ -27,6 +27,18 @@ public class WorkStudyJob {
     @Column(nullable = false, length = 20)
     private String status; // ACTIVE, FULL
 
+    @Column(length = 100)
+    private String location; // 工作地点
+
+    @Column(nullable = false)
+    private Double hourlyRate; // 工作薪资 (元/小时)
+
+    @Column(length = 500)
+    private String requirements; // 岗位要求
+
+    @Column(length = 100)
+    private String workTime; // 工作时间
+
     @Version
     private Long version; // 乐观锁字段，防止高并发超卖
 }

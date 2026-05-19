@@ -1,0 +1,128 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "第二课堂学时" [ref=e12] [cursor=pointer]:
+          - /url: /youth/second-classroom
+          - img [ref=e14]
+          - text: 第二课堂学时
+      - listitem [ref=e18]:
+        - link "活动发布管理" [ref=e19] [cursor=pointer]:
+          - /url: /youth/activities
+          - img [ref=e21]
+          - text: 活动发布管理
+      - listitem [ref=e23]:
+        - link "获奖情况审核" [ref=e24] [cursor=pointer]:
+          - /url: /youth/awards
+          - img [ref=e26]
+          - text: 获奖情况审核
+    - generic [ref=e30]:
+      - generic [ref=e31]: 系统状态
+      - generic [ref=e34]: 后端服务正常
+      - generic [ref=e37]: 团委/第二课堂模式
+  - generic [ref=e38]:
+    - banner [ref=e39]:
+      - heading "第二课堂学时" [level=2] [ref=e41]
+      - generic [ref=e42]:
+        - button "1" [ref=e44]:
+          - img [ref=e46]
+          - generic [ref=e50]: "1"
+        - button [ref=e51]:
+          - img [ref=e53]
+        - generic [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]: 团
+          - generic [ref=e57]: 第二课堂/团委
+    - main [ref=e58]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - button "未发放" [ref=e64]
+              - button "已发放" [ref=e65]
+            - generic [ref=e66]:
+              - generic [ref=e67]: 共 4 条活动
+              - generic [ref=e68]:
+                - img [ref=e71]
+                - textbox "搜索活动名称、关键字..." [ref=e73]
+          - generic [ref=e74]:
+            - generic [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]:
+                - img "2024校园文化艺术节闭幕式" [ref=e77]
+                - generic [ref=e78]: 报名中
+              - generic [ref=e80]:
+                - heading "2024校园文化艺术节闭幕式" [level=3] [ref=e81]
+                - paragraph [ref=e82]: 校园文化艺术节闭幕式暨优秀作品展演，包含舞蹈、合唱、器乐等节目，展现大学生艺术风采。
+                - generic [ref=e83]:
+                  - generic [ref=e84]:
+                    - img [ref=e86]
+                    - text: 2024-06-15
+                  - generic [ref=e90]:
+                    - img [ref=e92]
+                    - text: 大学生活动中心
+              - generic [ref=e95]:
+                - generic [ref=e96]: 2学时
+                - generic [ref=e97]: 2 学时
+                - button "发放学时" [ref=e98]
+            - generic [ref=e99] [cursor=pointer]:
+              - generic [ref=e100]:
+                - img "软件工程专业编程马拉松" [ref=e101]
+                - generic [ref=e102]: 报名中
+              - generic [ref=e104]:
+                - heading "软件工程专业编程马拉松" [level=3] [ref=e105]
+                - paragraph [ref=e106]: 48小时编程挑战赛，自由组队（2-4人），完成指定项目开发任务，评委打分评选优胜团队。
+                - generic [ref=e107]:
+                  - generic [ref=e108]:
+                    - img [ref=e110]
+                    - text: 2024-06-20
+                  - generic [ref=e114]:
+                    - img [ref=e116]
+                    - text: 计算机学院实验室
+              - generic [ref=e119]:
+                - generic [ref=e120]: 3学时
+                - generic [ref=e121]: 3 学时
+                - button "发放学时" [ref=e122]
+            - generic [ref=e123] [cursor=pointer]:
+              - generic [ref=e124]:
+                - img "志愿者服务：社区义务支教" [ref=e125]
+                - generic [ref=e126]: 报名中
+              - generic [ref=e128]:
+                - heading "志愿者服务：社区义务支教" [level=3] [ref=e129]
+                - paragraph [ref=e130]: 前往北湖社区小学开展义务支教活动，辅导小学生作业，开展趣味科学实验。
+                - generic [ref=e131]:
+                  - generic [ref=e132]:
+                    - img [ref=e134]
+                    - text: 2024-06-10
+                  - generic [ref=e138]:
+                    - img [ref=e140]
+                    - text: 北湖社区小学
+              - generic [ref=e143]:
+                - generic [ref=e144]: 1.5学时
+                - generic [ref=e145]: 1.5 学时
+                - button "发放学时" [ref=e146]
+            - generic [ref=e147] [cursor=pointer]:
+              - generic [ref=e148]:
+                - img "毕业季摄影大赛" [ref=e149]
+                - generic [ref=e150]: 已完成
+              - generic [ref=e152]:
+                - heading "毕业季摄影大赛" [level=3] [ref=e153]
+                - paragraph [ref=e154]: 用镜头记录校园最美的瞬间，参赛作品将在图书馆一楼展厅进行为期两周的展出。
+                - generic [ref=e155]:
+                  - generic [ref=e156]:
+                    - img [ref=e158]
+                    - text: 2024-06-01
+                  - generic [ref=e162]:
+                    - img [ref=e164]
+                    - text: 全校范围
+              - generic [ref=e167]:
+                - generic [ref=e168]: 1学时
+                - generic [ref=e169]: 1 学时
+                - button "发放学时" [ref=e170]
+        - generic [ref=e172]:
+          - img [ref=e175]
+          - heading "第二课堂学时发放" [level=3] [ref=e179]
+          - paragraph [ref=e180]: 请在左侧选择一项已发布的活动，点击「发放学时」为学生录入第二课堂学时。

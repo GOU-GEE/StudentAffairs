@@ -1,0 +1,99 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "管理员管理" [ref=e12] [cursor=pointer]:
+          - /url: /admin/admins
+          - img [ref=e14]
+          - text: 管理员管理
+      - listitem [ref=e16]:
+        - link "辅导员管理" [ref=e17] [cursor=pointer]:
+          - /url: /admin/teachers
+          - img [ref=e19]
+          - text: 辅导员管理
+      - listitem [ref=e21]:
+        - link "资助中心管理" [ref=e22] [cursor=pointer]:
+          - /url: /admin/financials
+          - img [ref=e24]
+          - text: 资助中心管理
+      - listitem [ref=e28]:
+        - link "团委管理" [ref=e29] [cursor=pointer]:
+          - /url: /admin/youths
+          - img [ref=e31]
+          - text: 团委管理
+      - listitem [ref=e35]:
+        - link "教务管理" [ref=e36] [cursor=pointer]:
+          - /url: /admin/academics
+          - img [ref=e38]
+          - text: 教务管理
+      - listitem [ref=e41]:
+        - link "学生管理" [ref=e42] [cursor=pointer]:
+          - /url: /admin/students
+          - img [ref=e44]
+          - text: 学生管理
+    - generic [ref=e49]:
+      - generic [ref=e50]: 系统状态
+      - generic [ref=e53]: 后端服务正常
+      - generic [ref=e56]: 超级管理员模式
+  - generic [ref=e57]:
+    - banner [ref=e58]:
+      - heading "辅导员管理" [level=2] [ref=e60]
+      - generic [ref=e61]:
+        - button "1" [ref=e63]:
+          - img [ref=e65]
+          - generic [ref=e69]: "1"
+        - button [ref=e70]:
+          - img [ref=e72]
+        - generic [ref=e74] [cursor=pointer]:
+          - generic [ref=e75]: 管
+          - generic [ref=e76]: 系统管理员
+    - main [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e79]:
+          - heading "共 4 人" [level=3] [ref=e81]
+          - button "上传Excel导入" [ref=e82]:
+            - img [ref=e84]
+            - text: 上传Excel导入
+        - generic [ref=e87]:
+          - img [ref=e90]
+          - textbox "搜索教职工号、姓名..." [ref=e92]
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - generic [ref=e95]: 教职工号
+            - generic [ref=e96]: 姓名
+            - generic [ref=e97]: 密码
+            - generic [ref=e98]: 操作
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - generic [ref=e101]: T001
+              - generic [ref=e102]: 王辅导员
+              - generic [ref=e103]: "******"
+              - generic [ref=e104]:
+                - button "重置密码" [ref=e105]
+                - button "删除" [ref=e106]
+            - generic [ref=e107]:
+              - generic [ref=e108]: T002
+              - generic [ref=e109]: 李辅导员
+              - generic [ref=e110]: "******"
+              - generic [ref=e111]:
+                - button "重置密码" [ref=e112]
+                - button "删除" [ref=e113]
+            - generic [ref=e114]:
+              - generic [ref=e115]: T003
+              - generic [ref=e116]: 张辅导员
+              - generic [ref=e117]: "******"
+              - generic [ref=e118]:
+                - button "重置密码" [ref=e119]
+                - button "删除" [ref=e120]
+            - generic [ref=e121]:
+              - generic [ref=e122]: T004
+              - generic [ref=e123]: 赵辅导员
+              - generic [ref=e124]: "******"
+              - generic [ref=e125]:
+                - button "重置密码" [ref=e126]
+                - button "删除" [ref=e127]

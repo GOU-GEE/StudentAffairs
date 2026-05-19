@@ -1,0 +1,71 @@
+[   86173ms] [WARNING] [Vue warn]: Unhandled error during execution of component update 
+  at <SecondClassroom onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/youth/second-classroom" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[   86224ms] TypeError: grantedIds.value.has is not a function
+    at http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196147778:68:40
+    at wrappedFn (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:926:14)
+    at Array.filter (<anonymous>)
+    at apply (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:932:26)
+    at Proxy.filter (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:832:10)
+    at ComputedRefImpl.fn (http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196147778:67:27)
+    at refreshComputed (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:542:26)
+    at isDirty (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:524:118)
+    at ReactiveEffect.runIfDirty (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:446:7)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:1883:31)
+[  101520ms] [WARNING] [Vue warn]: Unhandled error during execution of render function 
+  at <SecondClassroom onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/youth/second-classroom" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  101520ms] [WARNING] [Vue warn]: Unhandled error during execution of component update 
+  at <SecondClassroom onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/youth/second-classroom" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  101536ms] TypeError: $setup.grantedIds.has is not a function
+    at http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196163167:275:36
+    at renderList (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:3854:59)
+    at Proxy._sfc_render (http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196163167:224:67)
+    at renderComponentRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:4707:35)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5598:22)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:419:16)
+    at ReactiveEffect.runIfDirty (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:446:27)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:1883:31)
+    at flushJobs (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2032:5)
+[  109890ms] [WARNING] [Vue warn]: Unhandled error during execution of render function 
+  at <SecondClassroom onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/youth/second-classroom" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  109890ms] [WARNING] [Vue warn]: Unhandled error during execution of component update 
+  at <SecondClassroom onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > key="/youth/second-classroom" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://localhost:5173/@vite/client:509
+[  109897ms] TypeError: $setup.grantedIds.has is not a function
+    at http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196171562:275:36
+    at renderList (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:3854:59)
+    at Proxy._sfc_render (http://localhost:5173/src/views/youth/SecondClassroom.vue?t=1779196171562:224:67)
+    at renderComponentRoot (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:4707:35)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:5598:22)
+    at ReactiveEffect.run (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:419:16)
+    at ReactiveEffect.runIfDirty (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:446:27)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:1883:31)
+    at flushJobs (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-CPnnkeib.js?v=53311e50:2032:5)

@@ -94,7 +94,7 @@
           <div class="flex gap-4">
             <div class="flex-1">
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">活动详情</label>
-              <el-input v-model="form.description" type="textarea" :rows="6" placeholder="请输入活动详情..." class="!h-[140px]" />
+              <el-input v-model="form.description" type="textarea" :rows="6" placeholder="请输入活动详情..." class="custom-textarea !h-[140px]" />
             </div>
             <div class="flex-shrink-0 flex flex-col" style="width: 140px;">
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面</label>
@@ -106,7 +106,7 @@
                 accept="image/*"
                 class="cover-uploader"
               >
-                <div class="w-full aspect-square rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-emerald-400/60 cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 bg-surface-container-low overflow-hidden relative group">
+                <div class="w-full h-[140px] rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-emerald-400/60 cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 bg-surface-container-low overflow-hidden relative group">
                   <img v-if="form.coverImage" :src="form.coverImage" class="absolute inset-0 w-full h-full object-cover rounded-xl group-hover:brightness-50 transition-all" />
                   <div v-if="form.coverImage" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span class="text-white font-bold text-xs bg-black/50 px-2 py-1 rounded-lg">重新上传</span>
@@ -274,3 +274,12 @@ const statusClass = (s) => ({
 
 onMounted(loadActivities)
 </script>
+
+<style scoped>
+:deep(.custom-textarea .el-textarea__inner) {
+  height: 140px !important;
+  min-height: 140px !important;
+  max-height: 140px !important;
+  resize: none;
+}
+</style>
