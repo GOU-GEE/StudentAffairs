@@ -154,10 +154,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  InfoFilled, UserFilled, Edit, StarFilled, UploadFilled, 
+import {
+  InfoFilled, UserFilled, Edit, StarFilled, UploadFilled,
   CircleCheckFilled, Timer, Check
 } from '@element-plus/icons-vue'
+import axios from 'axios'
+const API = 'http://localhost:8080/api/mid-term'
 
 const basicInfo = {
   '姓名': '张小明',
@@ -235,26 +237,27 @@ const submitForm = () => {
     type: 'warning'
   }).then(async () => {
     submitting.value = true
-    await new Promise(r => setTimeout(r, 1500))
-    
-    const submission = {
-      id: Date.now(),
-      name: '张小明',
-      studentId: '202301042',
-      class: '2023级软件工程04班',
-      selfEval: form.value,
-      gpa: '3.82',
-      submitTime: new Date().toLocaleString(),
-      status: 'pending',
-      answers: { ...answers.value }
+    try {
+      const payload = {
+        studentId: '202301042',
+        studentName: '张小明',
+        className: '软工2班',
+        thoughtPerformance: form.value.thoughtEval,
+        academicPerformance: form.value.academicEval,
+        overallPerformance: form.value.comprehensiveEval,
+        selfAssessment: questions.value.map((q, i) => `${q.title}: ${answers.value[i]}`).join('\n\n'),
+      }
+      const res = await axios.post(API, payload)
+      if (res.data.code === 200) {
+        ElMessage.success('中期鉴定已成功提交！')
+        isSubmitted.value = true
+        localStorage.setItem('midterm_submitted', 'true')
+      } else {
+        ElMessage.error(res.data.msg || '提交失败')
+      }
+    } catch (e) {
+      ElMessage.error('提交失败，请检查网络连接')
     }
-    
-    const allSubmissions = JSON.parse(localStorage.getItem('midterm_submissions') || '[]')
-    allSubmissions.unshift(submission)
-    localStorage.setItem('midterm_submissions', JSON.stringify(allSubmissions))
-
-    ElMessage.success('中期鉴定表单已成功提交！')
-    isSubmitted.value = true
     submitting.value = false
   })
 }
@@ -283,6 +286,16 @@ onMounted(() => {
   if (localStorage.getItem('midterm_submitted') === 'true') {
     isSubmitted.value = true
   }
+  const loadExisting = async () => {
+    try {
+      const res = await axios.get(`${API}?studentId=202301042`)
+      if (res.data.code === 200 && res.data.data.length > 0) {
+        isSubmitted.value = true
+        localStorage.setItem('midterm_submitted', 'true')
+      }
+    } catch (e) {}
+  }
+  loadExisting()
 })
 
 const handleExceed = () => ElMessage.warning('最多上传 5 个附件')
