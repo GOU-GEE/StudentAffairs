@@ -65,7 +65,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <button class="flex-shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors flex items-center gap-1.5">
+        <button @click="exportData" class="flex-shrink-0 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors flex items-center gap-1.5">
           <el-icon :size="14"><Download /></el-icon>
           导出数据
         </button>
@@ -265,6 +265,7 @@ import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { Calendar, Download, Search, Document, User, ArrowDown } from '@element-plus/icons-vue'
+import { exportToCSV } from '@/utils/export'
 
 const handleBatchChange = (command) => {
   currentBatch.value.title = `2026年春季学期${command}申请`
@@ -448,5 +449,14 @@ const handleReject = async () => {
 
 const handleSave = () => {
   ElMessage.success('已暂存审核意见')
+}
+
+const exportData = () => {
+  if (students.value.length === 0) { ElMessage.warning('暂无数据可导出'); return }
+  exportToCSV('奖学金申请列表.csv',
+    ['学号','姓名','班级','状态','提交时间'],
+    students.value.map(s => ({ '学号':s.studentId, '姓名':s.name, '班级':s.class, '状态':statusLabel(s.status), '提交时间':s.submitTime }))
+  )
+  ElMessage.success('导出成功')
 }
 </script>

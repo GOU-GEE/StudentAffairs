@@ -1,7 +1,7 @@
 <template>
   <div class="h-full flex flex-col">
     <div class="flex items-center gap-3 mb-4">
-      <button class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+      <button @click="exportData" class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出记录
       </button>
     </div>
@@ -83,6 +83,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Download, Search, Document } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+import { exportToCSV } from '@/utils/export'
 
 const API = '/api/youth/awards'
 
@@ -146,5 +147,16 @@ const handleReview = async (award, action) => {
 const viewDetail = (award) => {
   detailAward.value = award
   detailVisible.value = true
+}
+
+const exportData = () => {
+  const data = filteredAwards.value
+  if (data.length === 0) { ElMessage.warning('暂无数据可导出'); return }
+  const statusMap = { PENDING: '待审核', APPROVED: '已通过', REJECTED: '已驳回' }
+  exportToCSV('获奖记录.csv',
+    ['学号','姓名','获奖名称','级别','类别','获奖时间','状态'],
+    data.map(a => ({ '学号':a.studentId, '姓名':a.studentName, '获奖名称':a.awardName, '级别':a.level, '类别':a.category, '获奖时间':a.awardTime, '状态':statusMap[a.status] || a.status }))
+  )
+  ElMessage.success('导出成功')
 }
 </script>

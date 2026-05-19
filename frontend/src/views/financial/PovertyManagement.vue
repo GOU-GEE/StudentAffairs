@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex items-center gap-3 mb-4">
-      <button class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+      <button @click="exportData" class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出名单
       </button>
     </div>
@@ -108,6 +108,7 @@ import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { Download, Search, Document } from '@element-plus/icons-vue'
+import { exportToCSV } from '@/utils/export'
 
 const students = ref([])
 
@@ -200,5 +201,15 @@ const confirmChangeLevel = () => {
     ElMessage.success('困难等级已更新')
   }
   levelDialogVisible.value = false
+}
+
+const exportData = () => {
+  const data = filteredStudents.value
+  if (data.length === 0) { ElMessage.warning('暂无数据可导出'); return }
+  exportToCSV('困难学生名单.csv',
+    ['学号','姓名','学院','班级','困难等级','困难原因','家庭年收入','状态'],
+    data.map(s => ({ '学号':s.studentId, '姓名':s.name, '学院':s.college, '班级':s.gradeClass, '困难等级':s.level, '困难原因':s.reason, '家庭年收入':s.annualIncome, '状态':s.status }))
+  )
+  ElMessage.success('导出成功')
 }
 </script>

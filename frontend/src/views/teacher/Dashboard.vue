@@ -21,7 +21,7 @@
       </div>
 
       <div class="md:col-span-12 flex items-center gap-3 mb-4">
-        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
+        <button @click="exportData" class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
           <el-icon :size="14"><Download /></el-icon>导出报表
         </button>
         <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
@@ -98,7 +98,9 @@
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position } from '@element-plus/icons-vue'
 import { ref, nextTick, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+import { exportToCSV } from '@/utils/export'
 
 const stats = ref([
   { label: 'Total Students', value: '2,405', icon: User, iconColor: '#316bf3', trend: 2.5 },
@@ -155,4 +157,12 @@ onMounted(async () => {
     }
   } catch(e) {}
 })
+
+const exportData = () => {
+  exportToCSV('辅导员工作报表.csv',
+    ['指标','数值','变化趋势'],
+    stats.value.map(s => ({ '指标':s.label, '数值':s.value, '变化趋势':(s.trend > 0 ? '+' : '') + s.trend + '%' }))
+  )
+  ElMessage.success('导出成功')
+}
 </script>

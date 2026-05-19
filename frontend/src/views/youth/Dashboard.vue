@@ -10,7 +10,7 @@
     </div>
 
     <div class="flex items-center gap-3 mb-4">
-      <button class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+      <button @click="exportData" class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出报表
       </button>
     </div>
@@ -64,8 +64,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import { Download, Timer, Calendar, Medal, Trophy } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+import { exportToCSV } from '@/utils/export'
 
 const API = '/api/youth'
 
@@ -92,4 +94,13 @@ const fetchActivities = async () => {
 onMounted(() => {
   fetchActivities()
 })
+
+const exportData = () => {
+  if (recentActivities.value.length === 0) { ElMessage.warning('暂无数据可导出'); return }
+  exportToCSV('活动统计报表.csv',
+    ['活动名称','时间','参与人数','状态'],
+    recentActivities.value.map(a => ({ '活动名称':a.title, '时间':a.date || a.time || '', '参与人数':String(a.participants || ''), '状态':a.status }))
+  )
+  ElMessage.success('导出成功')
+}
 </script>

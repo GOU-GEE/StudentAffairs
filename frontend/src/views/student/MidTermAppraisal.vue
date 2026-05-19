@@ -67,10 +67,12 @@
             </div>
             
             <el-upload
-              action="#"
+              action="http://localhost:8080/api/upload"
+              :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
               multiple
               :limit="5"
               :on-exceed="handleExceed"
+              :on-success="handleUploadSuccess"
               :disabled="isSubmitted"
               class="midterm-uploader"
             >
@@ -299,6 +301,12 @@ onMounted(() => {
   loadExisting()
 })
 
+const uploadedFiles = ref([])
+const handleUploadSuccess = (response) => {
+  if (response.code === 200) {
+    uploadedFiles.value.push(response.data.url)
+  }
+}
 const handleExceed = () => ElMessage.warning('最多上传 5 个附件')
 
 </script>

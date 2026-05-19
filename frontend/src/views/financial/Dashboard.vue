@@ -12,7 +12,7 @@
     </div>
 
     <div class="flex items-center gap-3 mb-4">
-      <button class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+      <button @click="exportData" class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出报表
       </button>
     </div>
@@ -66,8 +66,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import { Download, Trophy, Briefcase, Stamp, DataAnalysis, CircleCheck, CircleClose } from '@element-plus/icons-vue'
+import { exportToCSV } from '@/utils/export'
 
 const stats = ref([
   { label: '待审批申请', value: 0, desc: '加载中...' },
@@ -137,4 +139,20 @@ onMounted(async () => {
     // keep on error
   }
 })
+
+const exportData = () => {
+  const summaryRows = stats.value.map(s => ({ '指标': s.label, '数值': s.value, '说明': s.desc }))
+  const reviewRows = recentReviews.value.map(r => ({ '标题': r.title, '学生': r.student, '时间': r.time, '结果': r.result }))
+  const allRows = [
+    { '类型': '--- 资助概况统计 ---', '指标': '', '数值': '', '说明': '', '标题': '', '学生': '', '时间': '', '结果': '' },
+    ...summaryRows.map(r => ({ ...r, '标题': '', '学生': '', '时间': '', '结果': '' })),
+    { '类型': '--- 近期审批记录 ---', '指标': '', '数值': '', '说明': '', '标题': '', '学生': '', '时间': '', '结果': '' },
+    ...reviewRows.map(r => ({ '指标': '', '数值': '', '说明': '', ...r })),
+  ]
+  exportToCSV('资助管理报表.csv',
+    ['类型','指标','数值','说明','标题','学生','时间','结果'],
+    allRows
+  )
+  ElMessage.success('导出成功')
+}
 </script>

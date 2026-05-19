@@ -128,41 +128,23 @@
             <label class="text-sm text-gray-700 font-medium block mb-2">
               证明材料（证书照片/扫描件）<span class="text-red-500">*</span>
             </label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <!-- 已上传预览 -->
-              <div
-                v-for="(file, index) in uploadedFiles"
-                :key="index"
-                class="relative aspect-square rounded-xl border border-gray-200 overflow-hidden group"
-              >
-                <img :src="file.url" class="w-full h-full object-cover" />
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <el-icon class="text-white cursor-pointer hover:text-red-400" @click="removeFile(index)" :size="20"><Delete /></el-icon>
-                </div>
-              </div>
-
-              <!-- 上传按钮 -->
-              <button
-                v-if="uploadedFiles.length < 5"
-                @click="triggerUpload"
-                class="aspect-square rounded-xl border-2 border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-blue-500"
-              >
-                <el-icon :size="24"><Plus /></el-icon>
-                <span class="text-xs font-medium">点击上传</span>
-              </button>
-            </div>
+            <el-upload
+              action="http://localhost:8080/api/upload"
+              :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
+              list-type="picture-card"
+              :limit="5"
+              :on-exceed="handleExceed"
+              :on-success="handleUploadSuccess"
+              :on-remove="handleRemove"
+              :file-list="fileList"
+              accept="image/*,.pdf"
+            >
+              <el-icon><Plus /></el-icon>
+            </el-upload>
             <p class="text-[11px] text-gray-400 mt-3 flex items-center gap-1.5">
               <el-icon><InfoFilled /></el-icon>
               支持 JPG, PNG, PDF 格式，单文件不超过 5MB，最多上传 5 份
             </p>
-            <input
-              type="file"
-              ref="fileInput"
-              class="hidden"
-              accept="image/*,.pdf"
-              multiple
-              @change="handleFileChange"
-            />
           </div>
         </div>
       </div>
@@ -242,7 +224,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   Document, Medal, Calendar, ArrowDown, OfficeBuilding,
-  Plus, Delete, InfoFilled, Clock, CollectionTag
+  Plus, InfoFilled, Clock, CollectionTag
 } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
@@ -260,8 +242,7 @@ const form = ref({
   description: ''
 })
 
-const uploadedFiles = ref([])
-const fileInput = ref(null)
+const fileList = ref([])
 const submitting = ref(false)
 
 const loadAwards = async () => {
@@ -271,36 +252,14 @@ const loadAwards = async () => {
   } catch (e) { console.error(e) }
 }
 
-const triggerUpload = () => {
-  fileInput.value.click()
-}
-
-const handleFileChange = (e) => {
-  const files = Array.from(e.target.files)
-  if (uploadedFiles.value.length + files.length > 5) {
-    ElMessage.warning('最多只能上传 5 份材料')
-    return
+const handleExceed = () => ElMessage.warning('最多只能上传 5 份材料')
+const handleUploadSuccess = (response, uploadFile) => {
+  if (response.code === 200) {
+    uploadFile.url = response.data.url
   }
-
-  files.forEach(file => {
-    if (file.size > 5 * 1024 * 1024) {
-      ElMessage.warning(`文件 ${file.name} 超过 5MB`)
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      uploadedFiles.value.push({
-        name: file.name,
-        url: e.target.result,
-        file: file
-      })
-    }
-    reader.readAsDataURL(file)
-  })
 }
-
-const removeFile = (index) => {
-  uploadedFiles.value.splice(index, 1)
+const handleRemove = (uploadFile) => {
+  fileList.value = fileList.value.filter(f => f.uid !== uploadFile.uid)
 }
 
 const submitAward = async () => {
@@ -308,7 +267,7 @@ const submitAward = async () => {
   if (!form.value.awardTime) { ElMessage.warning('请选择获奖时间'); return }
   if (!form.value.level) { ElMessage.warning('请选择获奖级别'); return }
   if (!form.value.category) { ElMessage.warning('请选择获奖类别'); return }
-  if (uploadedFiles.value.length === 0) { ElMessage.warning('请上传获奖证明材料'); return }
+  if (fileList.value.length === 0) { ElMessage.warning('请上传获奖证明材料'); return }
 
   submitting.value = true
   try {
@@ -326,7 +285,7 @@ const submitAward = async () => {
       ElMessage.success('录入申请已提交，请等待辅导员审核')
       loadAwards()
       form.value = { awardName: '', awardTime: '', level: '校级', category: '学科竞赛', issuer: '', description: '' }
-      uploadedFiles.value = []
+      fileList.value = []
     }
   } catch (e) { ElMessage.error('提交失败') }
   submitting.value = false

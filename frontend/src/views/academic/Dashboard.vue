@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="flex items-center gap-3 mb-4">
-      <button class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+      <button @click="exportData" class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出报表
       </button>
     </div>
@@ -39,7 +39,9 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Download, DataAnalysis, Warning, Reading, TrendCharts } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+import { exportToCSV } from '@/utils/export'
 
 const router = useRouter()
 const API = '/api/academic'
@@ -73,4 +75,13 @@ onMounted(async () => {
     }
   } catch (e) { console.error(e) }
 })
+
+const exportData = () => {
+  if (warningStudents.value.length === 0) { ElMessage.warning('暂无数据可导出'); return }
+  exportToCSV('预警学生列表.csv',
+    ['姓名','学号','班级','预警等级'],
+    warningStudents.value.map(w => ({ '姓名':w.name, '学号':w.studentId, '班级':w.className, '预警等级':w.level+'预警' }))
+  )
+  ElMessage.success('导出成功')
+}
 </script>

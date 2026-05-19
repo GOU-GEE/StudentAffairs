@@ -98,17 +98,25 @@
             </div>
             <div class="flex-shrink-0 flex flex-col" style="width: 140px;">
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面</label>
-              <label class="w-full aspect-square rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-emerald-400/60 cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 bg-surface-container-low overflow-hidden relative group">
-                <input type="file" accept="image/*" class="hidden" @change="handleCoverUpload" />
-                <img v-if="form.coverImage" :src="form.coverImage" class="absolute inset-0 w-full h-full object-cover rounded-xl group-hover:brightness-50 transition-all" />
-                <div v-if="form.coverImage" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span class="text-white font-bold text-xs bg-black/50 px-2 py-1 rounded-lg">重新上传</span>
+              <el-upload
+                action="http://localhost:8080/api/upload"
+                :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
+                :show-file-list="false"
+                :on-success="handleCoverUploadSuccess"
+                accept="image/*"
+                class="cover-uploader"
+              >
+                <div class="w-full aspect-square rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-emerald-400/60 cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 bg-surface-container-low overflow-hidden relative group">
+                  <img v-if="form.coverImage" :src="form.coverImage" class="absolute inset-0 w-full h-full object-cover rounded-xl group-hover:brightness-50 transition-all" />
+                  <div v-if="form.coverImage" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="text-white font-bold text-xs bg-black/50 px-2 py-1 rounded-lg">重新上传</span>
+                  </div>
+                  <template v-if="!form.coverImage">
+                    <el-icon :size="28" class="text-outline"><Upload /></el-icon>
+                    <span class="text-xs text-outline font-medium">点击上传图片</span>
+                  </template>
                 </div>
-                <template v-if="!form.coverImage">
-                  <el-icon :size="28" class="text-outline"><Upload /></el-icon>
-                  <span class="text-xs text-outline font-medium">点击上传图片</span>
-                </template>
-              </label>
+              </el-upload>
               <button v-if="form.coverImage" @click="form.coverImage = ''" class="text-xs text-error hover:underline mt-1.5 text-center">清除封面</button>
             </div>
           </div>
@@ -156,7 +164,6 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
-const UPLOAD_API = '/api/upload'
 
 const activities = ref([])
 
@@ -251,19 +258,10 @@ const toggleStatus = async (act) => {
   }
 }
 
-const handleCoverUpload = async (e) => {
-  const file = e.target.files?.[0]
-  if (!file) return
-  const fd = new FormData()
-  fd.append('file', file)
-  try {
-    const res = await request.post(UPLOAD_API, fd)
-    if (res.data.code === 200) {
-      form.value.coverImage = 'http://localhost:8080' + res.data.data.url
-      ElMessage.success('封面上传成功')
-    }
-  } catch (e) {
-    ElMessage.error('上传失败')
+const handleCoverUploadSuccess = (response) => {
+  if (response.code === 200) {
+    form.value.coverImage = 'http://localhost:8080' + response.data.url
+    ElMessage.success('封面上传成功')
   }
 }
 
