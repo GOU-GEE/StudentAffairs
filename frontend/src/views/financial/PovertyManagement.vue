@@ -104,17 +104,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { Download, Search, Document } from '@element-plus/icons-vue'
 
-const students = ref([
-  { id: 1, studentId: '202301042', name: '张小明', college: '计算机学院', gradeClass: '2023级2班', level: 'A档', reason: '父母务农，家庭年收入不足1万元，父亲患病需长期用药', annualIncome: '0.8万', familySize: 5, status: '已认定' },
-  { id: 2, studentId: '202301043', name: '李四', college: '计算机学院', gradeClass: '2023级2班', level: 'C档', reason: '单亲家庭，母亲一人抚养兄妹二人', annualIncome: '2.5万', familySize: 3, status: '已认定' },
-  { id: 3, studentId: '202301048', name: '刘芳', college: '文学院', gradeClass: '2023级1班', level: 'B档', reason: '家庭经济来源单一，父亲打零工收入不稳定', annualIncome: '1.6万', familySize: 4, status: '已认定' },
-  { id: 4, studentId: '202301049', name: '陈强', college: '数学与信息学院', gradeClass: '2024级3班', level: 'A档', reason: '建档立卡贫困户，父母均为残疾人', annualIncome: '0.5万', familySize: 4, status: '已认定' },
-  { id: 5, studentId: '202401001', name: '新申请学生', college: '计算机学院', gradeClass: '2024级1班', level: '待认定', reason: '家庭突遭变故，经济状况急剧恶化', annualIncome: '待核实', familySize: 3, status: '待认定' },
-])
+const students = ref([])
 
 const searchQuery = ref('')
 const filterLevel = ref('全部')
@@ -152,6 +147,33 @@ const statList = computed(() => {
     { label: 'B档（比较困难）', value: b },
     { label: 'C档/待认定', value: c + pending },
   ]
+})
+
+const loadPovertyStudents = async () => {
+  try {
+    const res = await request.get('/api/admin/poverty-students')
+    if (res.data.code === 200) {
+      const list = res.data.data || []
+      students.value = list.map((p, idx) => ({
+        id: p.id || idx + 1,
+        studentId: p.studentId || '',
+        name: p.name || '',
+        college: p.college || '-',
+        gradeClass: p.gradeClass || '-',
+        level: p.extraInfo?.povertyLevel || '待认定',
+        reason: p.extraInfo?.povertyReason || '未提供',
+        annualIncome: p.extraInfo?.annualIncome || '待核实',
+        familySize: p.extraInfo?.familySize || '-',
+        status: p.extraInfo?.povertyLevel ? '已认定' : '待认定'
+      }))
+    }
+  } catch (e) {
+    ElMessage.error('加载困难学生数据失败')
+  }
+}
+
+onMounted(() => {
+  loadPovertyStudents()
 })
 
 const viewDetail = (student) => {

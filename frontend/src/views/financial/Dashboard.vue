@@ -65,19 +65,76 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import request from '@/utils/request'
 import { Download, Trophy, Briefcase, Stamp, DataAnalysis, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 
-const stats = [
-  { label: '待审批申请', value: 3, desc: '奖学金2项 + 助学金1项' },
-  { label: '勤工助学岗位', value: 5, desc: '活跃岗位3个 + 已满2个' },
-  { label: '困难认定学生', value: 128, desc: 'A档32人 + B档58人 + C档38人' },
-  { label: '本月发放金额', value: '¥8.5万', desc: '奖学金5.2万 + 助学金3.3万' },
-]
+const stats = ref([
+  { label: '待审批申请', value: 0, desc: '加载中...' },
+  { label: '勤工助学岗位', value: 0, desc: '加载中...' },
+  { label: '困难认定学生', value: 0, desc: '加载中...' },
+  { label: '本月发放金额', value: '-', desc: '加载中...' },
+])
 
-const recentReviews = [
-  { title: '国家励志奖学金申请', student: '张小明 (202301042)', time: '2026-05-15 14:30', result: '通过' },
-  { title: '国家助学金申请', student: '李四 (202301043)', time: '2026-05-14 10:00', result: '驳回' },
-  { title: '校级奖学金申请', student: '王五 (202301044)', time: '2026-05-13 16:00', result: '通过' },
-  { title: '勤工助学岗位申请', student: '赵六 (202301045)', time: '2026-05-12 09:30', result: '通过' },
-]
+const recentReviews = ref([])
+
+onMounted(async () => {
+  try {
+    // Load dashboard stats
+    const dashRes = await request.get('/api/financial-aid/dashboard')
+    if (dashRes.data.code === 200) {
+      const d = dashRes.data.data
+      stats.value[1] = { label: '勤工助学岗位', value: d.totalJobs || 0, desc: `活跃${d.activeJobs || 0}个` }
+      stats.value[0] = { label: '待审批申请', value: d.pendingReviews || 0, desc: '勤工助学待审' }
+    }
+  } catch (e) {
+    // keep defaults on error
+  }
+
+  try {
+    // Load work-study applications for recent reviews
+    const wsRes = await request.get('/api/financial-aid/applications')
+    if (wsRes.data.code === 200) {
+      const items = (wsRes.data.data || []).slice(0, 4).map(a => ({
+        title: `勤工助学岗位申请 #${a.id}`,
+        student: `${a.studentId}`,
+        time: a.applyTime || '',
+        result: a.status === 'APPROVED' ? '通过' : a.status === 'REJECTED' ? '驳回' : '待审核'
+      }))
+      recentReviews.value = items
+    }
+  } catch (e) {
+    // keep empty on error
+  }
+
+  try {
+    // Load pending scholarship applications to enrich stats
+    const scRes = await request.get('/api/applications/pending')
+    if (scRes.data.code === 200) {
+      const scholarshipCount = (scRes.data.data || []).filter(a => a.type === 'SCHOLARSHIP').length
+      const aidCount = (scRes.data.data || []).filter(a => a.type === 'FINANCIAL_AID').length
+      stats.value[0] = {
+        ...stats.value[0],
+        value: (stats.value[0].value || 0) + scholarshipCount + aidCount,
+        desc: `奖学金${scholarshipCount}项 + 助学金${aidCount}项`
+      }
+    }
+  } catch (e) {
+    // keep on error
+  }
+
+  try {
+    // Load poverty student count
+    const pvRes = await request.get('/api/admin/poverty-students')
+    if (pvRes.data.code === 200) {
+      const list = pvRes.data.data || []
+      const aCount = list.filter(p => p.extraInfo?.povertyLevel === 'A档').length
+      const bCount = list.filter(p => p.extraInfo?.povertyLevel === 'B档').length
+      const cCount = list.filter(p => p.extraInfo?.povertyLevel === 'C档').length
+      stats.value[2] = { label: '困难认定学生', value: list.length, desc: `A档${aCount}人 + B档${bCount}人 + C档${cCount}人` }
+    }
+  } catch (e) {
+    // keep on error
+  }
+})
 </script>

@@ -261,7 +261,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { Calendar, Download, Search, Document, User, ArrowDown } from '@element-plus/icons-vue'
 
@@ -274,21 +275,26 @@ const currentBatch = ref({
   title: '2026年春季学期国家励志奖学金申请（普通班）',
   status: '进行中',
   dateRange: '2025-03-29 ~ 2026-04-09',
-  total: 128,
-  reviewed: 36,
-  pending: 92
+  total: 0,
+  reviewed: 0,
+  pending: 0
 })
 
-const reviewProgress = computed(() =>
-  Math.round((currentBatch.value.reviewed / currentBatch.value.total) * 100)
-)
+const reviewProgress = computed(() => {
+  if (currentBatch.value.total === 0) return 0
+  return Math.round((currentBatch.value.reviewed / currentBatch.value.total) * 100)
+})
 
-const stats = computed(() => [
-  { label: '已审核', value: currentBatch.value.reviewed, color: 'text-gray-900' },
-  { label: '待审核', value: currentBatch.value.pending, color: 'text-orange-500' },
-  { label: '已通过', value: 24, color: 'text-green-600' },
-  { label: '未通过', value: 12, color: 'text-red-500' }
-])
+const stats = computed(() => {
+  const approved = students.value.filter(s => s.status === 'APPROVED').length
+  const rejected = students.value.filter(s => s.status === 'REJECTED').length
+  return [
+    { label: '已审核', value: currentBatch.value.reviewed, color: 'text-gray-900' },
+    { label: '待审核', value: currentBatch.value.pending, color: 'text-orange-500' },
+    { label: '已通过', value: approved, color: 'text-green-600' },
+    { label: '未通过', value: rejected, color: 'text-red-500' }
+  ]
+})
 
 // 状态筛选
 const statusFilters = [
@@ -300,18 +306,10 @@ const statusFilters = [
 const activeFilter = ref('all')
 const searchText = ref('')
 
-// Mock 学生列表
-const students = ref([
-  { id: 1, name: '张小明', studentId: '202301042', class: '计算机科学2301班', submitTime: '2026-04-02 14:32', status: 'PENDING', avatar: 'https://i.pravatar.cc/150?u=1' },
-  { id: 2, name: '李思远', studentId: '202301057', class: '计算机科学2301班', submitTime: '2026-04-02 14:28', status: 'PENDING', avatar: 'https://i.pravatar.cc/150?u=2' },
-  { id: 3, name: '王佳怡', studentId: '202301088', class: '软件工程2302班', submitTime: '2026-04-02 14:20', status: 'PENDING', avatar: 'https://i.pravatar.cc/150?u=3' },
-  { id: 4, name: '陈浩宇', studentId: '202301075', class: '计算机科学2301班', submitTime: '2026-04-01 11:15', status: 'APPROVED', avatar: 'https://i.pravatar.cc/150?u=4' },
-  { id: 5, name: '刘雨欣', studentId: '202301086', class: '软件工程2302班', submitTime: '2026-04-01 10:42', status: 'REJECTED', avatar: 'https://i.pravatar.cc/150?u=5' },
-  { id: 6, name: '赵明轩', studentId: '202301093', class: '计算机科学2302班', submitTime: '2026-04-01 09:30', status: 'PENDING', avatar: 'https://i.pravatar.cc/150?u=6' },
-  { id: 7, name: '吴晓彤', studentId: '202301101', class: '软件工程2301班', submitTime: '2026-03-31 16:45', status: 'PENDING', avatar: 'https://i.pravatar.cc/150?u=7' }
-])
+// 学生列表（从API加载）
+const students = ref([])
 
-const selectedStudent = ref(students.value[0])
+const selectedStudent = ref(null)
 const statementExpanded = ref(false)
 const honorsExpanded = ref(false)
 
@@ -331,9 +329,9 @@ const leftFields = computed(() => {
   return [
     { label: '学号', value: selectedStudent.value.studentId },
     { label: '姓名', value: selectedStudent.value.name },
-    { label: '性别', value: '男' },
-    { label: '所在班级', value: selectedStudent.value.class },
-    { label: '专业排名', value: '10 / 68' }
+    { label: '性别', value: selectedStudent.value.gender || '-' },
+    { label: '所在班级', value: selectedStudent.value.class || '-' },
+    { label: '专业排名', value: selectedStudent.value.rank || '-' }
   ]
 })
 
@@ -341,10 +339,10 @@ const leftFields = computed(() => {
 const rightFields = computed(() => {
   if (!selectedStudent.value) return []
   return [
-    { label: '困难认定等级', value: '无困难认定' },
-    { label: '本学期加权平均', value: '88.5' },
-    { label: '志愿服务时长', value: '32 小时' },
-    { label: '家庭年收入（元）', value: '50,000' }
+    { label: '困难认定等级', value: selectedStudent.value.povertyLevel || '无困难认定' },
+    { label: '本学期加权平均', value: selectedStudent.value.avgScore || '-' },
+    { label: '志愿服务时长', value: selectedStudent.value.volunteerHours || '-' },
+    { label: '家庭年收入（元）', value: selectedStudent.value.annualIncome || '-' }
   ]
 })
 
@@ -357,9 +355,6 @@ const documents = ref([
   { name: '家庭经济情况说明', ext: '.pdf', color: 'bg-red-400' }
 ])
 
-
-
-const reviewDecision = ref('pass')
 const reviewComment = ref('')
 
 const statusLabel = (s) => ({ PENDING: '待审核', APPROVED: '已通过', REJECTED: '未通过' }[s] || s)
@@ -369,22 +364,86 @@ const statusColor = (s) => ({
   REJECTED: 'text-red-500'
 }[s] || 'text-gray-400')
 
-const handlePass = () => {
-  if (!selectedStudent.value) { ElMessage.warning('请先选择学生'); return }
-  selectedStudent.value.status = 'APPROVED'
-  currentBatch.value.reviewed++
-  currentBatch.value.pending--
-  ElMessage.success(`已通过 ${selectedStudent.value.name} 的申请`)
-  reviewComment.value = ''
+const loadApplications = async () => {
+  try {
+    const res = await request.get('/api/applications/all')
+    if (res.data.code === 200) {
+      const all = res.data.data || []
+      const scholarshipApps = all.filter(a => a.type === 'SCHOLARSHIP')
+      students.value = scholarshipApps.map(a => ({
+        id: a.id,
+        name: a.studentName || a.studentId,
+        studentId: a.studentId,
+        class: a.extraInfo?.gradeClass || '-',
+        submitTime: a.applyTime || '',
+        status: a.status,
+        avatar: 'https://i.pravatar.cc/150?u=' + a.studentId,
+        gender: a.extraInfo?.gender || '-',
+        povertyLevel: a.extraInfo?.povertyLevel || '无困难认定',
+        avgScore: a.extraInfo?.avgScore || '-',
+        volunteerHours: a.extraInfo?.volunteerHours || '-',
+        annualIncome: a.extraInfo?.annualIncome || '-',
+        rank: a.extraInfo?.rank || '-',
+        reason: a.reason || ''
+      }))
+      currentBatch.value.total = students.value.length
+      currentBatch.value.reviewed = students.value.filter(s => s.status !== 'PENDING').length
+      currentBatch.value.pending = students.value.filter(s => s.status === 'PENDING').length
+      if (students.value.length > 0) {
+        selectedStudent.value = students.value[0]
+      }
+    }
+  } catch (e) {
+    ElMessage.error('加载申请列表失败')
+  }
 }
 
-const handleReject = () => {
+onMounted(() => {
+  loadApplications()
+})
+
+const handlePass = async () => {
   if (!selectedStudent.value) { ElMessage.warning('请先选择学生'); return }
-  selectedStudent.value.status = 'REJECTED'
-  currentBatch.value.reviewed++
-  currentBatch.value.pending--
-  ElMessage.warning(`已驳回 ${selectedStudent.value.name} 的申请`)
-  reviewComment.value = ''
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: 'APPROVED',
+      comment: reviewComment.value,
+      reviewerName: '资助中心管理员'
+    })
+    if (res.data.code === 200) {
+      selectedStudent.value.status = 'APPROVED'
+      currentBatch.value.reviewed++
+      currentBatch.value.pending--
+      const idx = students.value.findIndex(s => s.id === selectedStudent.value.id)
+      if (idx >= 0) students.value[idx].status = 'APPROVED'
+      ElMessage.success(`已通过 ${selectedStudent.value.name} 的申请`)
+      reviewComment.value = ''
+    }
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
+}
+
+const handleReject = async () => {
+  if (!selectedStudent.value) { ElMessage.warning('请先选择学生'); return }
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: 'REJECTED',
+      comment: reviewComment.value,
+      reviewerName: '资助中心管理员'
+    })
+    if (res.data.code === 200) {
+      selectedStudent.value.status = 'REJECTED'
+      currentBatch.value.reviewed++
+      currentBatch.value.pending--
+      const idx = students.value.findIndex(s => s.id === selectedStudent.value.id)
+      if (idx >= 0) students.value[idx].status = 'REJECTED'
+      ElMessage.warning(`已驳回 ${selectedStudent.value.name} 的申请`)
+      reviewComment.value = ''
+    }
+  } catch (e) {
+    ElMessage.error('操作失败')
+  }
 }
 
 const handleSave = () => {

@@ -68,14 +68,16 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import request from '@/utils/request'
 import { Download, Setting, User, DataAnalysis, Avatar, Document, UploadFilled } from '@element-plus/icons-vue'
 
-const stats = [
-  { label: '学生总数', value: 3560, icon: User, iconColor: 'var(--color-error)' },
+const stats = ref([
+  { label: '学生总数', value: 0, icon: User, iconColor: 'var(--color-error)' },
   { label: '教师/辅导员', value: 48, icon: Avatar, iconColor: 'var(--color-error)' },
   { label: '本月导入记录', value: 12, icon: DataAnalysis, iconColor: 'var(--color-error)' },
-  { label: '系统账号数', value: 5, icon: Setting, iconColor: 'var(--color-error)' },
-]
+  { label: '系统账号数', value: 0, icon: Setting, iconColor: 'var(--color-error)' },
+])
 
 const importHistory = [
   { title: '2024级新生信息导入', operator: '系统管理员', time: '2026-05-15 14:30', status: '成功', count: 1250, icon: Document },
@@ -83,4 +85,24 @@ const importHistory = [
   { title: '2023级学生档案更新', operator: '系统管理员', time: '2026-05-08 16:45', status: '部分失败', count: '320/356', icon: UploadFilled },
   { title: '困难认定数据导入', operator: '系统管理员', time: '2026-05-05 11:00', status: '成功', count: 180, icon: Document },
 ]
+
+onMounted(async () => {
+  try {
+    const res = await request.get('/api/academic/dashboard')
+    if (res.data.code === 200) {
+      stats.value[0].value = res.data.data.totalStudents || 0
+    }
+  } catch (e) {
+    // keep default on error
+  }
+
+  try {
+    const res = await request.get('/api/admin/accounts')
+    if (res.data.code === 200) {
+      stats.value[3].value = (res.data.data || []).length
+    }
+  } catch (e) {
+    // keep default on error
+  }
+})
 </script>

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -157,5 +158,17 @@ public class AdminController {
         account.put("name", body.getOrDefault("name", ""));
         account.put("status", "启用");
         return Result.success(account);
+    }
+
+    // ==================== 困难认定管理 ====================
+
+    /** 获取所有有困难认定数据的学生 */
+    @GetMapping("/poverty-students")
+    public Result<List<StudentProfile>> getPovertyStudents() {
+        List<StudentProfile> all = profileRepo.findAll();
+        List<StudentProfile> result = all.stream()
+                .filter(p -> p.getExtraInfo() != null && p.getExtraInfo().containsKey("povertyLevel"))
+                .collect(Collectors.toList());
+        return Result.success(result);
     }
 }

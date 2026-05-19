@@ -56,4 +56,50 @@ public class FinancialAidService {
         application.setApplyTime(LocalDateTime.now());
         applicationRepository.save(application);
     }
+
+    public List<WorkStudyApplication> getAllApplications() {
+        return applicationRepository.findByOrderByApplyTimeDesc();
+    }
+
+    @Transactional
+    public void reviewApplication(Long applicationId, String status) {
+        WorkStudyApplication app = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("申请不存在"));
+        if (!"PENDING".equals(app.getStatus())) {
+            throw new RuntimeException("该申请已处理");
+        }
+        app.setStatus(status);
+        applicationRepository.save(app);
+
+        // 如果拒绝，释放岗位名额
+        if ("REJECTED".equals(status)) {
+            WorkStudyJob job = jobRepository.findById(app.getJobId()).orElse(null);
+            if (job != null) {
+                job.setCurrentCount(Math.max(0, job.getCurrentCount() - 1));
+                if ("FULL".equals(job.getStatus())) job.setStatus("ACTIVE");
+                jobRepository.save(job);
+            }
+        }
+    }
+
+    public WorkStudyJob createJob(WorkStudyJob job) {
+        job.setCurrentCount(0);
+        if (job.getStatus() == null) job.setStatus("ACTIVE");
+        return jobRepository.save(job);
+    }
+
+    public java.util.Map<String, Object> getDashboardStats() {
+        long totalJobs = jobRepository.count();
+        long activeJobs = jobRepository.findAll().stream()
+                .filter(j -> "ACTIVE".equals(j.getStatus())).count();
+        long totalApplications = applicationRepository.count();
+        long pendingReviews = applicationRepository.countByStatus("PENDING");
+
+        java.util.Map<String, Object> stats = new java.util.LinkedHashMap<>();
+        stats.put("totalJobs", totalJobs);
+        stats.put("activeJobs", activeJobs);
+        stats.put("totalApplications", totalApplications);
+        stats.put("pendingReviews", pendingReviews);
+        return stats;
+    }
 }
