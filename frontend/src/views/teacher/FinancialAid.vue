@@ -32,9 +32,9 @@
           <span class="text-sm font-bold text-gray-900 truncate">{{ currentBatch }}</span>
           <span class="text-xs text-gray-400 mt-0.5">{{ currentBatchTime }}</span>
         </div>
-        <el-dropdown trigger="click" @command="handleBatchChange">
+        <el-dropdown trigger="click" @command="handleBatchChange" :teleported="false">
           <button class="flex-shrink-0 px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
-            {{ currentBatch === '国家励志奖学金' && isInitial ? '切换批次' : '切换批次' }} <el-icon><ArrowDown /></el-icon>
+            切换批次 <el-icon><ArrowDown /></el-icon>
           </button>
           <template #dropdown>
             <el-dropdown-menu>
