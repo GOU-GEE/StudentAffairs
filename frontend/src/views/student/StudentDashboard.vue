@@ -1,91 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-transparent">
-    <!-- Page Header -->
-    <div class="mb-6 flex justify-between items-end">
-      <div>
-        <h2 class="text-[2rem] font-bold text-gray-800 mb-2">上午好，张小明！👋</h2>
-        <div class="flex items-center text-sm text-gray-500 gap-4">
-          <span class="flex items-center gap-1"><el-icon><Calendar /></el-icon> 今天是 {{ currentDate }}，星期三</span>
-          <span class="flex items-center gap-1"><el-icon><Calendar /></el-icon> 距离英语四级还有 <span class="text-blue-500 font-bold mx-1">18</span> 天</span>
-        </div>
-      </div>
-      <div class="flex gap-4">
-        <!-- 待办任务 Popover -->
-        <el-popover placement="bottom-end" :width="300" trigger="click" popper-class="notification-popover" :hide-after="0" :show-after="0" transition="el-zoom-in-top">
-          <template #reference>
-            <div class="flex items-center gap-2 bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/40 shadow-sm transition-all hover:bg-white/60 cursor-pointer group">
-              <el-icon class="text-orange-500 text-lg group-hover:scale-110 transition-transform"><Document /></el-icon>
-              <div><div class="text-xl font-bold text-gray-800 leading-none">1</div><div class="text-[10px] text-gray-500 mt-1">待办任务</div></div>
-            </div>
-          </template>
-          <div class="p-2">
-            <div class="flex justify-between items-center mb-3 px-2">
-              <span class="font-bold text-sm text-gray-800">待办任务</span>
-              <span class="text-[10px] text-blue-500 cursor-pointer">全部忽略</span>
-            </div>
-            <div class="space-y-1">
-              <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border-b border-gray-50 last:border-0" @click="router.push('/student/applications/scholarship')">
-                <div class="flex justify-between mb-1">
-                  <span class="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">重要</span>
-                  <span class="text-[10px] text-gray-400">刚刚</span>
-                </div>
-                <div class="text-xs text-gray-700 font-medium truncate">国家励志奖学金申请即将截止</div>
-              </div>
-            </div>
-            <div class="mt-3 pt-2 border-t border-gray-50 text-center">
-              <button class="text-xs text-blue-500 font-medium" @click="router.push('/student/applications')">进入任务中心</button>
-            </div>
-          </div>
-        </el-popover>
-
-        <!-- 安全预警 Popover -->
-        <el-popover placement="bottom-end" :width="300" trigger="click" popper-class="notification-popover" :hide-after="0" :show-after="0" transition="el-zoom-in-top">
-          <template #reference>
-            <div class="flex items-center gap-2 bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/40 shadow-sm transition-all hover:bg-white/60 cursor-pointer group">
-              <el-icon class="text-green-500 text-lg group-hover:scale-110 transition-transform"><CircleCheck /></el-icon>
-              <div><div class="text-xl font-bold text-gray-800 leading-none">0</div><div class="text-[10px] text-gray-500 mt-1">安全预警</div></div>
-            </div>
-          </template>
-          <div class="p-4 text-center">
-            <el-icon class="text-4xl text-green-500 mb-2"><CircleCheck /></el-icon>
-            <p class="text-sm text-gray-600 font-medium">当前校园环境安全</p>
-            <p class="text-[10px] text-gray-400 mt-1">暂无异常预警信息</p>
-          </div>
-        </el-popover>
-
-        <!-- 材料待提交 Popover -->
-        <el-popover placement="bottom-end" :width="300" trigger="click" popper-class="notification-popover" :hide-after="0" :show-after="0" transition="el-zoom-in-top">
-          <template #reference>
-            <div class="flex items-center gap-2 bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/40 shadow-sm transition-all hover:bg-white/60 cursor-pointer group">
-              <el-icon class="text-purple-500 text-lg group-hover:scale-110 transition-transform"><UploadFilled /></el-icon>
-              <div><div class="text-xl font-bold text-gray-800 leading-none">2</div><div class="text-[10px] text-gray-500 mt-1">材料待提交</div></div>
-            </div>
-          </template>
-          <div class="p-2">
-            <div class="flex justify-between items-center mb-3 px-2">
-              <span class="font-bold text-sm text-gray-800">待提交材料</span>
-            </div>
-            <div class="space-y-2">
-              <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-gray-100 shadow-sm" @click="router.push('/student/profile')">
-                <div class="text-xs text-gray-800 font-bold mb-1">生源地贷款确认书</div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[10px] text-gray-400">截止日期: 05-15</span>
-                  <span class="text-[10px] text-purple-500 font-bold">去上传 ></span>
-                </div>
-              </div>
-              <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-gray-100 shadow-sm" @click="router.push('/student/profile')">
-                <div class="text-xs text-gray-800 font-bold mb-1">学籍信息核对单</div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[10px] text-gray-400">截止日期: 05-20</span>
-                  <span class="text-[10px] text-purple-500 font-bold">去确认 ></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </el-popover>
-      </div>
-    </div>
-
+  <div class="h-full flex flex-col bg-transparent pt-4">
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min pb-6">
       
@@ -106,18 +20,27 @@
             </div>
             <div class="text-sm text-gray-500 mb-2 font-medium">学号: 202301042</div>
             <p class="text-sm text-gray-600 mb-3">计算机学院 | 软件工程 | 软工2班</p>
-            <div class="text-xs text-gray-500 flex flex-col gap-1.5">
+            <div class="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1.5 items-center">
               <span class="flex items-center gap-1"><el-icon><Location /></el-icon> 兰苑3栋 402</span>
               <span class="flex items-center gap-1"><el-icon><Phone /></el-icon> 138-xxxx-8888</span>
             </div>
           </div>
         </div>
-        <div class="flex gap-2 flex-wrap pt-4 border-t border-gray-50">
-          <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-medium border border-red-100">中共党员</span>
-          <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[10px] font-medium border border-blue-100">困难生</span>
-          <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[10px] font-medium border border-green-100">篮球队</span>
-          <span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-[10px] font-medium border border-purple-100">ACM成员</span>
-          <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[10px] font-medium border border-orange-100">2025届</span>
+        <div class="pt-4 border-t border-gray-100 flex-1 flex flex-col min-h-0">
+          <div class="text-xs font-bold text-gray-800 mb-2.5 flex items-center justify-between">
+            <span class="flex items-center gap-1">
+              <el-icon class="text-blue-500"><Medal /></el-icon>
+              个人荣誉与奖项
+            </span>
+            <button @click="router.push('/student/honors')" class="text-[10px] text-blue-500 hover:text-blue-600 font-medium">查看全部</button>
+          </div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-2 flex-1 overflow-y-auto pr-1 custom-scrollbar">
+            <div v-for="award in awards.slice(0, 6)" :key="award.id" class="text-xs flex items-center justify-between py-1 border-b border-gray-50 last:border-0 hover:bg-gray-50/50 rounded transition-colors px-1">
+              <span class="text-gray-700 font-medium truncate pr-2" :title="award.awardName">{{ award.awardName }}</span>
+              <span :class="levelTagClass(award.level)" class="px-1.5 py-0.5 rounded text-[8px] font-bold flex-shrink-0">{{ award.level }}</span>
+            </div>
+            <div v-if="awards.length === 0" class="col-span-2 text-center text-gray-400 text-xs py-6">暂无获奖记录</div>
+          </div>
         </div>
       </div>
 
@@ -353,66 +276,21 @@
 
       <!-- 5. Notifications -->
       <div class="md:col-span-4 bg-white/30 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-white/40 flex flex-col h-[360px] hover:bg-white/50 transition-all">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-base font-bold text-gray-800">学校通知</h3>
+        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+          <h3 class="text-base font-bold text-gray-800">通知公告</h3>
           <button @click="router.push('/student/campus-life')" class="text-blue-500 text-xs hover:text-blue-600 font-medium">更多 <el-icon class="align-middle"><ArrowRight /></el-icon></button>
         </div>
-        <div class="space-y-3 mb-6">
-          <div class="flex justify-between items-center group cursor-pointer">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded text-[10px] flex-shrink-0">学校</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500">关于五一劳动节放假安排的通知</span>
+        <div class="flex-1 overflow-y-auto space-y-3.5 pr-1 custom-scrollbar">
+          <div v-for="notif in notifications.slice(0, 6)" :key="notif.id" @click="goNotification(notif.id)" class="flex justify-between items-center group cursor-pointer py-1.5 border-b border-gray-50 last:border-0 hover:bg-white/40 px-1 rounded transition-all">
+            <div class="flex items-center gap-2 truncate pr-2 flex-1">
+              <span :class="getTypeTagClass(notif.type)" class="px-1.5 py-0.5 rounded text-[10px] flex-shrink-0 font-medium">{{ getTypeName(notif.type) }}</span>
+              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500 flex-1">{{ notif.title }}</span>
             </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-06</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">{{ formatDate(notif.publishTime) }}</span>
           </div>
-          <div class="flex justify-between items-center group cursor-pointer">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded text-[10px] flex-shrink-0">学校</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500">2025年国家奖学金评审结果公示</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-05</span>
-          </div>
-          <div class="flex justify-between items-center group cursor-pointer">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded text-[10px] flex-shrink-0">学校</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500">大学英语四、六级考试报名通知</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-04</span>
-          </div>
-          <div class="flex justify-between items-center group cursor-pointer">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded text-[10px] flex-shrink-0">学校</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500">图书馆座位预约系统上线通知</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-03</span>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-base font-bold text-gray-800">班级通知</h3>
-          <button @click="router.push('/student/campus-life')" class="text-blue-500 text-xs hover:text-blue-600 font-medium">更多 <el-icon class="align-middle"><ArrowRight /></el-icon></button>
-        </div>
-        <div class="space-y-3 pb-4">
-          <div class="flex justify-between items-center group cursor-pointer" @click="router.push('/student/campus-life')">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-green-50 text-green-500 rounded text-[10px] flex-shrink-0">班级</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500 font-medium">本周日晚点名提醒</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-06</span>
-          </div>
-          <div class="flex justify-between items-center group cursor-pointer" @click="router.push('/student/campus-life')">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-green-50 text-green-500 rounded text-[10px] flex-shrink-0">班级</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500 font-medium">毕业生信息采集工作通知</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-05</span>
-          </div>
-          <div class="flex justify-between items-center group cursor-pointer" @click="router.push('/student/campus-life')">
-            <div class="flex items-center gap-2 truncate pr-2">
-              <span class="px-1.5 py-0.5 bg-green-50 text-green-500 rounded text-[10px] flex-shrink-0">班级</span>
-              <span class="text-sm text-gray-700 truncate group-hover:text-blue-500 font-medium">团课学习第二阶段开始</span>
-            </div>
-            <span class="text-xs text-gray-400 flex-shrink-0">05-04</span>
+          <div v-if="notifications.length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 text-xs py-10">
+            <el-icon class="text-2xl mb-2 opacity-55"><School /></el-icon>
+            暂无通知公告
           </div>
         </div>
       </div>
@@ -436,6 +314,8 @@ const selectedSemester = ref('大二下学期')
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const stats = ref({ gpa: '--', totalCredits: '--', classroomHours: '--', applicationCount: '--', awards: '--' })
+const notifications = ref([])
+const awards = ref([])
 
 const loadStats = async () => {
   try {
@@ -458,6 +338,29 @@ const loadStats = async () => {
       stats.value.applicationCount = appRes.data.data.length
     }
   } catch (e) { console.error(e) }
+}
+
+const loadNotifications = async () => {
+  try {
+    const res = await request.get('/api/communication/announcements')
+    if (res.data.code === 200) {
+      notifications.value = res.data.data
+    }
+  } catch (e) { console.error('加载通知失败', e) }
+}
+
+const loadAwards = async () => {
+  try {
+    const res = await request.get(`/api/youth/awards?studentId=${STUDENT_ID}`)
+    if (res.data.code === 200) {
+      const sorted = res.data.data.sort((a, b) => {
+        const dateA = new Date(a.awardTime || 0)
+        const dateB = new Date(b.awardTime || 0)
+        return dateB - dateA
+      })
+      awards.value = sorted
+    }
+  } catch (e) { console.error('加载荣誉失败', e) }
 }
 
 const academicStats = ref({
@@ -489,14 +392,52 @@ const academicStats = ref({
   }
 })
 
+const levelTagClass = (level) => {
+  const m = {
+    '国家级': 'bg-red-50 text-red-600 border border-red-100',
+    '省级': 'bg-orange-50 text-orange-600 border border-orange-100',
+    '市级': 'bg-yellow-50 text-yellow-600 border border-yellow-100',
+    '校级': 'bg-blue-50 text-blue-600 border border-blue-100',
+    '院级': 'bg-green-50 text-green-600 border border-green-100'
+  }
+  return m[level] || 'bg-gray-50 text-gray-500'
+}
+
+const getTypeName = (type) => {
+  const m = {
+    'NOTICE': '学校',
+    'URGENT': '紧急',
+    'EVENT': '活动'
+  }
+  return m[type] || '通知'
+}
+
+const getTypeTagClass = (type) => {
+  const m = {
+    'NOTICE': 'bg-blue-50 text-blue-500',
+    'URGENT': 'bg-red-50 text-red-500',
+    'EVENT': 'bg-green-50 text-green-500'
+  }
+  return m[type] || 'bg-gray-50 text-gray-500'
+}
+
+const formatDate = (s) => {
+  if (!s) return ''
+  const d = new Date(s)
+  return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+const goNotification = (id) => {
+  router.push({ path: '/student/campus-life', query: { notifId: id } })
+}
+
 const openProfile = inject('openProfile', () => {
   router.push('/student/profile')
 })
 
-const date = new Date()
-const currentDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
-
-onMounted(loadStats)
+onMounted(async () => {
+  await Promise.all([loadStats(), loadNotifications(), loadAwards()])
+})
 </script>
 
 <style scoped>
@@ -507,4 +448,16 @@ onMounted(loadStats)
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(6px); }
 
+/* Custom premium scrollbar for lists */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
 </style>

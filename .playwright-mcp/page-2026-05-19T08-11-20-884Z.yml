@@ -1,0 +1,89 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "团委管理首页" [ref=e12] [cursor=pointer]:
+          - /url: /youth
+          - img [ref=e14]
+          - text: 团委管理首页
+      - listitem [ref=e16]:
+        - link "第二课堂学时" [ref=e17] [cursor=pointer]:
+          - /url: /youth/second-classroom
+          - img [ref=e19]
+          - text: 第二课堂学时
+      - listitem [ref=e23]:
+        - link "活动发布管理" [active] [ref=e24] [cursor=pointer]:
+          - /url: /youth/activities
+          - img [ref=e26]
+          - text: 活动发布管理
+      - listitem [ref=e28]:
+        - link "获奖情况审核" [ref=e29] [cursor=pointer]:
+          - /url: /youth/awards
+          - img [ref=e31]
+          - text: 获奖情况审核
+      - listitem [ref=e34]:
+        - link "评优评奖管理" [ref=e35] [cursor=pointer]:
+          - /url: /youth/honors
+          - img [ref=e37]
+          - text: 评优评奖管理
+    - generic [ref=e40]:
+      - generic [ref=e41]: 系统状态
+      - generic [ref=e44]: 后端服务正常
+      - generic [ref=e47]: 团委/第二课堂模式
+  - generic [ref=e48]:
+    - banner [ref=e49]:
+      - heading "活动发布管理" [level=2] [ref=e51]
+      - generic [ref=e52]:
+        - button "1" [ref=e54]:
+          - img [ref=e56]
+          - generic [ref=e60]: "1"
+        - button [ref=e61]:
+          - img [ref=e63]
+        - generic [ref=e65] [cursor=pointer]:
+          - generic [ref=e66]: 团
+          - generic [ref=e67]: 第二课堂/团委
+    - main [ref=e68]:
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - text: 总学时数
+            - heading "4,280" [level=3] [ref=e72]
+            - paragraph [ref=e73]: 已发放 3,850 + 待发放 430
+          - generic [ref=e74]:
+            - text: 活跃活动
+            - heading "6" [level=3] [ref=e75]
+            - paragraph [ref=e76]: 进行中 2 个 + 报名中 4 个
+          - generic [ref=e77]:
+            - text: 待审获奖
+            - heading "5" [level=3] [ref=e78]
+            - paragraph [ref=e79]: 学科竞赛 2 + 文体 3
+          - generic [ref=e80]:
+            - text: 评优项目
+            - heading "3" [level=3] [ref=e81]
+            - paragraph [ref=e82]: 三好学生 / 优干 / 优秀团员
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - heading "快捷操作" [level=3] [ref=e85]
+            - generic [ref=e86]:
+              - button "发放学时 第二课堂学时管理" [ref=e87]:
+                - img [ref=e89]
+                - generic [ref=e93]: 发放学时
+                - generic [ref=e94]: 第二课堂学时管理
+              - button "发布活动 校园活动管理" [ref=e95]:
+                - img [ref=e97]
+                - generic [ref=e99]: 发布活动
+                - generic [ref=e100]: 校园活动管理
+              - button "审核获奖 学生获奖记录" [ref=e101]:
+                - img [ref=e103]
+                - generic [ref=e106]: 审核获奖
+                - generic [ref=e107]: 学生获奖记录
+              - button "评优评奖 荣誉评选管理" [ref=e108]:
+                - img [ref=e110]
+                - generic [ref=e112]: 评优评奖
+                - generic [ref=e113]: 荣誉评选管理
+          - heading "近期活动参与统计" [level=3] [ref=e115]

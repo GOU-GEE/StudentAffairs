@@ -1,0 +1,135 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "管理后台首页" [ref=e12] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e14]
+          - text: 管理后台首页
+      - listitem [ref=e16]:
+        - link "学生信息管理" [active] [ref=e17] [cursor=pointer]:
+          - /url: /admin/students
+          - img [ref=e19]
+          - text: 学生信息管理
+      - listitem [ref=e21]:
+        - link "成绩信息管理" [ref=e22] [cursor=pointer]:
+          - /url: /admin/grades
+          - img [ref=e24]
+          - text: 成绩信息管理
+      - listitem [ref=e26]:
+        - link "账号管理" [ref=e27] [cursor=pointer]:
+          - /url: /admin/accounts
+          - img [ref=e29]
+          - text: 账号管理
+    - generic [ref=e32]:
+      - generic [ref=e33]: 系统状态
+      - generic [ref=e36]: 后端服务正常
+      - generic [ref=e39]: 超级管理员模式
+  - generic [ref=e40]:
+    - banner [ref=e41]:
+      - heading "学生信息管理" [level=2] [ref=e167]
+      - generic [ref=e44]:
+        - button "1" [ref=e46]:
+          - img [ref=e48]
+          - generic [ref=e52]: "1"
+        - button [ref=e53]:
+          - img [ref=e55]
+        - generic [ref=e57] [cursor=pointer]:
+          - generic [ref=e58]: 管
+          - generic [ref=e59]: 系统管理员
+    - main [ref=e60]:
+      - generic [ref=e168]:
+        - generic [ref=e169]:
+          - button "批量导入" [ref=e170]:
+            - img [ref=e172]
+            - text: 批量导入
+          - button "新增学生" [ref=e174]:
+            - img [ref=e176]
+            - text: 新增学生
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - generic [ref=e181]:
+              - img [ref=e184]
+              - textbox "搜索学号、姓名..." [ref=e186]
+            - generic [ref=e188] [cursor=pointer]:
+              - generic:
+                - combobox [ref=e190]
+                - generic [ref=e191]: 学院筛选
+              - img [ref=e194]
+          - generic [ref=e196]: 3 条记录
+        - generic [ref=e199]:
+          - table [ref=e201]:
+            - rowgroup [ref=e210]:
+              - row "学号 姓名 学院 专业 年级班级 联系方式 操作" [ref=e211]:
+                - columnheader "学号" [ref=e212]:
+                  - generic [ref=e213]: 学号
+                - columnheader "姓名" [ref=e214]:
+                  - generic [ref=e215]: 姓名
+                - columnheader "学院" [ref=e216]:
+                  - generic [ref=e217]: 学院
+                - columnheader "专业" [ref=e218]:
+                  - generic [ref=e219]: 专业
+                - columnheader "年级班级" [ref=e220]:
+                  - generic [ref=e221]: 年级班级
+                - columnheader "联系方式" [ref=e222]:
+                  - generic [ref=e223]: 联系方式
+                - columnheader "操作" [ref=e224]:
+                  - generic [ref=e225]: 操作
+          - table [ref=e230]:
+            - rowgroup [ref=e239]:
+              - row "202301042 张小明 计算机学院 软件工程 2023级2班 138****0001 编辑 删除" [ref=e240]:
+                - cell "202301042" [ref=e241]:
+                  - generic [ref=e242]: "202301042"
+                - cell "张小明" [ref=e243]:
+                  - generic [ref=e244]: 张小明
+                - cell "计算机学院" [ref=e245]:
+                  - generic [ref=e246]: 计算机学院
+                - cell "软件工程" [ref=e247]:
+                  - generic [ref=e248]: 软件工程
+                - cell "2023级2班" [ref=e249]:
+                  - generic [ref=e250]: 2023级2班
+                - cell "138****0001" [ref=e251]:
+                  - generic [ref=e252]: 138****0001
+                - cell "编辑 删除" [ref=e253]:
+                  - generic [ref=e254]:
+                    - button "编辑" [ref=e255]
+                    - button "删除" [ref=e256]
+              - row "202301043 李四 计算机学院 软件工程 2023级2班 159****0002 编辑 删除" [ref=e257]:
+                - cell "202301043" [ref=e258]:
+                  - generic [ref=e259]: "202301043"
+                - cell "李四" [ref=e260]:
+                  - generic [ref=e261]: 李四
+                - cell "计算机学院" [ref=e262]:
+                  - generic [ref=e263]: 计算机学院
+                - cell "软件工程" [ref=e264]:
+                  - generic [ref=e265]: 软件工程
+                - cell "2023级2班" [ref=e266]:
+                  - generic [ref=e267]: 2023级2班
+                - cell "159****0002" [ref=e268]:
+                  - generic [ref=e269]: 159****0002
+                - cell "编辑 删除" [ref=e270]:
+                  - generic [ref=e271]:
+                    - button "编辑" [ref=e272]
+                    - button "删除" [ref=e273]
+              - row "202301044 王五 计算机学院 计算机科学与技术 2023级1班 177****0003 编辑 删除" [ref=e274]:
+                - cell "202301044" [ref=e275]:
+                  - generic [ref=e276]: "202301044"
+                - cell "王五" [ref=e277]:
+                  - generic [ref=e278]: 王五
+                - cell "计算机学院" [ref=e279]:
+                  - generic [ref=e280]: 计算机学院
+                - cell "计算机科学与技术" [ref=e281]:
+                  - generic [ref=e282]: 计算机科学与技术
+                - cell "2023级1班" [ref=e283]:
+                  - generic [ref=e284]: 2023级1班
+                - cell "177****0003" [ref=e285]:
+                  - generic [ref=e286]: 177****0003
+                - cell "编辑 删除" [ref=e287]:
+                  - generic [ref=e288]:
+                    - button "编辑" [ref=e289]
+                    - button "删除" [ref=e290]

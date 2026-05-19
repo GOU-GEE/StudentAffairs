@@ -1,0 +1,42 @@
+[     123ms] [WARNING] [Vue warn]: Failed to locate Teleport target with selector "#header-actions". Note the target element must exist before the component is mounted - i.e. the target cannot be rendered by the component itself, and ideally should be outside of the entire Vue component tree. 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[     123ms] [WARNING] [Vue warn]: Invalid Teleport target on mount: null (object) 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[    8934ms] [WARNING] [Vue warn]: Unhandled error during execution of component update 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[    8973ms] TypeError: Cannot read properties of null (reading 'type')
+    at unmountComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5877:16)
+    at unmount (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5823:22)
+    at unmountChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5894:49)
+    at unmount (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5832:83)
+    at unmountChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5894:49)
+    at unmount (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5832:83)
+    at Object.remove (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2559:4)
+    at unmount (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5830:35)
+    at unmountChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5894:49)
+    at unmount (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:5831:116)
+[   86968ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5173/src/views/admin/Dashboard.vue?t=1779178690924:0
+[   86968ms] [ERROR] [vite] Failed to reload /src/views/admin/Dashboard.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[   97813ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5173/src/views/admin/Dashboard.vue?t=1779178701816:0
+[   97813ms] [ERROR] [vite] Failed to reload /src/views/admin/Dashboard.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[  164463ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5173/src/views/admin/Dashboard.vue?t=1779178768433:0
+[  164463ms] [ERROR] [vite] Failed to reload /src/views/admin/Dashboard.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[  557812ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5173/src/views/admin/Dashboard.vue?t=1779179161814:0
+[  557812ms] [ERROR] [vite] Failed to reload /src/views/admin/Dashboard.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509
+[  567407ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5173/src/views/admin/Dashboard.vue?t=1779179171417:0
+[  567407ms] [ERROR] [vite] Failed to reload /src/views/admin/Dashboard.vue. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://127.0.0.1:5173/@vite/client:509

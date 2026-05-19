@@ -1,0 +1,87 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "资助管理首页" [ref=e12] [cursor=pointer]:
+          - /url: /financial
+          - img [ref=e14]
+          - text: 资助管理首页
+      - listitem [ref=e16]:
+        - link "奖助学金审批" [ref=e17] [cursor=pointer]:
+          - /url: /financial/scholarships
+          - img [ref=e19]
+          - text: 奖助学金审批
+      - listitem [ref=e21]:
+        - link "勤工助学管理" [ref=e22] [cursor=pointer]:
+          - /url: /financial/work-study
+          - img [ref=e24]
+          - text: 勤工助学管理
+      - listitem [ref=e26]:
+        - link "困难认定管理" [ref=e27] [cursor=pointer]:
+          - /url: /financial/poverty
+          - img [ref=e29]
+          - text: 困难认定管理
+    - generic [ref=e32]:
+      - generic [ref=e33]: 系统状态
+      - generic [ref=e36]: 后端服务正常
+      - generic [ref=e39]: 资助管理中心模式
+  - generic [ref=e40]:
+    - banner [ref=e41]:
+      - heading "资助管理首页" [level=2] [ref=e43]
+      - generic [ref=e44]:
+        - button "1" [ref=e46]:
+          - img [ref=e48]
+          - generic [ref=e52]: "1"
+        - button [ref=e53]:
+          - img [ref=e55]
+        - generic [ref=e57] [cursor=pointer]:
+          - generic [ref=e58]: 资
+          - generic [ref=e59]: 资助管理中心
+    - main [ref=e60]:
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e65]: 待审批申请
+            - heading "0" [level=3] [ref=e66]
+            - paragraph [ref=e67]: 加载中...
+          - generic [ref=e68]:
+            - generic [ref=e70]: 勤工助学岗位
+            - heading "0" [level=3] [ref=e71]
+            - paragraph [ref=e72]: 加载中...
+          - generic [ref=e73]:
+            - generic [ref=e75]: 困难认定学生
+            - heading "0" [level=3] [ref=e76]
+            - paragraph [ref=e77]: 加载中...
+          - generic [ref=e78]:
+            - generic [ref=e80]: 本月发放金额
+            - heading "-" [level=3] [ref=e81]
+            - paragraph [ref=e82]: 加载中...
+        - button "导出报表" [ref=e84]:
+          - img [ref=e86]
+          - text: 导出报表
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - heading "快捷操作" [level=3] [ref=e90]
+            - generic [ref=e91]:
+              - button "奖学金审批 查看待审申请" [ref=e92]:
+                - img [ref=e94]
+                - generic [ref=e96]: 奖学金审批
+                - generic [ref=e97]: 查看待审申请
+              - button "岗位管理 勤工助学岗位" [ref=e98]:
+                - img [ref=e100]
+                - generic [ref=e102]: 岗位管理
+                - generic [ref=e103]: 勤工助学岗位
+              - button "困难认定 学生困难等级" [ref=e104]:
+                - img [ref=e106]
+                - generic [ref=e108]: 困难认定
+                - generic [ref=e109]: 学生困难等级
+              - button "数据统计 资助情况分析" [ref=e110]:
+                - img [ref=e112]
+                - generic [ref=e114]: 数据统计
+                - generic [ref=e115]: 资助情况分析
+          - heading "近期审批记录" [level=3] [ref=e117]

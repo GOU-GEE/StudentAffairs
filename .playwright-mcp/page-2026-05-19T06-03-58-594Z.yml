@@ -1,0 +1,104 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "教务管理首页" [ref=e12] [cursor=pointer]:
+          - /url: /academic
+          - img [ref=e14]
+          - text: 教务管理首页
+      - listitem [ref=e16]:
+        - link "成绩管理" [ref=e17] [cursor=pointer]:
+          - /url: /academic/grades
+          - img [ref=e19]
+          - text: 成绩管理
+      - listitem [ref=e21]:
+        - link "学业预警" [ref=e22] [cursor=pointer]:
+          - /url: /academic/warnings
+          - img [ref=e24]
+          - text: 学业预警
+      - listitem [ref=e26]:
+        - link "中期鉴定管理" [ref=e27] [cursor=pointer]:
+          - /url: /academic/mid-term
+          - img [ref=e29]
+          - text: 中期鉴定管理
+      - listitem [ref=e31]:
+        - link "课程管理" [ref=e32] [cursor=pointer]:
+          - /url: /academic/courses
+          - img [ref=e34]
+          - text: 课程管理
+    - generic [ref=e38]:
+      - generic [ref=e39]: 系统状态
+      - generic [ref=e42]: 后端服务正常
+      - generic [ref=e45]: 教务管理模式
+  - generic [ref=e46]:
+    - banner [ref=e47]:
+      - heading "课程管理" [level=2] [ref=e49]
+      - generic [ref=e50]:
+        - button "1" [ref=e52]:
+          - img [ref=e54]
+          - generic [ref=e58]: "1"
+        - button [ref=e59]:
+          - img [ref=e61]
+        - generic [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]: 教
+          - generic [ref=e65]: 教务管理
+    - main [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - text: 课程总数
+            - heading "0" [level=3] [ref=e70]
+          - generic [ref=e71]:
+            - text: 必修课
+            - heading "0" [level=3] [ref=e72]
+          - generic [ref=e73]:
+            - text: 选修课
+            - heading "0" [level=3] [ref=e74]
+          - generic [ref=e75]:
+            - text: 总学分
+            - heading "0" [level=3] [ref=e76]
+        - generic [ref=e77]:
+          - generic [ref=e79]:
+            - img [ref=e82]
+            - textbox "搜索课程名称..." [ref=e84]
+          - generic [ref=e86] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e88]
+              - generic [ref=e89]: 课程类型
+            - img [ref=e92]
+          - generic [ref=e95] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e97]
+              - generic [ref=e98]: 学期
+            - img [ref=e101]
+        - generic [ref=e105]:
+          - table [ref=e107]:
+            - rowgroup [ref=e118]:
+              - row "课程代码 课程名称 类型 学分 学时 开课学期 任课教师 授课班级 操作" [ref=e119]:
+                - columnheader "课程代码" [ref=e120]:
+                  - generic [ref=e121]: 课程代码
+                - columnheader "课程名称" [ref=e122]:
+                  - generic [ref=e123]: 课程名称
+                - columnheader "类型" [ref=e124]:
+                  - generic [ref=e125]: 类型
+                - columnheader "学分" [ref=e126]:
+                  - generic [ref=e127]: 学分
+                - columnheader "学时" [ref=e128]:
+                  - generic [ref=e129]: 学时
+                - columnheader "开课学期" [ref=e130]:
+                  - generic [ref=e131]: 开课学期
+                - columnheader "任课教师" [ref=e132]:
+                  - generic [ref=e133]: 任课教师
+                - columnheader "授课班级" [ref=e134]:
+                  - generic [ref=e135]: 授课班级
+                - columnheader "操作" [ref=e136]:
+                  - generic [ref=e137]: 操作
+          - generic [ref=e141]:
+            - table:
+              - rowgroup
+            - generic [ref=e143]: No Data

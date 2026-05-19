@@ -1,0 +1,59 @@
+[      99ms] [WARNING] [Vue warn]: Failed to locate Teleport target with selector "#header-actions". Note the target element must exist before the component is mounted - i.e. the target cannot be rendered by the component itself, and ideally should be outside of the entire Vue component tree. 
+  at <CourseManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/academic/courses" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[      99ms] [WARNING] [Vue warn]: Invalid Teleport target on mount: null (object) 
+  at <CourseManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/academic/courses" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[     137ms] [WARNING] Unhandled error during execution of component update Proxy(Object) at <CourseManagement>
+at <BaseTransition>
+at <Transition>
+at <RouterView>
+at <Layout>
+at <RouterView>
+at <App> [Object, Object, Object, Object, Object, Object, Object] @ http://127.0.0.1:5173/@vite/client:509
+[     154ms] TypeError: Cannot read properties of null (reading 'emitsOptions')
+    at shouldUpdateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:4813:26)
+    at updateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5514:7)
+    at processComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5489:8)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5283:28)
+    at patchBlockChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5449:4)
+    at Object.process (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:2529:5)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5284:34)
+    at patchBlockChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5449:4)
+    at patchElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5416:4)
+    at processElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5341:5)
+[  151133ms] [ERROR] TypeError: Cannot read properties of null (reading 'emitsOptions')
+    at shouldUpdateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:4813:26)
+    at updateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5514:7)
+    at processComponent (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5489:8)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5283:28)
+    at patchKeyedChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5690:33)
+    at patchChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5654:54)
+    at patchElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5418:26)
+    at processElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5341:5)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5282:32)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5603:5) @ http://127.0.0.1:5173/@vite/client:509
+[  151133ms] [WARNING] [HMR] Something went wrong during Vue component hot-reload. Full reload required. @ http://127.0.0.1:5173/@vite/client:509
+[  200047ms] [ERROR] TypeError: Cannot set properties of null (setting '__vnode')
+    at patchElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5399:14)
+    at processElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5341:5)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5282:32)
+    at patchKeyedChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5683:33)
+    at patchChildren (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5654:54)
+    at patchElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5418:26)
+    at processElement (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5341:5)
+    at patch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5282:32)
+    at ReactiveEffect.componentUpdateFn [as fn] (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:5603:5)
+    at ReactiveEffect.run (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=6213e152:419:16) @ http://127.0.0.1:5173/@vite/client:509
+[  200048ms] [WARNING] [HMR] Something went wrong during Vue component hot-reload. Full reload required. @ http://127.0.0.1:5173/@vite/client:509
+[  281154ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5173/@vite/client:968

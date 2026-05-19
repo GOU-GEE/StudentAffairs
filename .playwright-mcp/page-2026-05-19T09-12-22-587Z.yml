@@ -1,0 +1,103 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e43]:
+    - navigation [ref=e44]:
+      - generic [ref=e45]:
+        - img "Logo" [ref=e46]
+        - generic [ref=e47]:
+          - generic [ref=e48]: 西华师范大学
+          - generic [ref=e49]: 智慧学工系统
+      - list [ref=e50]:
+        - listitem [ref=e51]:
+          - link "教务管理首页" [ref=e52] [cursor=pointer]:
+            - /url: /academic
+            - img [ref=e54]
+            - text: 教务管理首页
+        - listitem [ref=e56]:
+          - link "成绩管理" [ref=e57] [cursor=pointer]:
+            - /url: /academic/grades
+            - img [ref=e59]
+            - text: 成绩管理
+        - listitem [ref=e61]:
+          - link "学业预警" [ref=e62] [cursor=pointer]:
+            - /url: /academic/warnings
+            - img [ref=e64]
+            - text: 学业预警
+        - listitem [ref=e66]:
+          - link "中期鉴定管理" [ref=e67] [cursor=pointer]:
+            - /url: /academic/mid-term
+            - img [ref=e69]
+            - text: 中期鉴定管理
+        - listitem [ref=e71]:
+          - link "课程管理" [ref=e72] [cursor=pointer]:
+            - /url: /academic/courses
+            - img [ref=e74]
+            - text: 课程管理
+      - generic [ref=e78]:
+        - generic [ref=e79]: 系统状态
+        - generic [ref=e82]: 后端服务正常
+        - generic [ref=e85]: 教务管理模式
+    - generic [ref=e86]:
+      - banner [ref=e87]:
+        - heading "教务管理首页" [level=2] [ref=e89]
+        - generic [ref=e90]:
+          - button "1" [ref=e92]:
+            - img [ref=e94]
+            - generic [ref=e98]: "1"
+          - button [ref=e99]:
+            - img [ref=e101]
+          - generic [ref=e103] [cursor=pointer]:
+            - generic [ref=e104]: 教
+            - generic [ref=e105]: 教务管理
+      - main [ref=e106]:
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - text: 学生总数
+              - heading "3" [level=3] [ref=e110]
+              - paragraph [ref=e111]: 已录入成绩的学生
+            - generic [ref=e112]:
+              - text: 课程总数
+              - heading "--" [level=3] [ref=e113]
+              - paragraph
+            - generic [ref=e114]:
+              - text: 预警学生
+              - heading "1" [level=3] [ref=e115]
+              - paragraph
+            - generic [ref=e116]:
+              - text: 平均分
+              - heading "73.4" [level=3] [ref=e117]
+              - paragraph [ref=e118]: 全体学生均分
+          - button "导出报表" [ref=e120]:
+            - img [ref=e122]
+            - text: 导出报表
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - heading "快捷操作" [level=3] [ref=e126]
+              - generic [ref=e127]:
+                - button "成绩管理 录入与导入" [ref=e128]:
+                  - img [ref=e130]
+                  - generic [ref=e132]: 成绩管理
+                  - generic [ref=e133]: 录入与导入
+                - button "学业预警 预警配置" [ref=e134]:
+                  - img [ref=e136]
+                  - generic [ref=e138]: 学业预警
+                  - generic [ref=e139]: 预警配置
+                - button "课程管理 课程安排" [ref=e140]:
+                  - img [ref=e142]
+                  - generic [ref=e145]: 课程管理
+                  - generic [ref=e146]: 课程安排
+                - button "统计分析 学业数据" [ref=e147]:
+                  - img [ref=e149]
+                  - generic [ref=e151]: 统计分析
+                  - generic [ref=e152]: 学业数据
+            - generic [ref=e153]:
+              - heading "预警学生列表" [level=3] [ref=e154]
+              - generic [ref=e156]:
+                - generic [ref=e157]: 李
+                - generic [ref=e158]:
+                  - heading "李四" [level=4] [ref=e159]
+                  - paragraph [ref=e160]: 202301043 | 软工2班 | 挂科 -- 门
+                - generic [ref=e161]: 一般预警
+  - alert [ref=e162]:
+    - img [ref=e164]
+    - paragraph [ref=e166]: 欢迎回来，教务管理

@@ -1,0 +1,156 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "主页" [ref=e12] [cursor=pointer]:
+          - /url: /student
+          - img [ref=e14]
+          - text: 主页
+      - listitem [ref=e16]:
+        - link "学业与第二课堂" [ref=e17] [cursor=pointer]:
+          - /url: /student/academic
+          - img [ref=e19]
+          - text: 学业与第二课堂
+      - listitem [ref=e22]:
+        - button "我的申请" [ref=e23]:
+          - img [ref=e25]
+          - generic [ref=e27]: 我的申请
+          - img [ref=e29]
+        - list [ref=e31]:
+          - listitem [ref=e32]:
+            - link "请假报备" [ref=e33] [cursor=pointer]:
+              - /url: /student/applications/leave
+          - listitem [ref=e34]:
+            - link "奖助学金" [ref=e35] [cursor=pointer]:
+              - /url: /student/applications/scholarship
+          - listitem [ref=e36]:
+            - link "勤工助学" [ref=e37] [cursor=pointer]:
+              - /url: /student/applications/work-study
+          - listitem [ref=e38]:
+            - link "安全异常报备" [ref=e39] [cursor=pointer]:
+              - /url: /student/applications/safety-report
+          - listitem [ref=e40]:
+            - link "获奖情况录入" [ref=e41] [cursor=pointer]:
+              - /url: /student/applications/awards
+          - listitem [ref=e42]:
+            - link "中期鉴定填报" [ref=e43] [cursor=pointer]:
+              - /url: /student/applications/mid-term
+      - listitem [ref=e44]:
+        - link "职业规划 (AI)" [ref=e45] [cursor=pointer]:
+          - /url: /student/career-plan
+          - img [ref=e47]
+          - text: 职业规划 (AI)
+      - listitem [ref=e50]:
+        - link "通讯中心" [ref=e51] [cursor=pointer]:
+          - /url: /student/campus-life
+          - img [ref=e53]
+          - text: 通讯中心
+      - listitem [ref=e57]:
+        - link "活动大厅" [ref=e58] [cursor=pointer]:
+          - /url: /student/activity-center
+          - img [ref=e60]
+          - text: 活动大厅
+      - listitem [ref=e64]:
+        - link "个人荣誉与记录" [ref=e65] [cursor=pointer]:
+          - /url: /student/honors
+          - img [ref=e67]
+          - text: 个人荣誉与记录
+      - listitem [ref=e70]:
+        - link "个人信息" [ref=e71] [cursor=pointer]:
+          - /url: /student/profile
+          - img [ref=e73]
+          - text: 个人信息
+  - generic [ref=e75]:
+    - banner [ref=e76]:
+      - heading "获奖情况录入" [level=2] [ref=e78]
+      - generic [ref=e79]:
+        - button [ref=e81]:
+          - img [ref=e83]
+        - button [ref=e87]:
+          - img [ref=e89]
+        - generic [ref=e91] [cursor=pointer]:
+          - img [ref=e92]
+          - generic [ref=e93]: 张小明
+    - main [ref=e94]:
+      - generic [ref=e96]:
+        - generic [ref=e97]:
+          - generic [ref=e99]:
+            - heading "获奖情况录入" [level=3] [ref=e100]
+            - paragraph [ref=e101]: 上传您的获奖证明材料，提交至辅导员审核后将计入个人档案
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - img [ref=e105]
+              - generic [ref=e107]: 获奖基本信息
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - generic [ref=e110]: 获奖名称 *
+                - generic [ref=e111]:
+                  - img [ref=e113]
+                  - textbox "如：2024年全国大学生数学建模竞赛省级一等奖" [ref=e116]
+              - generic [ref=e117]:
+                - generic [ref=e118]: 获奖时间 *
+                - generic [ref=e119]:
+                  - img [ref=e121]
+                  - generic [ref=e124]:
+                    - img [ref=e127]
+                    - combobox "选择年月" [ref=e129]
+              - generic [ref=e130]:
+                - generic [ref=e131]: 获奖级别 *
+                - generic [ref=e132]:
+                  - combobox [ref=e133] [cursor=pointer]:
+                    - option "请选择获奖级别" [disabled]
+                    - option "国家级"
+                    - option "省级"
+                    - option "市级"
+                    - option "校级" [selected]
+                    - option "院级"
+                  - generic:
+                    - generic:
+                      - img
+              - generic [ref=e134]:
+                - generic [ref=e135]: 获奖类别 *
+                - generic [ref=e136]:
+                  - combobox [ref=e137] [cursor=pointer]:
+                    - option "请选择获奖类别" [disabled]
+                    - option "学科竞赛" [selected]
+                    - option "文体活动"
+                    - option "社会实践"
+                    - option "荣誉称号"
+                    - option "学术科研"
+                    - option "其他"
+                  - generic:
+                    - generic:
+                      - img
+              - generic [ref=e138]:
+                - generic [ref=e139]: 颁奖单位
+                - generic [ref=e140]:
+                  - img [ref=e142]
+                  - textbox "如：教育部、西华师范大学" [ref=e146]
+              - generic [ref=e147]:
+                - generic [ref=e148]: 获奖简述
+                - textbox "简要说明获奖背景、排名或项目内容..." [ref=e149]
+              - generic [ref=e150]:
+                - generic [ref=e151]: 证明材料（证书照片/扫描件）*
+                - list [ref=e153]:
+                  - button [ref=e154] [cursor=pointer]:
+                    - img [ref=e156]
+                - paragraph [ref=e158]:
+                  - img [ref=e160]
+                  - text: 支持 JPG, PNG, PDF 格式，单文件不超过 5MB，最多上传 5 份
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - img [ref=e165]
+              - generic [ref=e167]: 提交后请等待辅导员审核，审核通过后将正式同步至个人荣誉档案
+            - button "提交录入" [ref=e168]
+        - generic [ref=e169]:
+          - generic [ref=e170]:
+            - img [ref=e172]
+            - heading "录入历史" [level=3] [ref=e176]
+          - generic [ref=e178]:
+            - generic [ref=e179]: 📜
+            - paragraph [ref=e180]: 暂无录入记录

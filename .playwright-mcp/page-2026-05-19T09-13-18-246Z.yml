@@ -1,0 +1,186 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "资助管理首页" [ref=e12] [cursor=pointer]:
+          - /url: /financial
+          - img [ref=e14]
+          - text: 资助管理首页
+      - listitem [ref=e16]:
+        - link "奖助学金审批" [active] [ref=e17] [cursor=pointer]:
+          - /url: /financial/scholarships
+          - img [ref=e19]
+          - text: 奖助学金审批
+      - listitem [ref=e21]:
+        - link "勤工助学管理" [ref=e22] [cursor=pointer]:
+          - /url: /financial/work-study
+          - img [ref=e24]
+          - text: 勤工助学管理
+      - listitem [ref=e26]:
+        - link "困难认定管理" [ref=e27] [cursor=pointer]:
+          - /url: /financial/poverty
+          - img [ref=e29]
+          - text: 困难认定管理
+    - generic [ref=e32]:
+      - generic [ref=e33]: 系统状态
+      - generic [ref=e36]: 后端服务正常
+      - generic [ref=e39]: 资助管理中心模式
+  - generic [ref=e40]:
+    - banner [ref=e41]:
+      - heading "奖助学金审批" [level=2] [ref=e122]
+      - generic [ref=e44]:
+        - button "1" [ref=e46]:
+          - img [ref=e48]
+          - generic [ref=e52]: "1"
+        - button [ref=e53]:
+          - img [ref=e55]
+        - generic [ref=e57] [cursor=pointer]:
+          - generic [ref=e58]: 资
+          - generic [ref=e59]: 资助管理中心
+    - main [ref=e60]:
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - generic [ref=e126]:
+              - img [ref=e127]
+              - generic [ref=e131]: 0%
+            - generic [ref=e132]:
+              - paragraph [ref=e133]: 资助中心审核进度
+              - paragraph [ref=e134]: 已完成 0/1
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - generic [ref=e138]: "0"
+              - generic [ref=e139]: 已审核
+            - generic [ref=e140]:
+              - generic [ref=e141]: "1"
+              - generic [ref=e142]: 待审核
+            - generic [ref=e143]:
+              - generic [ref=e144]: "0"
+              - generic [ref=e145]: 已通过
+            - generic [ref=e146]:
+              - generic [ref=e147]: "0"
+              - generic [ref=e148]: 未通过
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - generic [ref=e153]: 2026年春季学期国家励志奖学金申请（普通班）
+                - generic [ref=e154]: 进行中
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - img [ref=e158]
+                  - text: 2025-03-29 ~ 2026-04-09
+                - generic [ref=e160]: 本批共 1 人，已审核 0，待审核 1
+            - button "切换批次" [ref=e162]:
+              - text: 切换批次
+              - img [ref=e164]
+            - button "导出数据" [ref=e166]:
+              - img [ref=e168]
+              - text: 导出数据
+        - generic [ref=e170]:
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - generic [ref=e174]:
+                - paragraph [ref=e175]: 申请学生列表
+                - generic [ref=e176]: 共 1 条
+              - generic [ref=e177]:
+                - img [ref=e179]
+                - textbox "搜索学号/姓名" [ref=e181]
+              - generic [ref=e182]:
+                - button "全部" [ref=e183]
+                - button "待审核" [ref=e184]
+                - button "已通过" [ref=e185]
+                - button "未通过" [ref=e186]
+            - generic [ref=e188] [cursor=pointer]:
+              - generic [ref=e189]:
+                - img [ref=e190]
+                - generic [ref=e191]:
+                  - generic [ref=e192]:
+                    - generic [ref=e193]: 张小明
+                    - generic [ref=e194]: 待审核
+                  - paragraph [ref=e195]: 学号：202301042
+                  - paragraph [ref=e196]: "-"
+              - paragraph [ref=e197]: 提交：2026-05-16T17:10:08.360657
+          - generic [ref=e199]:
+            - paragraph [ref=e201]: 申请信息
+            - generic [ref=e202]:
+              - generic [ref=e203]:
+                - paragraph [ref=e204]: 基本信息
+                - generic [ref=e205]:
+                  - generic [ref=e206]:
+                    - generic [ref=e207]:
+                      - generic [ref=e208]: 学号
+                      - generic [ref=e209]: "202301042"
+                    - generic [ref=e210]:
+                      - generic [ref=e211]: 姓名
+                      - generic [ref=e212]: 张小明
+                    - generic [ref=e213]:
+                      - generic [ref=e214]: 性别
+                      - generic [ref=e215]: "-"
+                    - generic [ref=e216]:
+                      - generic [ref=e217]: 所在班级
+                      - generic [ref=e218]: "-"
+                    - generic [ref=e219]:
+                      - generic [ref=e220]: 专业排名
+                      - generic [ref=e221]: "-"
+                  - generic [ref=e222]:
+                    - generic [ref=e223]:
+                      - generic [ref=e224]: 困难认定等级
+                      - generic [ref=e225]: 无困难认定
+                    - generic [ref=e226]:
+                      - generic [ref=e227]: 本学期加权平均
+                      - generic [ref=e228]: "-"
+                    - generic [ref=e229]:
+                      - generic [ref=e230]: 志愿服务时长
+                      - generic [ref=e231]: "-"
+                    - generic [ref=e232]:
+                      - generic [ref=e233]: 家庭年收入（元）
+                      - generic [ref=e234]: "-"
+                - generic [ref=e235]:
+                  - paragraph [ref=e236]: 在校获得荣誉
+                  - paragraph [ref=e237]: 2024年校级三好学生 · 全国大学生数学竞赛二等奖 · 优秀学生干部
+                  - button "展开" [ref=e238]:
+                    - text: 展开
+                    - img [ref=e240]
+                - generic [ref=e242]:
+                  - paragraph [ref=e243]: 个人申请陈述
+                  - paragraph [ref=e244]: 我在思想、学习和生活中始终保持积极向上的态度，努力提升自我，积极参与各类社会实践与志愿服务活动。本学期加权平均成绩 88.5 分，专业排名第 10 名，获得校级三好学生称号，志愿服务累计 32 小时。特此申请国家励志奖学金，感谢老师的评审。
+                  - button "展开全部" [ref=e245]:
+                    - text: 展开全部
+                    - img [ref=e247]
+              - generic [ref=e249]:
+                - paragraph [ref=e250]: 申请材料
+                - generic [ref=e251]:
+                  - generic [ref=e252] [cursor=pointer]:
+                    - img [ref=e255]
+                    - paragraph [ref=e257]: 申请表
+                    - paragraph [ref=e258]: .pdf
+                  - generic [ref=e259] [cursor=pointer]:
+                    - img [ref=e262]
+                    - paragraph [ref=e264]: 成绩单
+                    - paragraph [ref=e265]: .jpg
+                  - generic [ref=e266] [cursor=pointer]:
+                    - img [ref=e269]
+                    - paragraph [ref=e271]: 荣誉证书
+                    - paragraph [ref=e272]: .pdf
+                  - generic [ref=e273] [cursor=pointer]:
+                    - img [ref=e276]
+                    - paragraph [ref=e278]: 志愿服务证明
+                    - paragraph [ref=e279]: .jpg
+                  - generic [ref=e280] [cursor=pointer]:
+                    - img [ref=e283]
+                    - paragraph [ref=e285]: 家庭经济情况说明
+                    - paragraph [ref=e286]: .pdf
+          - generic [ref=e287]:
+            - paragraph [ref=e289]: 意见说明
+            - generic [ref=e292]:
+              - textbox "请输入详细的审核意见说明..." [ref=e293]
+              - generic [ref=e294]: 0 / 500
+            - generic [ref=e295]:
+              - button "暂存" [ref=e296]
+              - button "不通过" [ref=e297]
+              - button "通过" [ref=e298]

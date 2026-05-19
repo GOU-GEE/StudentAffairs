@@ -1,0 +1,210 @@
+[   20077ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: User, __name: user, setup: } 
+  at <ElIcon size=80 color="#316bf3" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   20079ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: Warning, __name: warning, setup: } 
+  at <ElIcon size=80 color="#ba1a1a" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   20079ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: Document, __name: document, setup: } 
+  at <ElIcon size=80 color="#f59e0b" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   20079ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: Trophy, __name: trophy, setup: } 
+  at <ElIcon size=80 color="#10b981" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   61933ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/academic/dashboard:0
+[   61933ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   62168ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/academic/records:0
+[   62169ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   62392ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/academic/warnings:0
+[   62392ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   62611ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/mid-term/all:0
+[   62613ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   62842ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/courses:0
+[   62842ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   63066ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/activities:0
+[   63067ms] [ERROR] Failed to fetch recent activities AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   63293ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/second-classroom/records:0
+[   63293ms] [ERROR] Failed to fetch records AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   63554ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/activities:0
+[   63554ms] [ERROR] Failed to load activities AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   63764ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/awards:0
+[   63764ms] [ERROR] Failed to fetch awards AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   63974ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/honors/projects:0
+[   63975ms] [ERROR] Failed to fetch projects AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   64198ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/financial-aid/dashboard:0
+[   64201ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/financial-aid/applications:0
+[   64204ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/applications/pending:0
+[   64206ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/poverty-students:0
+[   64427ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/applications/all:0
+[   64648ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/financial-aid/jobs:0
+[   64865ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/poverty-students:0
+[   65083ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: User, __name: user, setup: } 
+  at <ElIcon size=80 color="var(--color-error)" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65084ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: Avatar, __name: avatar, setup: } 
+  at <ElIcon size=80 color="var(--color-error)" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65084ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: DataAnalysis, __name: data-analysis, setup: } 
+  at <ElIcon size=80 color="var(--color-error)" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65084ms] [WARNING] [Vue warn]: Vue received a Component that was made a reactive object. This can lead to unnecessary performance overhead and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+Component that was made reactive:  {name: Setting, __name: setting, setup: } 
+  at <ElIcon size=80 color="var(--color-error)" > 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/admin" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65090ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/academic/dashboard:0
+[   65093ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/accounts:0
+[   65301ms] [WARNING] [Vue warn]: Property "filterStudents" was accessed during render but is not defined on instance. 
+  at <StudentManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/students" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65302ms] [WARNING] [Vue warn]: Property "filterStudents" was accessed during render but is not defined on instance. 
+  at <StudentManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/admin/students" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   65313ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/students:0
+[   65314ms] [WARNING] Property "filterStudents" was accessed during render but is not defined on instance. Proxy(Object) at <StudentManagement>
+at <BaseTransition>
+at <Transition>
+at <RouterView>
+at <Layout>
+at <RouterView>
+at <App> [Object, Object, Object, Object, Object, Object, Object] @ http://127.0.0.1:5173/@vite/client:509
+[   65343ms] [WARNING] Property "filterStudents" was accessed during render but is not defined on instance. Proxy(Object) at <StudentManagement>
+at <BaseTransition>
+at <Transition>
+at <RouterView>
+at <Layout>
+at <RouterView>
+at <App> [Object, Object, Object, Object, Object, Object, Object] @ http://127.0.0.1:5173/@vite/client:509
+[   65536ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/grades:0
+[   65756ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/admin/accounts:0
+[   66057ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/second-classroom/records?studentId=T001:0
+[   66057ms] [ERROR] AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4)
+    at Axios$1.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2583:37)
+    at async Promise.all (index 1)
+    at async loadStats (http://127.0.0.1:5173/src/views/student/StudentDashboard.vue:22:49) @ http://127.0.0.1:5173/@vite/client:509
+[   66058ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/applications/student/T001:0
+[   66058ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/communication/announcements:0
+[   66058ms] [ERROR] Failed to load notifications AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   66058ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/academic/student-records?studentId=T001:0
+[   66535ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/applications/student/T001:0
+[   66535ms] [ERROR] Failed to load leave history AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509
+[   66951ms] [WARNING] ElementPlusError: [el-link] [API] The underline option (boolean) is about to be deprecated in version 3.0.0, please use 'always' | 'hover' | 'never' instead.
+For more detail, please visit: https://element-plus.org/en-US/component/link.html#underline
+
+    at debugWarn (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5933:35)
+    at watch.immediate (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5973:12)
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1890:15)
+    at baseWatchOptions.call (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2382:46)
+    at job (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1664:13)
+    at watch$1 (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1685:25)
+    at doWatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2404:22)
+    at watch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2356:9)
+    at useDeprecated (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5972:2) @ http://127.0.0.1:5173/@vite/client:509
+[   66952ms] [WARNING] ElementPlusError: [el-link] [API] The underline option (boolean) is about to be deprecated in version 3.0.0, please use 'always' | 'hover' | 'never' instead.
+For more detail, please visit: https://element-plus.org/en-US/component/link.html#underline
+
+    at debugWarn (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5933:35)
+    at watch.immediate (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5973:12)
+    at callWithErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1883:17)
+    at callWithAsyncErrorHandling (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1890:15)
+    at baseWatchOptions.call (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2382:46)
+    at job (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1664:13)
+    at watch$1 (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:1685:25)
+    at doWatch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2404:22)
+    at watch (http://127.0.0.1:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BbU3t3Tm.js?v=66b4564c:2356:9)
+    at useDeprecated (http://127.0.0.1:5173/node_modules/.vite/deps/element-plus.js?v=66b4564c:5972:2) @ http://127.0.0.1:5173/@vite/client:509
+[   66993ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/career/appointments?studentId=T001:0
+[   67276ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ http://localhost:8080/api/youth/activities:0
+[   67277ms] [ERROR] 加载活动失败 AxiosError: Request failed with status code 403
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:1669:14)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=66b4564c:2002:4) @ http://127.0.0.1:5173/@vite/client:509

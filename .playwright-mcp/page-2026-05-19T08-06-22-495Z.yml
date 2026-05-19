@@ -1,0 +1,141 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: 西华师范大学
+        - generic [ref=e9]: 智慧学工系统
+    - list [ref=e10]:
+      - listitem [ref=e11]:
+        - link "学生档案大屏" [ref=e12] [cursor=pointer]:
+          - /url: /teacher
+          - img [ref=e14]
+          - text: 学生档案大屏
+      - listitem [ref=e16]:
+        - link "奖助服务管理" [ref=e17] [cursor=pointer]:
+          - /url: /teacher/financial-aid
+          - img [ref=e19]
+          - text: 奖助服务管理
+      - listitem [ref=e21]:
+        - link "学业预警支持" [ref=e22] [cursor=pointer]:
+          - /url: /teacher/academic-warning
+          - img [ref=e24]
+          - text: 学业预警支持
+      - listitem [ref=e26]:
+        - link "安全监控中心" [ref=e27] [cursor=pointer]:
+          - /url: /teacher/safety-monitoring
+          - img [ref=e29]
+          - text: 安全监控中心
+      - listitem [ref=e31]:
+        - link "发布通知" [ref=e32] [cursor=pointer]:
+          - /url: /teacher/career-plan
+          - img [ref=e34]
+          - text: 发布通知
+      - listitem [ref=e36]:
+        - link "沟通互动" [ref=e37] [cursor=pointer]:
+          - /url: /teacher/communication
+          - img [ref=e39]
+          - text: 沟通互动
+      - listitem [ref=e42]:
+        - link "中期鉴定收集" [ref=e43] [cursor=pointer]:
+          - /url: /teacher/mid-term
+          - img [ref=e45]
+          - text: 中期鉴定收集
+      - listitem [ref=e47]:
+        - link "职业规划预约" [ref=e48] [cursor=pointer]:
+          - /url: /teacher/career-appointments
+          - img [ref=e50]
+          - text: 职业规划预约
+    - generic [ref=e53]:
+      - generic [ref=e54]: 系统状态
+      - generic [ref=e57]: 后端服务正常
+      - generic [ref=e60]: Ollama AI 就绪
+  - generic [ref=e61]:
+    - banner [ref=e62]:
+      - heading "安全监控中心" [level=2] [ref=e64]
+      - generic [ref=e65]:
+        - button "1" [ref=e67]:
+          - img [ref=e69]
+          - generic [ref=e73]: "1"
+        - button [ref=e74]:
+          - img [ref=e76]
+        - generic [ref=e78] [cursor=pointer]:
+          - generic [ref=e79]: 李
+          - generic [ref=e80]: 李辅导员
+    - main [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e86]:
+              - img [ref=e89]
+              - generic [ref=e91]: 未处理事件
+            - generic [ref=e92]:
+              - generic [ref=e93]: "0"
+              - generic [ref=e94]: 件待处理
+          - generic [ref=e95]:
+            - generic [ref=e97]:
+              - img [ref=e100]
+              - generic [ref=e104]: 处理中
+            - generic [ref=e105]:
+              - generic [ref=e106]: "1"
+              - generic [ref=e107]: 件进行中
+          - generic [ref=e108]:
+            - generic [ref=e110]:
+              - img [ref=e113]
+              - generic [ref=e116]: 已结案
+            - generic [ref=e117]:
+              - generic [ref=e118]: "2"
+              - generic [ref=e119]: 件已处理
+          - generic [ref=e120]:
+            - generic [ref=e122]:
+              - img [ref=e125]
+              - generic [ref=e129]: 事件总数
+            - generic [ref=e130]:
+              - generic [ref=e131]: "3"
+              - generic [ref=e132]: 件上报
+        - generic [ref=e133]:
+          - generic [ref=e135]:
+            - button "突发事件处置" [ref=e137]: 突发事件处置
+            - button "上报新事件" [ref=e139]:
+              - img [ref=e141]
+              - text: 上报新事件
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: 心理健康
+                  - generic [ref=e149]: 5月17日 15:51
+                - generic [ref=e151] [cursor=pointer]:
+                  - generic:
+                    - combobox [ref=e153]
+                    - generic [ref=e154]: 处理中
+                  - img [ref=e157]
+              - heading "李四 - 高级预警" [level=4] [ref=e159]
+              - paragraph [ref=e160]: 学生近期情绪低落，多次旷课，疑似存在心理健康问题，辅导员已约谈。
+              - paragraph [ref=e161]: "处理人: 王辅导员"
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]: 违规违纪
+                  - generic [ref=e166]: 5月14日 15:51
+                - generic [ref=e168] [cursor=pointer]:
+                  - generic:
+                    - combobox [ref=e170]
+                    - generic [ref=e171]: 已结案
+                  - img [ref=e174]
+              - heading "王五 - 中级预警" [level=4] [ref=e176]
+              - paragraph [ref=e177]: 宿舍违规使用大功率电器，已进行警告处理并没收设备。
+              - paragraph [ref=e178]: "处理人: 宿管处"
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - generic [ref=e182]: 医疗紧急
+                  - generic [ref=e183]: 5月11日 15:51
+                - generic [ref=e185] [cursor=pointer]:
+                  - generic:
+                    - combobox [ref=e187]
+                    - generic [ref=e188]: 已结案
+                  - img [ref=e191]
+              - heading "未知 - 高级预警" [level=4] [ref=e193]
+              - paragraph [ref=e194]: 图书馆2楼有学生晕倒，已联系校医院并送医处理，家长已通知。
+              - paragraph [ref=e195]: "处理人: 校医院"

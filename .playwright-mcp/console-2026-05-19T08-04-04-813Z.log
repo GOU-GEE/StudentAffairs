@@ -1,0 +1,16 @@
+[   41541ms] [WARNING] [Vue warn]: Failed to locate Teleport target with selector "#header-actions". Note the target element must exist before the component is mounted - i.e. the target cannot be rendered by the component itself, and ideally should be outside of the entire Vue component tree. 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[   41542ms] [WARNING] [Vue warn]: Invalid Teleport target on mount: null (object) 
+  at <Dashboard onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/teacher" > 
+  at <BaseTransition mode="out-in" appear=false persisted=false  ... > 
+  at <Transition name="fade" mode="out-in" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509

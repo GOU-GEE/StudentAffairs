@@ -1,0 +1,25 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - img "Logo" [ref=e7]
+      - generic [ref=e8]:
+        - generic [ref=e9]: 西华师范大学
+        - generic [ref=e10]: 智慧学工系统
+    - generic [ref=e11]: CHINA WEST NORMAL UNIVERSITY STUDENT AFFAIRS
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - heading "系统登录" [level=2] [ref=e14]
+      - paragraph [ref=e15]: 请输入账号密码进入系统
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: 账号
+        - generic [ref=e20]:
+          - img [ref=e23]
+          - textbox "请输入账号" [ref=e25]
+      - generic [ref=e26]:
+        - generic [ref=e27]: 密码
+        - generic [ref=e29]:
+          - img [ref=e32]
+          - textbox "请输入密码" [ref=e35]
+      - button "登 录" [ref=e36]
+    - paragraph [ref=e37]: 系统将根据账号自动识别角色并跳转至对应工作台

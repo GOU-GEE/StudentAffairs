@@ -1,0 +1,16 @@
+[     117ms] [WARNING] [Vue warn]: Failed to locate Teleport target with selector "#header-actions". Note the target element must exist before the component is mounted - i.e. the target cannot be rendered by the component itself, and ideally should be outside of the entire Vue component tree. 
+  at <MidTermManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/academic/mid-term" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
+[     118ms] [WARNING] [Vue warn]: Invalid Teleport target on mount: null (object) 
+  at <MidTermManagement onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > key="/academic/mid-term" > 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <RouterView> 
+  at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView> 
+  at <App> @ http://127.0.0.1:5173/@vite/client:509
