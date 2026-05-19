@@ -1,49 +1,33 @@
 <template>
   <div class="flex flex-col gap-6 h-full">
     <!-- 顶部统计卡片 -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="glass-card p-6 rounded-3xl border border-white/20 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center shadow-inner"><el-icon :size="24"><Warning /></el-icon></div>
-          <span class="text-xs font-black text-secondary uppercase tracking-widest">未处理事件</span>
-        </div>
-        <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-black text-red-600">{{ stats.open || 0 }}</span>
-          <span class="text-xs text-secondary font-bold">件待处理</span>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-4">
+        <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0"><el-icon :size="20"><Warning /></el-icon></div>
+        <div>
+          <span class="text-sm font-bold text-gray-900">未处理事件：<span class="text-xl font-black text-red-600">{{ stats.open || 0 }}</span></span>
+          <span class="text-xs text-gray-400 ml-2">件待处理</span>
         </div>
       </div>
-      <div class="glass-card p-6 rounded-3xl border border-white/20 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-bl-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center shadow-inner"><el-icon :size="24"><Timer /></el-icon></div>
-          <span class="text-xs font-black text-secondary uppercase tracking-widest">处理中</span>
-        </div>
-        <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-black text-on-surface">{{ stats.processing || 0 }}</span>
-          <span class="text-xs text-secondary font-bold">件进行中</span>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-4">
+        <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center flex-shrink-0"><el-icon :size="20"><Timer /></el-icon></div>
+        <div>
+          <span class="text-sm font-bold text-gray-900">处理中：<span class="text-xl font-black text-gray-900">{{ stats.processing || 0 }}</span></span>
+          <span class="text-xs text-gray-400 ml-2">件进行中</span>
         </div>
       </div>
-      <div class="glass-card p-6 rounded-3xl border border-white/20 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-green-500/10 rounded-bl-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center shadow-inner"><el-icon :size="24"><CircleCheck /></el-icon></div>
-          <span class="text-xs font-black text-secondary uppercase tracking-widest">已结案</span>
-        </div>
-        <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-black text-green-600">{{ stats.closed || 0 }}</span>
-          <span class="text-xs text-secondary font-bold">件已处理</span>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-4">
+        <div class="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center flex-shrink-0"><el-icon :size="20"><CircleCheck /></el-icon></div>
+        <div>
+          <span class="text-sm font-bold text-gray-900">已结案：<span class="text-xl font-black text-green-600">{{ stats.closed || 0 }}</span></span>
+          <span class="text-xs text-gray-400 ml-2">件已处理</span>
         </div>
       </div>
-      <div class="glass-card p-6 rounded-3xl border border-white/20 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner"><el-icon :size="24"><Bell /></el-icon></div>
-          <span class="text-xs font-black text-secondary uppercase tracking-widest">事件总数</span>
-        </div>
-        <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-black text-on-surface">{{ stats.total || 0 }}</span>
-          <span class="text-xs text-secondary font-bold">件上报</span>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-4">
+        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0"><el-icon :size="20"><Bell /></el-icon></div>
+        <div>
+          <span class="text-sm font-bold text-gray-900">事件总数：<span class="text-xl font-black text-gray-900">{{ stats.total || 0 }}</span></span>
+          <span class="text-xs text-gray-400 ml-2">件上报</span>
         </div>
       </div>
     </div>
@@ -163,15 +147,40 @@ const stats = ref({})
 const showNewDialog = ref(false)
 const newIncident = ref({ studentName: '', type: 'MENTAL', level: 'MEDIUM', description: '', handlerName: '' })
 
+// Mock 数据：API无数据时使用
+const MOCK_INCIDENTS = [
+  { id:101, studentName:'张三', type:'FIGHT', level:'HIGH', description:'5月18日晚22时，兰苑3栋4楼发生学生打架事件，涉事学生为软工1班张三和李四，起因系宿舍矛盾激化。宿管已介入调解，校保卫处已记录备案。涉事学生均为初犯，暂无严重伤情。', status:'OPEN', reportTime:'2026-05-18 22:15', handlerName:'王辅导员' },
+  { id:102, studentName:'李四', type:'MENTAL', level:'HIGH', description:'学生近期情绪低落，连续旷课5天，室友反映其有自残倾向。心理咨询中心已介入评估，初步判断为中度抑郁，建议休学治疗并由家属陪护。已通知家长来校。', status:'PROCESSING', reportTime:'2026-05-17 15:51', handlerName:'王辅导员' },
+  { id:103, studentName:'（匿名）', type:'MEDICAL', level:'HIGH', description:'5月16日下午，图书馆2楼有学生突然晕倒，疑似低血糖。校医院已现场救治并送医处理，学生目前已恢复意识。家长已通知。', status:'CLOSED', reportTime:'2026-05-16 14:20', handlerName:'校医院' },
+  { id:104, studentName:'王五', type:'VIOLATION', level:'MEDIUM', description:'宿舍违规使用大功率电器（电饭锅），被宿管巡查发现。已收缴违规电器并给予警告处分。该生认错态度良好，承诺不再使用。', status:'CLOSED', reportTime:'2026-05-14 09:00', handlerName:'宿管处' },
+  { id:105, studentName:'赵六', type:'MISSING', level:'HIGH', description:'学生自5月15日离开宿舍后失联超24小时，手机关机。室友最后一次见其于15日上午8时离开宿舍。已向派出所报案，正在通过监控追查行踪。家长已到校。', status:'PROCESSING', reportTime:'2026-05-16 08:30', handlerName:'李辅导员' },
+  { id:106, studentName:'钱七', type:'MEDICAL', level:'LOW', description:'体育课上打篮球时扭伤脚踝，已送校医院处理。X光检查无骨折，仅软组织挫伤。学生已回宿舍休养。', status:'CLOSED', reportTime:'2026-05-12 16:40', handlerName:'体育老师' },
+  { id:107, studentName:'孙八', type:'VIOLATION', level:'MEDIUM', description:'在期末考试中被发现携带小抄，监考老师当场制止并上报教务。按照学校考试违规处理办法，给予该科目成绩作废和记过处分。', status:'OPEN', reportTime:'2026-05-20 10:00', handlerName:'教务处' },
+  { id:108, studentName:'周九', type:'MENTAL', level:'MEDIUM', description:'辅导员谈话中发现该生因失恋存在较严重情绪问题，已连续一周未正常进食。已安排心理咨询中心进行定期辅导，安排室友密切关注。', status:'PROCESSING', reportTime:'2026-05-19 11:20', handlerName:'李辅导员' },
+]
+
+const MOCK_STATS = { open: 2, processing: 3, closed: 3, total: 8 }
+
 const loadData = async () => {
   try {
     const [incRes, statRes] = await Promise.all([
       request.get(`${API}/incidents`),
       request.get(`${API}/stats`)
     ])
-    if (incRes.data.code === 200) incidents.value = incRes.data.data
-    if (statRes.data.code === 200) stats.value = statRes.data.data
-  } catch (e) { console.error(e) }
+    if (incRes.data.code === 200 && incRes.data.data?.length > 0) {
+      incidents.value = incRes.data.data
+    } else {
+      incidents.value = MOCK_INCIDENTS
+    }
+    if (statRes.data.code === 200 && statRes.data.data) {
+      stats.value = statRes.data.data
+    } else {
+      stats.value = MOCK_STATS
+    }
+  } catch (e) {
+    incidents.value = MOCK_INCIDENTS
+    stats.value = MOCK_STATS
+  }
 }
 
 const updateStatus = async (id, status) => {
