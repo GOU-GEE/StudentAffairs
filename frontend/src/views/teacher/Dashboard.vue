@@ -1,16 +1,5 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <div class="flex gap-2">
-        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
-          <el-icon :size="14"><Download /></el-icon>导出报表
-        </button>
-        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-          <el-icon :size="14"><UploadFilled /></el-icon>导入数据
-        </button>
-      </div>
-    </teleport>
-
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
       
@@ -29,6 +18,15 @@
              <el-icon :size="80" :color="stat.iconColor"><component :is="stat.icon" /></el-icon>
           </div>
         </div>
+      </div>
+
+      <div class="md:col-span-12 flex items-center gap-3 mb-4">
+        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
+          <el-icon :size="14"><Download /></el-icon>导出报表
+        </button>
+        <button class="bg-primary text-on-primary-fixed hover:bg-primary-fixed transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+          <el-icon :size="14"><UploadFilled /></el-icon>导入数据
+        </button>
       </div>
 
       <!-- 2. Focus Students (重点关注) -->

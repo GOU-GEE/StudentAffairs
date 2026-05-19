@@ -1,15 +1,13 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <div class="flex gap-2">
-        <button @click="importDialogVisible = true" class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
-          <el-icon :size="14"><UploadFilled /></el-icon>批量导入
-        </button>
-        <button @click="openAddDialog" class="bg-error text-on-error hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-          <el-icon :size="14"><Plus /></el-icon>新增学生
-        </button>
-      </div>
-    </teleport>
+    <div class="flex items-center gap-3 mb-4">
+      <button @click="importDialogVisible = true" class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
+        <el-icon :size="14"><UploadFilled /></el-icon>批量导入
+      </button>
+      <button @click="openAddDialog" class="bg-error text-on-error hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon :size="14"><Plus /></el-icon>新增学生
+      </button>
+    </div>
 
     <!-- Search Bar -->
     <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15 mb-6 flex items-center gap-4">

@@ -1,16 +1,5 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <div class="flex gap-2">
-        <button class="bg-surface-container-high text-on-surface hover:bg-outline-variant/30 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 border border-outline-variant/20 shadow-sm">
-          <el-icon :size="14"><Download /></el-icon>导出报表
-        </button>
-        <button class="bg-error text-on-error hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-          <el-icon :size="14"><Setting /></el-icon>系统配置
-        </button>
-      </div>
-    </teleport>
-
     <!-- Stats Overview -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
       <div v-for="(stat, idx) in stats" :key="idx" class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_2px_8px_rgba(25,28,30,0.02)] hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -30,21 +19,21 @@
       <div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)]">
         <h3 class="text-[1.125rem] font-semibold text-on-surface mb-4">快捷操作</h3>
         <div class="grid grid-cols-2 gap-3">
-          <button @click="$router.push('/admin/students')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
+          <router-link to="/admin/students" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
             <el-icon :size="28" color="var(--color-error)"><User /></el-icon>
             <span class="text-sm font-semibold text-on-surface">导入学生信息</span>
             <span class="text-xs text-secondary">批量导入学生档案</span>
-          </button>
-          <button @click="$router.push('/admin/grades')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
+          </router-link>
+          <router-link to="/admin/grades" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
             <el-icon :size="28" color="var(--color-error)"><DataAnalysis /></el-icon>
             <span class="text-sm font-semibold text-on-surface">导入成绩数据</span>
             <span class="text-xs text-secondary">批量导入学业成绩</span>
-          </button>
-          <button @click="$router.push('/admin/accounts')" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
+          </router-link>
+          <router-link to="/admin/accounts" class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
             <el-icon :size="28" color="var(--color-error)"><Avatar /></el-icon>
             <span class="text-sm font-semibold text-on-surface">账号管理</span>
             <span class="text-xs text-secondary">创建与管理账号</span>
-          </button>
+          </router-link>
           <button class="flex flex-col items-center gap-2 p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-colors border border-outline-variant/15 text-left">
             <el-icon :size="28" color="var(--color-error)"><Setting /></el-icon>
             <span class="text-sm font-semibold text-on-surface">系统配置</span>

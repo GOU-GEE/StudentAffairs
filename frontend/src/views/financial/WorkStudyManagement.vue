@@ -1,17 +1,17 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <button @click="openAddJobDialog" class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon :size="14"><Plus /></el-icon>发布新岗位
-      </button>
-    </teleport>
-
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div v-for="(stat, idx) in statList" :key="idx" class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15">
         <span class="text-xs font-bold text-secondary uppercase tracking-wider">{{ stat.label }}</span>
         <h3 class="text-2xl font-bold text-on-surface mt-1">{{ stat.value }}</h3>
       </div>
+    </div>
+
+    <div class="flex items-center gap-3 mb-4">
+      <button @click="openAddJobDialog" class="bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
+        <el-icon :size="14"><Plus /></el-icon>发布新岗位
+      </button>
     </div>
 
     <!-- Job Listings -->

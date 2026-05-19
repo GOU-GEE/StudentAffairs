@@ -1,10 +1,10 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
+    <div class="flex items-center gap-3 mb-4">
       <button class="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
         <el-icon :size="14"><Download /></el-icon>导出记录
       </button>
-    </teleport>
+    </div>
 
     <!-- Filter Tabs -->
     <div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15 mb-6 flex items-center gap-4">

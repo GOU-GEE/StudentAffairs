@@ -1,15 +1,15 @@
 <template>
   <div class="h-full flex flex-col">
-    <teleport to="#header-actions">
-      <button @click="runEngine" :disabled="engineRunning"
-              class="bg-error text-white hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md disabled:opacity-50">
-        <el-icon :class="engineRunning ? 'animate-spin' : ''"><Refresh /></el-icon>
-        {{ engineRunning ? '引擎运行中...' : '运行预警引擎' }}
-      </button>
-    </teleport>
-
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+      <div class="md:col-span-12 flex items-center gap-3 mb-4">
+        <button @click="runEngine" :disabled="engineRunning"
+                class="bg-error text-white hover:bg-error/80 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md disabled:opacity-50">
+          <el-icon :class="engineRunning ? 'animate-spin' : ''"><Refresh /></el-icon>
+          {{ engineRunning ? '引擎运行中...' : '运行预警引擎' }}
+        </button>
+      </div>
       
       <!-- 成绩分布柱状图 -->
       <div class="md:col-span-7 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] h-[380px] flex flex-col">
