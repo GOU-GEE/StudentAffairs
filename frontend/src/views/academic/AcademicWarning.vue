@@ -40,25 +40,80 @@
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'; import { ElMessage } from 'element-plus'; import { VideoPlay, Search } from '@element-plus/icons-vue'
+import { ref, computed, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { VideoPlay, Search } from '@element-plus/icons-vue'
+import axios from 'axios'
+
+const API = 'http://localhost:8080/api/academic'
+
 const searchQuery = ref('')
+const warnings = ref([])
 const config = ref({ failThreshold: 2, gpaThreshold: 2.0, declineSemesters: 2, autoNotify: true, autoEmail: false })
-const warnings = ref([
-  { id:1, studentId:'202301043', studentName:'李四', className:'软工2班', failedCount:2, gpa:1.8, level:'严重', reason:'数据结构45分、算法55分' },
-  { id:2, studentId:'202301050', studentName:'钱七', className:'软工1班', failedCount:3, gpa:1.5, level:'严重', reason:'多门课程不及格' },
-  { id:3, studentId:'202301047', studentName:'周八', className:'计科3班', failedCount:1, gpa:2.3, level:'一般', reason:'数据库原理58分' },
-])
+
+const loadWarnings = async () => {
+  try {
+    const res = await axios.get(`${API}/warnings`)
+    if (res.data.code === 200) {
+      const all = res.data.data
+      const byStudent = {}
+      all.forEach(r => {
+        if (!byStudent[r.studentId]) {
+          byStudent[r.studentId] = {
+            id: r.id,
+            studentId: r.studentId,
+            studentName: r.studentName,
+            className: r.className,
+            failedCount: 0,
+            failedCourses: [],
+            totalScore: 0,
+            totalCredit: 0,
+          }
+        }
+        const s = byStudent[r.studentId]
+        s.totalScore += r.score * r.credit
+        s.totalCredit += r.credit
+        if (r.score < 60) { s.failedCount++; s.failedCourses.push(r.courseName + r.score + '分') }
+      })
+      warnings.value = Object.values(byStudent).map(s => ({
+        id: s.id,
+        studentId: s.studentId,
+        studentName: s.studentName,
+        className: s.className,
+        failedCount: s.failedCount,
+        gpa: s.totalCredit > 0 ? (s.totalScore / s.totalCredit).toFixed(1) : 0,
+        level: s.failedCount >= 2 ? '严重' : '一般',
+        reason: s.failedCourses.join('、'),
+      }))
+    }
+  } catch (e) { console.error(e) }
+}
+
 const filteredWarnings = computed(() => {
   if (!searchQuery.value) return warnings.value
-  const q = searchQuery.value.toLowerCase(); return warnings.value.filter(w => w.studentId.includes(q) || w.studentName.includes(q))
+  const q = searchQuery.value.toLowerCase()
+  return warnings.value.filter(w => w.studentId.includes(q) || w.studentName.includes(q))
 })
+
 const statList = computed(() => [
   { label:'预警学生', value:warnings.value.length, color:'text-red-500' },
   { label:'严重预警', value:warnings.value.filter(w=>w.level==='严重').length, color:'text-red-500' },
   { label:'一般预警', value:warnings.value.filter(w=>w.level==='一般').length, color:'text-amber-600' },
-  { label:'已通知', value:5, color:'text-green-600' },
+  { label:'挂科总人次', value:warnings.value.reduce((a,w)=>a+w.failedCount,0), color:'text-green-600' },
 ])
-const runEngine = () => { ElMessage.success('预警引擎运行完成：扫描 3560 名学生，发现 8 条预警记录') }
+
+const runEngine = async () => {
+  try {
+    const res = await axios.post(`${API}/warnings/run-engine`)
+    if (res.data.code === 200) {
+      ElMessage.success(res.data.data)
+      loadWarnings()
+    }
+  } catch (e) { ElMessage.error('预警引擎运行失败') }
+}
+
 const saveConfig = () => { ElMessage.success('预警配置已保存') }
 const viewDetail = (row) => { ElMessage.info(`${row.studentName}：${row.reason}`) }
+
+onMounted(loadWarnings)
 </script>

@@ -53,32 +53,89 @@
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'; import { ElMessage, ElMessageBox } from 'element-plus'; import { Plus, Search } from '@element-plus/icons-vue'
-const courses = ref([
-  { id:1, code:'CS201', name:'数据结构', type:'必修', credit:4, hours:64, semester:'2025-2026-1', teacher:'张教授', className:'2023级软工1班、2班' },
-  { id:2, code:'CS202', name:'算法设计与分析', type:'必修', credit:3, hours:48, semester:'2025-2026-1', teacher:'李教授', className:'2023级软工1班、2班' },
-  { id:3, code:'CS301', name:'软件工程', type:'必修', credit:3, hours:48, semester:'2025-2026-1', teacher:'王副教授', className:'2023级软工2班' },
-  { id:4, code:'CS205', name:'数据库原理', type:'必修', credit:4, hours:64, semester:'2025-2026-1', teacher:'赵教授', className:'2023级软工1班、2班' },
-  { id:5, code:'EN401', name:'大学英语(四)', type:'必修', credit:2, hours:32, semester:'2025-2026-1', teacher:'刘讲师', className:'2023级软工1班、2班' },
-  { id:6, code:'CS250', name:'Python数据分析', type:'选修', credit:2, hours:32, semester:'2025-2026-1', teacher:'陈副教授', className:'2023级软工1班' },
-])
-const searchQuery = ref(''); const filterType = ref(''); const filterSemester = ref(''); const dialogVisible = ref(false); const editingCourse = ref(null)
-const semesters = ['2024-2025-2','2025-2026-1','2025-2026-2']
+import { ref, computed, onMounted, watch } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus, Search } from '@element-plus/icons-vue'
+import axios from 'axios'
+
+const API = 'http://localhost:8080/api/courses'
+
+const courses = ref([])
+const searchQuery = ref('')
+const filterType = ref('')
+const filterSemester = ref('')
+const dialogVisible = ref(false)
+const editingCourse = ref(null)
 const form = ref({ code:'', name:'', type:'必修', credit:3, hours:48, semester:'2025-2026-1', teacher:'', className:'' })
+
+const loadCourses = async () => {
+  try {
+    const params = {}
+    if (filterType.value) params.type = filterType.value
+    if (filterSemester.value) params.semester = filterSemester.value
+    const res = await axios.get(API, { params })
+    if (res.data.code === 200) courses.value = res.data.data
+  } catch (e) { console.error(e) }
+}
+
+const semesters = ['2024-2025-2','2025-2026-1','2025-2026-2']
+
 const filteredCourses = computed(() => {
   let list = courses.value
-  if (searchQuery.value) { const q = searchQuery.value.toLowerCase(); list = list.filter(c => c.name.includes(q) || c.code.toLowerCase().includes(q)) }
-  if (filterType.value) list = list.filter(c => c.type === filterType.value)
-  if (filterSemester.value) list = list.filter(c => c.semester === filterSemester.value)
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase()
+    list = list.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q))
+  }
   return list
 })
+
 const statList = computed(() => {
   const required = courses.value.filter(c => c.type === '必修').length
   const elective = courses.value.filter(c => c.type === '选修').length
-  return [{ label:'课程总数', value:courses.value.length },{ label:'必修课', value:required },{ label:'选修课', value:elective },{ label:'总学分', value:courses.value.reduce((a,c)=>a+c.credit,0) }]
+  return [
+    { label:'课程总数', value:courses.value.length },
+    { label:'必修课', value:required },
+    { label:'选修课', value:elective },
+    { label:'总学分', value:courses.value.reduce((a,c)=>a+c.credit,0) }
+  ]
 })
-const openAddDialog = () => { editingCourse.value = null; form.value = { code:'', name:'', type:'必修', credit:3, hours:48, semester:'2025-2026-1', teacher:'', className:'' }; dialogVisible.value = true }
-const editCourse = (row) => { editingCourse.value = row; form.value = { ...row }; dialogVisible.value = true }
-const saveCourse = () => { if (!form.value.code || !form.value.name) { ElMessage.warning('课程代码和名称为必填'); return }; ElMessage.success(editingCourse.value ? '课程已更新' : '课程已添加'); dialogVisible.value = false }
-const deleteCourse = (row) => { ElMessageBox.confirm(`确定删除课程「${row.name}」？`,'确认删除',{ confirmButtonText:'删除', cancelButtonText:'取消', type:'warning' }).then(() => { courses.value = courses.value.filter(c => c.id !== row.id); ElMessage.success('已删除') }).catch(() => {}) }
+
+const openAddDialog = () => {
+  editingCourse.value = null
+  form.value = { code:'', name:'', type:'必修', credit:3, hours:48, semester:'2025-2026-1', teacher:'', className:'' }
+  dialogVisible.value = true
+}
+
+const editCourse = (row) => {
+  editingCourse.value = row
+  form.value = { ...row }
+  dialogVisible.value = true
+}
+
+const saveCourse = async () => {
+  if (!form.value.code || !form.value.name) { ElMessage.warning('课程代码和名称为必填'); return }
+  try {
+    if (editingCourse.value) {
+      const res = await axios.put(`${API}/${editingCourse.value.id}`, form.value)
+      if (res.data.code === 200) { ElMessage.success('课程已更新'); loadCourses() }
+      else { ElMessage.error(res.data.msg) }
+    } else {
+      const res = await axios.post(API, form.value)
+      if (res.data.code === 200) { ElMessage.success('课程已添加'); loadCourses() }
+    }
+    dialogVisible.value = false
+  } catch (e) { ElMessage.error('操作失败') }
+}
+
+const deleteCourse = async (row) => {
+  try {
+    await ElMessageBox.confirm(`确定删除课程「${row.name}」？`, '确认删除', { confirmButtonText:'删除', cancelButtonText:'取消', type:'warning' })
+    const res = await axios.delete(`${API}/${row.id}`)
+    if (res.data.code === 200) { ElMessage.success('已删除'); loadCourses() }
+  } catch (e) {}
+}
+
+watch([filterType, filterSemester], () => loadCourses())
+
+onMounted(loadCourses)
 </script>
