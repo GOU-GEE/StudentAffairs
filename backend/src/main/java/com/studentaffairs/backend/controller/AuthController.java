@@ -1,6 +1,7 @@
 package com.studentaffairs.backend.controller;
 
 import com.studentaffairs.backend.common.Result;
+import com.studentaffairs.backend.security.JwtProvider;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -10,6 +11,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
+
+    private final JwtProvider jwtProvider;
 
     private static final Map<String, Map<String, String>> ACCOUNTS = new HashMap<>();
 
@@ -31,6 +34,10 @@ public class AuthController {
         ACCOUNTS.put(username, info);
     }
 
+    public AuthController(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
+
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody Map<String, String> body) {
         String username = body.getOrDefault("username", "").trim();
@@ -48,7 +55,9 @@ public class AuthController {
         Map<String, Object> data = new HashMap<>();
         data.put("role", account.get("role"));
         data.put("name", account.get("name"));
-        data.put("token", "mock-token-" + username);
+        String jwt = jwtProvider.generateToken(
+            account.getOrDefault("userId", ""), username, account.get("role"));
+        data.put("token", jwt);
         if (account.containsKey("userId")) data.put("userId", account.get("userId"));
         return Result.success(data);
     }
