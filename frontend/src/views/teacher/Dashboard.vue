@@ -97,7 +97,7 @@
 
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position } from '@element-plus/icons-vue'
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import request from '@/utils/request'
 
 const stats = ref([
@@ -144,4 +144,15 @@ const sendMessage = async () => {
     scrollToBottom()
   }
 }
+
+onMounted(async () => {
+  try {
+    const res = await request.get('/api/academic/dashboard')
+    if (res.data.code === 200) {
+      const d = res.data.data
+      stats.value[0].value = String(d.totalStudents || 0)
+      stats.value[2].value = String(d.warningCount || 0)
+    }
+  } catch(e) {}
+})
 </script>

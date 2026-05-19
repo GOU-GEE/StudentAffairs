@@ -2,6 +2,7 @@ package com.studentaffairs.backend.service;
 
 import com.studentaffairs.backend.entity.AcademicRecord;
 import com.studentaffairs.backend.repository.AcademicRecordRepository;
+import com.studentaffairs.backend.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,9 +12,11 @@ import java.util.stream.Collectors;
 public class AcademicService {
 
     private final AcademicRecordRepository recordRepository;
+    private final CourseRepository courseRepository;
 
-    public AcademicService(AcademicRecordRepository recordRepository) {
+    public AcademicService(AcademicRecordRepository recordRepository, CourseRepository courseRepository) {
         this.recordRepository = recordRepository;
+        this.courseRepository = courseRepository;
     }
 
     /** 获取所有预警学生 */
@@ -125,6 +128,7 @@ public class AcademicService {
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("totalStudents", studentCount);
         stats.put("warningCount", warningCount);
+        stats.put("totalCourses", courseRepository.count());
         stats.put("avgScore", avgScore != null ? Math.round(avgScore * 100.0) / 100.0 : 0.0);
         stats.put("recentWarnings", recentWarnings);
         return stats;

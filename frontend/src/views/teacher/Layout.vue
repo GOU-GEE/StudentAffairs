@@ -316,13 +316,24 @@ onUnmounted(() => {
   if (pollTimer) clearInterval(pollTimer)
 })
 
-const changePwd = () => {
+const changePwd = async () => {
   if (!pwdForm.value.current || !pwdForm.value.newPwd || !pwdForm.value.confirm) { ElMessage.warning('请填写完整的密码信息'); return }
   if (pwdForm.value.newPwd !== pwdForm.value.confirm) { ElMessage.error('两次输入的新密码不一致'); return }
-  if (pwdForm.value.newPwd.length < 8) { ElMessage.error('新密码至少需要 8 位'); return }
-  ElMessage.success('密码修改成功（演示模式）')
-  showSettings.value = false
-  pwdForm.value = { current: '', newPwd: '', confirm: '' }
+  if (pwdForm.value.newPwd.length < 6) { ElMessage.error('新密码至少需要6位'); return }
+  try {
+    const res = await request.put('/api/auth/change-password', {
+      username: sessionStorage.getItem('userName') || '',
+      oldPassword: pwdForm.value.current,
+      newPassword: pwdForm.value.newPwd
+    })
+    if (res.data.code === 200) {
+      ElMessage.success('密码修改成功')
+      showSettings.value = false
+      pwdForm.value = { current: '', newPwd: '', confirm: '' }
+    } else {
+      ElMessage.error(res.data.msg)
+    }
+  } catch (e) { ElMessage.error('修改失败，请稍后再试') }
 }
 
 const logout = () => {

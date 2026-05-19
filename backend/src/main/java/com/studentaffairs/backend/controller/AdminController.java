@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -112,39 +113,14 @@ public class AdminController {
     @GetMapping("/accounts")
     public Result<List<Map<String, Object>>> getAccounts() {
         List<Map<String, Object>> accounts = new ArrayList<>();
-
-        Map<String, Object> a1 = new HashMap<>();
-        a1.put("id", 1);
-        a1.put("username", "admin");
-        a1.put("role", "admin");
-        a1.put("name", "系统管理员");
-        a1.put("status", "启用");
-        accounts.add(a1);
-
-        Map<String, Object> a2 = new HashMap<>();
-        a2.put("id", 2);
-        a2.put("username", "teacher_li");
-        a2.put("role", "teacher");
-        a2.put("name", "李辅导员");
-        a2.put("status", "启用");
-        accounts.add(a2);
-
-        Map<String, Object> a3 = new HashMap<>();
-        a3.put("id", 3);
-        a3.put("username", "teacher_wang");
-        a3.put("role", "teacher");
-        a3.put("name", "王老师");
-        a3.put("status", "启用");
-        accounts.add(a3);
-
-        Map<String, Object> a4 = new HashMap<>();
-        a4.put("id", 4);
-        a4.put("username", "student_zhang");
-        a4.put("role", "student");
-        a4.put("name", "张小明");
-        a4.put("status", "启用");
-        accounts.add(a4);
-
+        AuthController.getAccounts().forEach((username, info) -> {
+            Map<String, Object> account = new LinkedHashMap<>();
+            account.put("username", username);
+            account.put("role", info.get("role"));
+            account.put("name", info.get("name"));
+            account.put("userId", info.getOrDefault("userId", ""));
+            accounts.add(account);
+        });
         return Result.success(accounts);
     }
 

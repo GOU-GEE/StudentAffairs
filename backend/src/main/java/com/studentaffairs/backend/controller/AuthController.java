@@ -14,7 +14,7 @@ public class AuthController {
 
     private final JwtProvider jwtProvider;
 
-    private static final Map<String, Map<String, String>> ACCOUNTS = new HashMap<>();
+    static final Map<String, Map<String, String>> ACCOUNTS = new HashMap<>();
 
     static {
         addAccount("admin", "123456", "admin", "系统管理员", null);
@@ -32,6 +32,10 @@ public class AuthController {
         info.put("name", name);
         if (userId != null) info.put("userId", userId);
         ACCOUNTS.put(username, info);
+    }
+
+    public static Map<String, Map<String, String>> getAccounts() {
+        return ACCOUNTS;
     }
 
     public AuthController(JwtProvider jwtProvider) {
@@ -60,5 +64,28 @@ public class AuthController {
         data.put("token", jwt);
         if (account.containsKey("userId")) data.put("userId", account.get("userId"));
         return Result.success(data);
+    }
+
+    @PutMapping("/change-password")
+    public Result<String> changePassword(@RequestBody Map<String, String> body) {
+        String username = body.getOrDefault("username", "").trim();
+        String oldPassword = body.getOrDefault("oldPassword", "");
+        String newPassword = body.getOrDefault("newPassword", "");
+
+        if (username.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
+            return Result.error(400, "参数不完整");
+        }
+
+        Map<String, String> account = ACCOUNTS.get(username);
+        if (account == null || !account.get("password").equals(oldPassword)) {
+            return Result.error(401, "原密码错误");
+        }
+
+        if (newPassword.length() < 6) {
+            return Result.error(400, "新密码至少需要6位");
+        }
+
+        account.put("password", newPassword);
+        return Result.success("密码修改成功");
     }
 }
