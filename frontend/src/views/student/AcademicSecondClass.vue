@@ -93,8 +93,8 @@
           <el-table-column prop="semester" label="开课学期" width="120" align="center"></el-table-column>
         </el-table>
         <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
-          <span class="text-sm text-gray-500">共 24 条</span>
-          <el-pagination background layout="prev, pager, next" :total="24" :page-size="10" size="small" />
+          <span class="text-sm text-gray-500">共 {{ tableData.length }} 条</span>
+          <el-pagination background layout="prev, pager, next" :total="tableData.length" :page-size="10" size="small" />
         </div>
       </div>
 
@@ -139,8 +139,8 @@
               <h3 class="text-base font-bold text-gray-800">学时分类完成情况</h3>
             </div>
             <div class="text-sm text-gray-500 flex items-center gap-4">
-              <span>总计学时 <span class="font-bold text-gray-800 ml-1">116 / 144</span></span>
-              <span>总体完成率 <span class="text-blue-600 font-bold text-lg ml-1">68%</span></span>
+              <span>总计学时 <span class="font-bold text-gray-800 ml-1">{{ totalHours }} / {{ totalRequiredHours }}</span></span>
+              <span>总体完成率 <span class="text-blue-600 font-bold text-lg ml-1">{{ overallProgress }}%</span></span>
             </div>
           </div>
 
@@ -169,7 +169,7 @@
 
           <div class="mt-5 bg-gray-50/80 rounded-xl p-3 flex items-center justify-center gap-2 text-xs font-medium text-gray-500 border border-gray-100">
             <el-icon class="text-sm text-gray-400"><DataLine /></el-icon>
-            还需完成 12 学时即可达成培养方案要求，继续加油！
+            还需完成 {{ Math.max(0, totalRequiredHours - totalHours) }} 学时即可达成培养方案要求，继续加油！
           </div>
         </div>
       </div>
@@ -207,6 +207,13 @@ const categoryNames = ['志愿服务类', '创新创业类', '社会实践类', 
 
 const totalHours = computed(() => records.value.reduce((sum, r) => sum + (r.hours || 0), 0))
 
+const totalRequiredHours = computed(() => archiveReqs.reduce((s, r) => s + r, 0))
+
+const overallProgress = computed(() => {
+  if (totalRequiredHours.value === 0) return 0
+  return Math.round((totalHours.value / totalRequiredHours.value) * 100)
+})
+
 const archiveNames = ['思想素质', '文艺体育', '创新创造', '志愿服务', '劳动教育', '技能特长']
 const archiveReqs = [32, 32, 16, 16, 32, 16]
 const archiveCategoryMap = [3, 4, 1, 0, 2, 5]
@@ -230,13 +237,26 @@ const archiveList = computed(() => {
   })
 })
 
-const tableData = ref([
-  { name: '数据结构', type: '专业必修', score: 95, gpa: 4.0, credits: 4, semester: '2024-2025-2', status: '优秀' },
-  { name: '操作系统', type: '专业必修', score: 92, gpa: 4.0, credits: 4, semester: '2024-2025-2', status: '优秀' },
-  { name: '计算机网络', type: '专业必修', score: 88, gpa: 3.7, credits: 3, semester: '2024-2025-2', status: '良好' },
-  { name: '高等数学（下）', type: '公共基础', score: 85, gpa: 3.3, credits: 5, semester: '2024-2025-2', status: '良好' },
-  { name: '英语（四）', type: '公共基础', score: 79, gpa: 2.7, credits: 3, semester: '2024-2025-2', status: '中等' }
-])
+const academicRecords = ref([])
+
+const loadAcademicRecords = async () => {
+  try {
+    const res = await request.get(`/api/academic/student-records?studentId=${STUDENT_ID}`)
+    if (res.data.code === 200) academicRecords.value = res.data.data
+  } catch (e) { console.error(e) }
+}
+
+const tableData = computed(() => {
+  return academicRecords.value.map(r => ({
+    name: r.courseName,
+    type: r.courseType === '必修' ? '专业必修' : '专业选修',
+    score: r.score,
+    gpa: ((r.score || 0) / 25).toFixed(1),
+    credits: r.credit,
+    semester: r.semester,
+    status: r.score >= 90 ? '优秀' : r.score >= 80 ? '良好' : r.score >= 70 ? '中等' : r.score >= 60 ? '及格' : '不及格'
+  }))
+})
 
 const initCharts = () => {
   // 1. Radar Chart
@@ -366,12 +386,12 @@ const handleResize = () => {
   charts.forEach(chart => chart.resize())
 }
 
-onMounted(() => {
-  loadRecords()
-  nextTick(() => {
-    initCharts()
-    window.addEventListener('resize', handleResize)
-  })
+onMounted(async () => {
+  await loadRecords()
+  await loadAcademicRecords()
+  await nextTick()
+  initCharts()
+  window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
