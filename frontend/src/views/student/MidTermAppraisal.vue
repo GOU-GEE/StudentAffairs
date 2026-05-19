@@ -68,7 +68,7 @@
             
             <el-upload
               action="http://localhost:8080/api/upload"
-              :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
+              :headers="uploadHeaders"
               multiple
               :limit="5"
               :on-exceed="handleExceed"
@@ -163,6 +163,7 @@ import {
 import request from '@/utils/request'
 const API = '/api/mid-term'
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
+const uploadHeaders = { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
 
 const basicInfo = {
   '姓名': '张小明',

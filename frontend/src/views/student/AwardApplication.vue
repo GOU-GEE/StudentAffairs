@@ -130,7 +130,7 @@
             </label>
             <el-upload
               action="http://localhost:8080/api/upload"
-              :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
+              :headers="uploadHeaders"
               list-type="picture-card"
               :limit="5"
               :on-exceed="handleExceed"
@@ -231,6 +231,7 @@ import request from '@/utils/request'
 const API = '/api/youth'
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 const STUDENT_NAME = '张小明'
+const uploadHeaders = { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
 
 const history = ref([])
 const form = ref({

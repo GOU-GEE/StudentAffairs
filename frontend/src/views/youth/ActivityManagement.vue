@@ -100,7 +100,7 @@
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面</label>
               <el-upload
                 action="http://localhost:8080/api/upload"
-                :headers="{ Authorization: 'Bearer ' + sessionStorage.getItem('token') }"
+                :headers="uploadHeaders"
                 :show-file-list="false"
                 :on-success="handleCoverUploadSuccess"
                 accept="image/*"
@@ -164,6 +164,7 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
+const uploadHeaders = { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
 
 const activities = ref([])
 
