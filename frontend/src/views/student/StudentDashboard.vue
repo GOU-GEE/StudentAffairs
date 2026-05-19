@@ -118,7 +118,7 @@
       <!-- 3. Dynamic & Tasks -->
       <div class="md:col-span-4 bg-white/30 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-white/40 flex flex-col justify-between h-[360px] hover:bg-white/50 transition-all">
         <h3 class="text-base font-bold text-gray-800 mb-4">进展与待办</h3>
-        <div class="flex-1 flex flex-col justify-between">
+        <div class="flex-1 flex flex-col space-y-3 overflow-y-auto custom-scrollbar pr-1">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center text-lg">
@@ -183,61 +183,6 @@
             </div>
             <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full border border-blue-100">已开始</span>
           </div>
-        </div>
-        <div class="mt-4 pt-4 border-t border-gray-50 text-center">
-          <el-popover placement="top" :width="500" trigger="click">
-            <template #reference>
-              <button class="text-blue-500 text-xs hover:text-blue-600 font-medium">查看全部待办 (6) <el-icon class="align-middle"><ArrowRight /></el-icon></button>
-            </template>
-            <div class="p-4">
-              <div class="text-base font-bold text-gray-800 mb-4 px-1">任务中心详情</div>
-              <div class="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                <div class="p-3 bg-orange-50/30 rounded-xl border border-orange-100 hover:bg-orange-50/50 transition-all cursor-pointer group">
-                  <div class="flex items-center gap-2 mb-2">
-                    <el-icon class="text-orange-500"><Medal /></el-icon>
-                    <span class="text-xs font-bold text-gray-800">奖学金申请</span>
-                    <span class="ml-auto text-[10px] text-orange-600 font-medium">待提交</span>
-                  </div>
-                  <p class="text-[11px] text-gray-500 leading-relaxed mb-2">国家励志奖学金申请即将截止，请尽快完成材料上传。</p>
-                  <div class="text-[10px] text-gray-400">截止时间: 2026-05-12</div>
-                </div>
-                
-                <div class="p-3 bg-blue-50/30 rounded-xl border border-blue-100 hover:bg-blue-50/50 transition-all cursor-pointer group" @click="router.push('/student/profile')">
-                  <div class="flex items-center gap-2 mb-2">
-                    <el-icon class="text-blue-500"><EditPen /></el-icon>
-                    <span class="text-xs font-bold text-gray-800">中期鉴定</span>
-                    <span class="ml-auto text-[10px] text-blue-600 font-medium">进行中</span>
-                  </div>
-                  <p class="text-[11px] text-gray-500 leading-relaxed mb-2">请完成个人学年总结并提交辅导员审核。</p>
-                  <div class="text-[10px] text-gray-400">截止时间: 2026-05-15</div>
-                </div>
-
-                <div class="p-3 bg-red-50/30 rounded-xl border border-red-100 hover:bg-red-50/50 transition-all cursor-pointer group">
-                  <div class="flex items-center gap-2 mb-2">
-                    <el-icon class="text-red-500"><Warning /></el-icon>
-                    <span class="text-xs font-bold text-gray-800">安全知识考试</span>
-                    <span class="ml-auto text-[10px] text-red-600 font-medium">未开始</span>
-                  </div>
-                  <p class="text-[11px] text-gray-500 leading-relaxed mb-2">全校性安全意识测评，人人必做。</p>
-                  <div class="text-[10px] text-gray-400">截止时间: 2026-05-10</div>
-                </div>
-
-                <div class="p-3 bg-purple-50/30 rounded-xl border border-purple-100 hover:bg-purple-50/50 transition-all cursor-pointer group">
-                  <div class="flex items-center gap-2 mb-2">
-                    <el-icon class="text-purple-500"><Stamp /></el-icon>
-                    <span class="text-xs font-bold text-gray-800">学时认证</span>
-                    <span class="ml-auto text-[10px] text-purple-600 font-medium">待补正</span>
-                  </div>
-                  <p class="text-[11px] text-gray-500 leading-relaxed mb-2">您的第二课堂学时认证申请被退回，请修改。</p>
-                  <div class="text-[10px] text-gray-400">更新时间: 2026-05-08</div>
-                </div>
-              </div>
-              <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-                <span class="text-[11px] text-gray-400">当前共有 6 项待办任务</span>
-                <button class="text-xs text-blue-500 font-bold hover:underline" @click="router.push('/student/applications')">进入任务中心详情页</button>
-              </div>
-            </div>
-          </el-popover>
         </div>
       </div>
 

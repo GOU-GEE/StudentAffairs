@@ -51,22 +51,13 @@
       <div class="lg:col-span-3 bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col">
         <div class="flex justify-between items-center mb-2">
           <h3 class="text-base font-bold text-gray-800">学科能力雷达图</h3>
-          <el-button size="small" class="!rounded-full text-xs" plain>详情</el-button>
         </div>
         <div class="flex-1 w-full" ref="radarChartRef"></div>
       </div>
 
       <!-- Trend Analysis (Moved from below) -->
       <div class="lg:col-span-5 bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-fit">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-base font-bold text-gray-800">学业趋势分析</h3>
-          <el-select v-model="trendType" size="small" class="!w-24">
-            <el-option label="GPA 趋势" value="gpa"></el-option>
-            <el-option label="学分趋势" value="credits"></el-option>
-            <el-option label="绩点排名" value="rank"></el-option>
-            <el-option label="综测排名" value="overall"></el-option>
-          </el-select>
-        </div>
+        <h3 class="text-base font-bold text-gray-800 mb-4">学业趋势分析</h3>
         <div class="h-48 w-full" ref="trendChartRef"></div>
       </div>
     </div>
@@ -94,7 +85,6 @@
         </el-table>
         <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
           <span class="text-sm text-gray-500">共 {{ tableData.length }} 条</span>
-          <el-pagination background layout="prev, pager, next" :total="tableData.length" :page-size="11" size="small" />
         </div>
       </div>
 
@@ -104,8 +94,7 @@
         <div class="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col">
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-base font-bold text-gray-800">第二课堂统计</h3>
-            <el-button size="small" class="!rounded-full text-xs" plain>详情</el-button>
-          </div>
+            </div>
           <div class="flex-1 flex items-center h-40">
              <div class="w-1/2 h-full" ref="secondClassChartRef"></div>
              <div class="w-1/2 flex flex-col gap-3.5 pl-2">
