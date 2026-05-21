@@ -33,7 +33,7 @@
         </div>
 
         <div class="mt-auto pt-8 text-center">
-          <button class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
+          <button @click="router.push('/student/applications/award')" class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
         </div>
       </div>
 
@@ -68,7 +68,7 @@
         </div>
 
         <div class="mt-auto pt-8 text-center">
-          <button class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
+          <button @click="router.push('/student/honors')" class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
         </div>
       </div>
     </div>
@@ -120,7 +120,7 @@
       </div>
 
       <div class="mt-8 pt-4 border-t border-gray-100/50 text-center">
-        <button class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
+        <button @click="router.push('/student/honors')" class="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors">查看更多记录</button>
       </div>
     </div>
   </div>
@@ -128,8 +128,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Medal, Trophy, Warning, ArrowRight, Stamp, InfoFilled, Search } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+
+const router = useRouter()
 
 const API = '/api/youth'
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'

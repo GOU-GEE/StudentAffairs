@@ -90,27 +90,34 @@
             职业规划预约
           </router-link>
         </li>
+        <li>
+          <router-link
+            to="/teacher/feedbacks"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><EditPen /></el-icon>
+            意见反馈管理
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/teacher/leaves"
+            active-class="!text-primary font-bold"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-secondary hover:bg-white/60 group"
+          >
+            <el-icon :size="20" class="group-hover:scale-110 transition-transform"><Calendar /></el-icon>
+            请假报备管理
+          </router-link>
+        </li>
       </ul>
-
-      <div class="mt-auto px-4">
-        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/15 flex flex-col gap-2">
-           <div class="text-[0.6875rem] font-bold text-secondary uppercase">系统状态</div>
-           <div class="flex items-center gap-2">
-             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-             <span class="text-xs text-secondary font-medium">后端服务正常</span>
-           </div>
-           <div class="flex items-center gap-2">
-             <div class="w-2 h-2 rounded-full bg-ai-primary animate-pulse"></div>
-             <span class="text-xs text-secondary font-medium">Ollama AI 就绪</span>
-           </div>
-        </div>
-      </div>
+      
     </nav>
 
     <!-- Main Content -->
     <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden">
       <!-- Header: 毛玻璃 + 路由标题 + 右侧操作 -->
-      <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-40 h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight">
+      <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-[9999] h-14 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight">
         <!-- 页面标题 & 页面特定操作(通过 teleport 注入) -->
         <div class="flex items-center gap-6">
           <h2 class="text-2xl font-black text-on-surface tracking-tight">{{ route.meta.title || '' }}</h2>

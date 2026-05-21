@@ -43,7 +43,7 @@
     <!-- 主内容区 -->
     <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col min-h-screen overflow-x-auto">
       <!-- Header 毛玻璃 -->
-      <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-40 h-14 bg-white/40 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight min-w-[900px]">
+      <header class="flex items-center justify-between px-8 fixed top-0 left-0 md:left-64 right-0 z-[9999] h-14 bg-white/40 backdrop-blur-xl border-b border-outline-variant/10 font-sans tracking-tight min-w-[900px]">
         <div class="flex items-center gap-6">
           <h2 class="text-2xl font-black text-on-surface tracking-tight whitespace-nowrap">
             {{ route.meta.title || '' }}
@@ -536,63 +536,135 @@ const notifications = ref([])
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 
 const fetchNotifications = async () => {
+  const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
+  const list = []
+
+  // Fetch Announcements
   try {
-    const res = await request.get('/api/communication/announcements')
-    if (res.data.code === 200) {
-      const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
-      notifications.value = res.data.data.map(a => {
+    const resAnn = await request.get('/api/communication/announcements')
+    if (resAnn.data.code === 200 && Array.isArray(resAnn.data.data)) {
+      resAnn.data.data.forEach(a => {
         const d = new Date(a.publishTime)
         const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-        return {
+        const isCounselor = a.publisherId === 'T001'
+        list.push({
           id: a.id,
-          tag: a.type === 'NOTICE' ? '辅导员通知' : '系统公告',
-          tagStyle: a.type === 'NOTICE' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700',
+          tag: isCounselor ? '班级' : '学院',
+          tagStyle: isCounselor ? 'bg-orange-50 text-orange-600 border border-orange-100/50' : 'bg-blue-50 text-blue-600 border border-blue-100/50',
           time: timeStr,
           title: a.title,
           content: a.content,
           read: readIds.includes(a.id),
           expanded: false,
+          publishTime: a.publishTime,
+          isMessage: false,
           path: `/student/campus-life?notifId=${a.id}`
-        }
+        })
       })
     }
-  } catch (e) { console.error('Failed to load notifications', e) }
+  } catch (e) {
+    console.error('Failed to load announcements', e)
+  }
+
+  // Fetch Messages
+  try {
+    const resMsg = await request.get(`/api/communication/messages?userId=T001&peerId=${STUDENT_ID}`)
+    if (resMsg.data.code === 200 && Array.isArray(resMsg.data.data)) {
+      // 过滤李老师发给学生的未读消息
+      const unreadMsgs = resMsg.data.data.filter(m => m.senderId === 'T001' && !m.isRead && !m.isRecalled)
+      unreadMsgs.forEach(m => {
+        const d = new Date(m.sentTime)
+        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        list.push({
+          id: `msg-${m.id}`,
+          messageId: m.id,
+          tag: '班级',
+          tagStyle: 'bg-orange-50 text-orange-600 border border-orange-100/50',
+          time: timeStr,
+          title: `李老师: ${m.content}`,
+          content: m.content,
+          read: false,
+          expanded: false,
+          publishTime: m.sentTime,
+          isMessage: true,
+          path: `/student/campus-life?select=chat`
+        })
+      })
+    }
+  } catch (e) {
+    console.error('Failed to load messages', e)
+  }
+
+  // 按发布时间降序排序
+  list.sort((a, b) => new Date(b.publishTime || 0) - new Date(a.publishTime || 0))
+  notifications.value = list
 }
 
-const toggleNotif = (n) => {
-  if (!n.read) {
-    n.read = true
-    const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
-    if (!readIds.includes(n.id)) {
-      readIds.push(n.id)
-      localStorage.setItem('student_read_notifs', JSON.stringify(readIds))
+const toggleNotif = async (n) => {
+  if (n.isMessage) {
+    try {
+      await request.put(`/api/communication/messages/${n.messageId}/read`)
+    } catch (e) {
+      console.error('Failed to mark message as read', e)
+    }
+  } else {
+    if (!n.read) {
+      n.read = true
+      const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
+      if (!readIds.includes(n.id)) {
+        readIds.push(n.id)
+        localStorage.setItem('student_read_notifs', JSON.stringify(readIds))
+      }
     }
   }
   if (n.path) {
     if (n.path.includes('?tab=')) {
       const tab = n.path.split('?tab=')[1];
       router.push({ path: n.path.split('?')[0], query: { tab } });
+    } else if (n.path.includes('?select=')) {
+      const select = n.path.split('?select=')[1];
+      router.push({ path: n.path.split('?')[0], query: { select } });
     } else {
       router.push(n.path);
     }
     notifOpen.value = false;
   }
+  fetchNotifications()
 }
-const markAllRead = () => {
-  notifications.value.forEach(n => n.read = true)
-  const allIds = notifications.value.map(n => n.id)
-  localStorage.setItem('student_read_notifs', JSON.stringify(allIds))
+const markAllRead = async () => {
+  // Mark all announcements as read
+  notifications.value.forEach(n => {
+    if (!n.isMessage) {
+      n.read = true
+    }
+  })
+  const annIds = notifications.value.filter(n => !n.isMessage).map(n => n.id)
+  localStorage.setItem('student_read_notifs', JSON.stringify(annIds))
+
+  // Mark all messages as read
+  const msgNotifs = notifications.value.filter(n => n.isMessage)
+  for (const n of msgNotifs) {
+    try {
+      await request.put(`/api/communication/messages/${n.messageId}/read`)
+    } catch (e) {}
+  }
+  
+  await fetchNotifications()
 }
 
 // 点击外部关闭通知
 const closeNotif = () => { notifOpen.value = false }
+let pollTimer = null
 onMounted(() => {
   document.addEventListener('click', closeNotif)
   fetchNotifications()
   // Poll for new notifications
-  setInterval(fetchNotifications, 30000)
+  pollTimer = setInterval(fetchNotifications, 5000)
 })
-onUnmounted(() => document.removeEventListener('click', closeNotif))
+onUnmounted(() => {
+  document.removeEventListener('click', closeNotif)
+  if (pollTimer) clearInterval(pollTimer)
+})
 
 // 路由切换时关闭档案
 

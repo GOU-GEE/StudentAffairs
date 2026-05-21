@@ -21,10 +21,10 @@
         </div>
       </div>
 
-      <div class="h-px bg-outline-variant/15"></div>
+      <div class="h-px bg-outline-variant/35"></div>
 
       <!-- 意见反馈入口 -->
-      <div class="px-2 pt-2 pb-2 border-b border-outline-variant/15">
+      <div class="px-2 pt-2 pb-2 border-b border-outline-variant/35">
         <div class="px-2 py-3 rounded-xl flex items-center justify-between cursor-pointer transition-all min-h-[44px]"
              :class="activeId === 'feedback' ? 'bg-primary/10 shadow-sm ring-1 ring-primary/20' : 'hover:bg-white hover:shadow-sm'"
              @click="openFeedback">
@@ -41,7 +41,7 @@
       <!-- 下部：通知列表 -->
       <div class="flex-1 flex flex-col min-h-0">
         <!-- Tabs & 统计 -->
-        <div class="flex items-center justify-between border-b border-outline-variant/15 flex-shrink-0">
+        <div class="flex items-center justify-between border-b border-outline-variant/35 flex-shrink-0">
           <div class="flex items-center gap-5">
             <span class="text-sm font-bold text-on-surface px-4 py-3 border-r border-outline-variant/30">
               通知
@@ -134,8 +134,8 @@
             <div class="flex items-end gap-3 bg-white p-1.5 rounded-2xl border border-outline-variant/30 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
               <textarea ref="chatInputRef" v-model="chatInput" rows="1" @keydown.enter.exact.prevent="sendChat" class="flex-1 resize-none outline-none text-sm px-2 py-1.5 bg-transparent custom-scrollbar max-h-32 min-h-[32px]" placeholder="发送消息给辅导员... (Enter发送，Shift+Enter换行)"></textarea>
               <div class="flex items-center gap-2 pb-0.5 pr-1">
-                <button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Picture /></el-icon></button>
-                <button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Paperclip /></el-icon></button>
+                <button @click="ElMessage.info('图片发送功能开发中')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Picture /></el-icon></button>
+                <button @click="ElMessage.info('文件发送功能开发中')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Paperclip /></el-icon></button>
                 <button @click="sendChat" class="px-4 py-1.5 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!chatInput.trim()">发送</button>
               </div>
             </div>
@@ -247,6 +247,7 @@ const router = useRouter()
 
 const API = '/api/communication'
 const studentId = sessionStorage.getItem('userId') || '202301042'
+const studentName = sessionStorage.getItem('userName') || '张小明'
 const teacherId = 'T001'
 const teacherName = '李老师'
 const teacherAvatar = '/avatar-placeholder.png'
@@ -266,12 +267,26 @@ const notifications = ref([])
 // 已读通知ID集合（本地跟踪）
 const readNotifIds = ref(new Set())
 
-// 反馈（本地 mock）
-const feedbacks = ref([
-  { id: 1, student: '李四', time: '昨天 14:30', content: '学校南门的共享单车停放区太小了，经常停不下，建议扩建。', reply: '感谢建议，后勤处已将南门外区域纳入下个月的扩建规划。', replyTime: '昨天 16:00' },
-  { id: 2, student: '王五', time: '05-18 09:00', content: '图书馆二楼的空调制冷效果不好，希望能报修。', reply: '已通知维修人员，预计本周五前完成检修。', replyTime: '05-18 11:30' },
-  { id: 3, student: '赵六', time: '05-19 10:20', content: '希望食堂能增加一些清淡口味的窗口。', reply: null, replyTime: null }
-])
+// 反馈（从后端动态加载）
+const feedbacks = ref([])
+
+const loadFeedbacks = async () => {
+  try {
+    const res = await request.get(`${API}/feedbacks`, { params: { studentId } })
+    if (res.data.code === 200) {
+      feedbacks.value = res.data.data.map(fb => ({
+        id: fb.id,
+        student: fb.studentId === studentId ? '我' : (fb.studentName || '学生'),
+        time: formatTimeFull(fb.createTime),
+        content: fb.content,
+        reply: fb.reply,
+        replyTime: fb.replyTime ? formatTimeFull(fb.replyTime) : null
+      }))
+    }
+  } catch (e) {
+    console.error('加载意见反馈失败', e)
+  }
+}
 
 // Context Menu
 const contextMenu = ref({ visible: false, x: 0, y: 0, msg: null })
@@ -340,17 +355,24 @@ const openFeedback = () => {
   activeId.value = 'feedback'
 }
 
-const submitFeedback = () => {
+const submitFeedback = async () => {
   if (!feedbackInput.value.trim()) return
-  feedbacks.value.unshift({
-    id: Date.now(),
-    student: '我',
-    time: '刚刚',
-    content: feedbackInput.value,
-    reply: null,
-    replyTime: null
-  })
-  feedbackInput.value = ''
+  try {
+    const res = await request.post(`${API}/feedbacks`, {
+      studentId,
+      studentName,
+      content: feedbackInput.value
+    })
+    if (res.data.code === 200) {
+      feedbackInput.value = ''
+      ElMessage.success('反馈已提交，感谢您的宝贵意见！')
+      await loadFeedbacks()
+    } else {
+      ElMessage.warning(res.data.msg || '提交失败')
+    }
+  } catch (e) {
+    ElMessage.error('提交失败，请稍后重试')
+  }
 }
 
 const sendChat = async () => {
@@ -448,10 +470,12 @@ const formatTimeFull = (s) => {
 }
 
 onMounted(async () => {
-  await Promise.all([loadNotifications(), loadChatMessages()])
+  await Promise.all([loadNotifications(), loadChatMessages(), loadFeedbacks()])
   document.addEventListener('click', closeContextMenu)
 
-  if (route.query.notifId) {
+  if (route.query.select === 'chat') {
+    selectChat()
+  } else if (route.query.notifId) {
     const targetId = parseInt(route.query.notifId)
     if (notifications.value.find(n => n.id === targetId)) {
       selectNotification(targetId)
@@ -473,6 +497,12 @@ watch(() => route.query.notifId, (newId) => {
     if (notifications.value.find(n => n.id === targetId)) {
       selectNotification(targetId)
     }
+  }
+})
+
+watch(() => route.query.select, (newSelect) => {
+  if (newSelect === 'chat') {
+    selectChat()
   }
 })
 

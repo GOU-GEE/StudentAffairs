@@ -46,20 +46,34 @@ public class ApplicationController {
         return Result.success(repository.save(application));
     }
 
-    /** 辅导员审批（状态机流转：PENDING -> APPROVED/REJECTED）*/
+    /** 辅导员审批或学生销假（状态机流转：PENDING -> APPROVED/REJECTED，或者 APPROVED -> RETURNED）*/
     @PutMapping("/{id}/review")
     public Result<String> review(@PathVariable Long id, @RequestBody Map<String, String> body) {
         return repository.findById(id).map(app -> {
             String newStatus = body.get("status");
-            if (!"APPROVED".equals(newStatus) && !"REJECTED".equals(newStatus)) {
+            if (!"APPROVED".equals(newStatus) && !"REJECTED".equals(newStatus) && !"RETURNED".equals(newStatus)) {
                 return Result.<String>error(400, "无效的审批状态");
             }
             app.setStatus(newStatus);
-            app.setReviewComment(body.get("comment"));
-            app.setReviewerName(body.getOrDefault("reviewerName", "辅导员"));
+            if (body.containsKey("comment")) {
+                app.setReviewComment(body.get("comment"));
+            }
+            if (body.containsKey("reviewerName")) {
+                app.setReviewerName(body.get("reviewerName"));
+            } else if (!"RETURNED".equals(newStatus)) {
+                app.setReviewerName("辅导员");
+            }
             app.setReviewTime(LocalDateTime.now());
             repository.save(app);
-            return Result.<String>success("APPROVED".equals(newStatus) ? "申请已批准" : "申请已驳回");
+            String message = "操作成功";
+            if ("APPROVED".equals(newStatus)) {
+                message = "申请已批准";
+            } else if ("REJECTED".equals(newStatus)) {
+                message = "申请已驳回";
+            } else if ("RETURNED".equals(newStatus)) {
+                message = "已完成销假";
+            }
+            return Result.<String>success(message);
         }).orElse(Result.<String>error(404, "申请不存在"));
     }
 }

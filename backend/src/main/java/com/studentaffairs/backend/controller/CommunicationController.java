@@ -2,9 +2,11 @@ package com.studentaffairs.backend.controller;
 
 import com.studentaffairs.backend.common.Result;
 import com.studentaffairs.backend.entity.Announcement;
+import com.studentaffairs.backend.entity.Feedback;
 import com.studentaffairs.backend.entity.Message;
 import com.studentaffairs.backend.entity.StudentProfile;
 import com.studentaffairs.backend.repository.AnnouncementRepository;
+import com.studentaffairs.backend.repository.FeedbackRepository;
 import com.studentaffairs.backend.repository.MessageRepository;
 import com.studentaffairs.backend.repository.StudentProfileRepository;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +21,16 @@ public class CommunicationController {
     private final AnnouncementRepository announcementRepo;
     private final MessageRepository messageRepo;
     private final StudentProfileRepository studentProfileRepo;
+    private final FeedbackRepository feedbackRepo;
 
     public CommunicationController(AnnouncementRepository announcementRepo,
                                    MessageRepository messageRepo,
-                                   StudentProfileRepository studentProfileRepo) {
+                                   StudentProfileRepository studentProfileRepo,
+                                   FeedbackRepository feedbackRepo) {
         this.announcementRepo = announcementRepo;
         this.messageRepo = messageRepo;
         this.studentProfileRepo = studentProfileRepo;
+        this.feedbackRepo = feedbackRepo;
     }
 
     // ==================== 公告 ====================
@@ -145,5 +150,32 @@ public class CommunicationController {
             contacts.add(contact);
         }
         return Result.success(contacts);
+    }
+
+    // ==================== 意见反馈 ====================
+
+    @GetMapping("/feedbacks")
+    public Result<List<Feedback>> getFeedbacks(@RequestParam(required = false) String studentId) {
+        if (studentId != null && !studentId.isEmpty()) {
+            return Result.success(feedbackRepo.findByStudentIdOrderByCreateTimeDesc(studentId));
+        }
+        return Result.success(feedbackRepo.findByOrderByCreateTimeDesc());
+    }
+
+    @PostMapping("/feedbacks")
+    public Result<Feedback> submitFeedback(@RequestBody Feedback feedback) {
+        feedback.setCreateTime(LocalDateTime.now());
+        if (feedback.getStatus() == null) feedback.setStatus("PENDING");
+        return Result.success(feedbackRepo.save(feedback));
+    }
+
+    @PutMapping("/feedbacks/{id}/reply")
+    public Result<Feedback> replyFeedback(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        Feedback feedback = feedbackRepo.findById(id).orElse(null);
+        if (feedback == null) return Result.error(404, "反馈不存在");
+        feedback.setReply(body.get("reply"));
+        feedback.setReplyTime(LocalDateTime.now());
+        feedback.setStatus("REPLIED");
+        return Result.success(feedbackRepo.save(feedback));
     }
 }

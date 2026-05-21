@@ -20,7 +20,7 @@
              class="p-3 rounded-xl cursor-pointer transition-all border flex items-center gap-3"
              :class="activeStudentId === student.studentId ? 'bg-white shadow-sm border-primary/30 ring-1 ring-primary/20' : 'border-transparent hover:bg-white hover:shadow-md hover:border-outline-variant/30'">
           <div class="relative flex-shrink-0">
-            <img :src="student.avatar || 'https://i.pravatar.cc/150?u=default'" class="w-10 h-10 rounded-full border border-outline-variant/30 object-cover" />
+            <img src="/avatar-placeholder.png" class="w-10 h-10 rounded-full border border-outline-variant/30 object-cover" />
             <div v-if="getUnreadCount(student.studentId) > 0"
                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
               {{ getUnreadCount(student.studentId) }}

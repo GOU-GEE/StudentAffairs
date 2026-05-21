@@ -61,7 +61,29 @@ public class YouthController {
         activity.setMaxParticipants(req.getMaxParticipants());
         activity.setCredits(req.getCredits());
         activity.setLevel(req.getLevel());
+        
+        activity.setCoverImage(req.getCoverImage());
+        activity.setEnrollTime(req.getEnrollTime());
+        activity.setTimeDetail(req.getTimeDetail());
+        activity.setRangeName(req.getRangeName());
+        activity.setLeaveSupport(req.getLeaveSupport());
+        activity.setCreditType(req.getCreditType());
+        activity.setEnrollLimit(req.getEnrollLimit());
+        
+        if (req.getStatus() != null) {
+            activity.setStatus(req.getStatus());
+        }
+        
         return success(activityRepository.save(activity));
+    }
+
+    @DeleteMapping("/activities/{id}")
+    public Map<String, Object> deleteActivity(@PathVariable Long id) {
+        activityRepository.deleteById(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 200);
+        map.put("msg", "Activity deleted successfully");
+        return map;
     }
 
     @PutMapping("/activities/{id}/toggle-status")

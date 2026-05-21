@@ -11,7 +11,7 @@
         <div class="relative z-10 flex-1">
           <div class="flex justify-between items-center mb-2">
             <span class="text-white/80 text-sm font-medium">当前 GPA</span>
-            <span class="text-white/80 text-xs flex items-center cursor-pointer hover:text-white transition-colors">本学期 <el-icon class="ml-1"><ArrowRight /></el-icon></span>
+            <span @click="toggleSemester" class="text-white/80 text-xs flex items-center cursor-pointer hover:text-white transition-colors">{{ currentSemesterLabel }} <el-icon class="ml-1"><ArrowRight /></el-icon></span>
           </div>
           <div class="flex items-end gap-3 mb-4">
             <span class="text-[3.25rem] font-bold leading-none tracking-tight">3.85</span>
@@ -181,15 +181,55 @@ const trendChartRef = ref(null)
 
 let charts = []
 
+const semesters = ['大一上学期', '大一下学期', '大二上学期', '大二下学期(本学期)']
+const currentSemesterIndex = ref(3)
+const currentSemesterLabel = computed(() => semesters[currentSemesterIndex.value])
+const toggleSemester = () => {
+  currentSemesterIndex.value = (currentSemesterIndex.value + 1) % semesters.length
+}
+
 const trendType = ref('gpa')
 
 const records = ref([])
+const radarData = ref(null)
 
 const loadRecords = async () => {
   try {
     const res = await request.get(`${API}/second-classroom/records?studentId=${STUDENT_ID}`)
     if (res.data.code === 200) records.value = res.data.data
   } catch (e) { console.error(e) }
+}
+
+const loadRadarData = async () => {
+  try {
+    const res = await request.get(`/api/academic/student-radar?studentId=${STUDENT_ID}`)
+    if (res.data.code === 200) radarData.value = res.data.data
+  } catch (e) { console.error(e) }
+}
+
+const donutLabels = ['活动参与', '志愿服务', '社团活动', '技能培训']
+const donutColors = ['#9E86FF', '#52C41A', '#FAAD14', '#1890FF']
+const getDonutData = () => {
+  if (records.value.length === 0) {
+    return [
+      { value: 18, name: '活动参与', itemStyle: { color: '#9E86FF' } },
+      { value: 24, name: '志愿服务', itemStyle: { color: '#52C41A' } },
+      { value: 6, name: '社团活动', itemStyle: { color: '#FAAD14' } },
+      { value: 8, name: '技能培训', itemStyle: { color: '#1890FF' } },
+      { value: 4, name: '剩余目标', itemStyle: { color: '#F3F4F6' } }
+    ]
+  }
+  const catHours = [0, 0, 0, 0]
+  records.value.forEach(r => {
+    const ci = r.categoryIndex ?? 0
+    if (ci < 4) catHours[ci] += (r.hours || 0)
+  })
+  return [
+    { value: catHours[0], name: donutLabels[0], itemStyle: { color: donutColors[0] } },
+    { value: catHours[1], name: donutLabels[1], itemStyle: { color: donutColors[1] } },
+    { value: catHours[2], name: donutLabels[2], itemStyle: { color: donutColors[2] } },
+    { value: catHours[3], name: donutLabels[3], itemStyle: { color: donutColors[3] } },
+  ]
 }
 
 const categoryNames = ['志愿服务类', '创新创业类', '社会实践类', '学术讲座类', '文体活动类', '技能培训类']
@@ -271,7 +311,7 @@ const initCharts = () => {
       series: [{
         type: 'radar',
         data: [{
-          value: [85, 90, 78, 82, 82, 80],
+          value: radarData.value?.abilities || [85, 90, 78, 82, 82, 80],
           name: '能力值',
           areaStyle: { color: 'rgba(24, 144, 255, 0.15)' },
           lineStyle: { color: '#1890FF', width: 2 },
@@ -298,20 +338,14 @@ const initCharts = () => {
         center: ['50%', '50%'],
         avoidLabelOverlap: false,
         label: { show: false },
-        data: [
-          { value: 18, name: '活动参与', itemStyle: { color: '#9E86FF' } },
-          { value: 24, name: '志愿服务', itemStyle: { color: '#52C41A' } },
-          { value: 6, name: '社团活动', itemStyle: { color: '#FAAD14' } },
-          { value: 8, name: '技能培训', itemStyle: { color: '#1890FF' } },
-          { value: 4, name: '剩余目标', itemStyle: { color: '#F3F4F6' } }
-        ]
+        data: getDonutData()
       }],
       graphic: [{
         type: 'text',
         left: 'center',
         top: 'center',
         style: {
-          text: '{val|32}\n{lbl|总学时}',
+          text: `{val|${totalHours.value}}\n{lbl|总学时}`,
           textAlign: 'center',
           rich: {
             val: { fontSize: 28, fontWeight: 'bold', color: '#1F2937', lineHeight: 32 },
@@ -376,8 +410,7 @@ const handleResize = () => {
 }
 
 onMounted(async () => {
-  await loadRecords()
-  await loadAcademicRecords()
+  await Promise.all([loadRecords(), loadAcademicRecords(), loadRadarData()])
   await nextTick()
   initCharts()
   window.addEventListener('resize', handleResize)

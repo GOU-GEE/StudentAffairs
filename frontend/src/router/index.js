@@ -23,7 +23,9 @@ const router = createRouter({
         { path: 'safety-monitoring', name: 'TeacherSafetyMonitoring', meta: { title: '安全监控中心' }, component: () => import('../views/teacher/SafetyMonitoring.vue') },
         { path: 'communication', name: 'TeacherCommunication', meta: { title: '沟通互动' }, component: () => import('../views/teacher/Communication.vue') },
         { path: 'mid-term', name: 'TeacherMidTerm', meta: { title: '中期鉴定收集' }, component: () => import('../views/teacher/MidTermManagement.vue') },
-        { path: 'career-appointments', name: 'TeacherCareerAppointments', meta: { title: '职业规划预约' }, component: () => import('../views/teacher/CareerAppointment.vue') }
+        { path: 'career-appointments', name: 'TeacherCareerAppointments', meta: { title: '职业规划预约' }, component: () => import('../views/teacher/CareerAppointment.vue') },
+        { path: 'feedbacks', name: 'TeacherFeedbacks', meta: { title: '意见反馈管理' }, component: () => import('../views/teacher/FeedbackManagement.vue') },
+        { path: 'leaves', name: 'TeacherLeaves', meta: { title: '请假报备管理' }, component: () => import('../views/teacher/LeaveManagement.vue') }
       ]
     },
     {

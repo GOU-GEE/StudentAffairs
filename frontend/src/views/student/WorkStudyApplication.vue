@@ -143,7 +143,7 @@
             <p class="text-xs text-gray-400 mb-3">{{ item.department }}</p>
             <div class="flex items-center justify-between text-[10px] text-gray-400">
               <span class="flex items-center gap-1"><el-icon><Calendar /></el-icon> {{ item.applyTime }}</span>
-              <span class="text-blue-600 group-hover:underline">详情 ></span>
+              <span @click.stop="ElMessage.info('详情功能开发中')" class="text-blue-600 group-hover:underline cursor-pointer">详情 ></span>
             </div>
           </div>
         </div>
@@ -164,18 +164,43 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 const API = '/api/applications'
+const JOBS_API = '/api/financial-aid/jobs'
 const studentId = sessionStorage.getItem('userId') || '202301042'
 const studentName = '张小明'
 import { 
   Document, Check, InfoFilled, Clock, Calendar, ArrowRight 
 } from '@element-plus/icons-vue'
 
-const availableJobs = [
-  { id: 1, name: '图书馆管理员', department: '校图书馆·咨询台', salary: '18.5元/时', type: '文化服务' },
-  { id: 2, name: '多媒体教室维护', department: '信息技术中心', salary: '20元/时', type: '技术支撑' },
-  { id: 3, name: '学工办助理', department: '学生事务管理处', salary: '19元/时', type: '行政辅助' },
-  { id: 4, name: '勤工助学基地助理', department: '学生处', salary: '18元/时', type: '行政辅助' }
-]
+const availableJobs = ref([])
+
+const loadJobs = async () => {
+  try {
+    const res = await request.get(JOBS_API)
+    if (res.data.code === 200) {
+      availableJobs.value = res.data.data.map(job => ({
+        id: job.id,
+        name: job.title,
+        department: job.department,
+        salary: job.hourlyRate ? `${job.hourlyRate}元/时` : '面议',
+        type: job.status === 'FULL' ? '已满' : '可申请',
+        quota: job.quota,
+        currentCount: job.currentCount || 0,
+        location: job.location,
+        requirements: job.requirements,
+        workTime: job.workTime
+      }))
+    }
+  } catch (e) {
+    console.error('加载岗位列表失败', e)
+    // fallback to default jobs
+    availableJobs.value = [
+      { id: 1, name: '图书馆管理员', department: '校图书馆·咨询台', salary: '18.5元/时', type: '文化服务' },
+      { id: 2, name: '多媒体教室维护', department: '信息技术中心', salary: '20元/时', type: '技术支撑' },
+      { id: 3, name: '学工办助理', department: '学生事务管理处', salary: '19元/时', type: '行政辅助' },
+      { id: 4, name: '勤工助学基地助理', department: '学生处', salary: '18元/时', type: '行政辅助' }
+    ]
+  }
+}
 
 const form = ref({
   selectedJob: null,
@@ -212,6 +237,7 @@ const loadHistory = async () => {
 }
 
 onMounted(() => {
+  loadJobs()
   loadHistory()
 })
 

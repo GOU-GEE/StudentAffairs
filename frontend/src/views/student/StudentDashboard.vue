@@ -235,9 +235,9 @@
           <button @click="router.push('/student/campus-life')" class="text-blue-500 text-xs hover:text-blue-600 font-medium">更多 <el-icon class="align-middle"><ArrowRight /></el-icon></button>
         </div>
         <div class="flex-1 overflow-y-auto space-y-3.5 pr-1 custom-scrollbar">
-          <div v-for="notif in notifications.slice(0, 6)" :key="notif.id" @click="goNotification(notif.id)" class="flex justify-between items-center group cursor-pointer py-1.5 border-b border-gray-50 last:border-0 hover:bg-white/40 px-1 rounded transition-all">
+          <div v-for="notif in notifications.slice(0, 6)" :key="notif.id" @click="goNotification(notif)" class="flex justify-between items-center group cursor-pointer py-1.5 border-b border-gray-50 last:border-0 hover:bg-white/40 px-1 rounded transition-all">
             <div class="flex items-center gap-2 truncate pr-2 flex-1">
-              <span :class="getTypeTagClass(notif.type)" class="px-1.5 py-0.5 rounded text-[10px] flex-shrink-0 font-medium">{{ getTypeName(notif.type) }}</span>
+              <span :class="getTypeTagClass(notif)" class="px-1.5 py-0.5 rounded text-[10px] flex-shrink-0 font-medium">{{ getTypeName(notif) }}</span>
               <span class="text-sm text-gray-700 truncate group-hover:text-blue-500 flex-1">{{ notif.title }}</span>
             </div>
             <span class="text-xs text-gray-400 flex-shrink-0">{{ formatDate(notif.publishTime) }}</span>
@@ -257,7 +257,7 @@
 
 <script setup>
 import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Money, School, Guide, ChatDotRound, Calendar, ArrowRight, Location, Phone, ArrowDown, EditPen, Reading, CircleCheck, Medal, Stamp } from '@element-plus/icons-vue'
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 
@@ -295,12 +295,43 @@ const loadStats = async () => {
 }
 
 const loadNotifications = async () => {
+  let merged = []
+
+  // Fetch Announcements
   try {
-    const res = await request.get('/api/communication/announcements')
-    if (res.data.code === 200) {
-      notifications.value = res.data.data
+    const resAnn = await request.get('/api/communication/announcements')
+    if (resAnn.data.code === 200 && Array.isArray(resAnn.data.data)) {
+      merged.push(...resAnn.data.data.map(a => ({
+        ...a,
+        isMessage: false
+      })))
     }
-  } catch (e) { console.error('加载通知失败', e) }
+  } catch (e) {
+    console.error('Failed to load announcements', e)
+  }
+
+  // Fetch Messages
+  try {
+    const resMsg = await request.get(`/api/communication/messages?userId=T001&peerId=${STUDENT_ID}`)
+    if (resMsg.data.code === 200 && Array.isArray(resMsg.data.data)) {
+      // 过滤李老师发给学生的未读消息
+      const unreadMsgs = resMsg.data.data.filter(m => m.senderId === 'T001' && !m.isRead && !m.isRecalled)
+      merged.push(...unreadMsgs.map(m => ({
+        id: `msg-${m.id}`,
+        messageId: m.id,
+        title: `李老师: ${m.content}`,
+        publishTime: m.sentTime,
+        isMessage: true,
+        type: 'MESSAGE'
+      })))
+    }
+  } catch (e) {
+    console.error('Failed to load messages', e)
+  }
+
+  // 按时间降序排序
+  merged.sort((a, b) => new Date(b.publishTime || b.sentTime || 0) - new Date(a.publishTime || a.sentTime || 0))
+  notifications.value = merged
 }
 
 const loadAwards = async () => {
@@ -389,22 +420,14 @@ const levelTagClass = (level) => {
   return m[level] || 'bg-gray-50 text-gray-500'
 }
 
-const getTypeName = (type) => {
-  const m = {
-    'NOTICE': '学校',
-    'URGENT': '紧急',
-    'EVENT': '活动'
-  }
-  return m[type] || '通知'
+const getTypeName = (notif) => {
+  const isCounselor = notif.publisherId === 'T001' || notif.isMessage
+  return isCounselor ? '班级' : '学院'
 }
 
-const getTypeTagClass = (type) => {
-  const m = {
-    'NOTICE': 'bg-blue-50 text-blue-500',
-    'URGENT': 'bg-red-50 text-red-500',
-    'EVENT': 'bg-green-50 text-green-500'
-  }
-  return m[type] || 'bg-gray-50 text-gray-500'
+const getTypeTagClass = (notif) => {
+  const isCounselor = notif.publisherId === 'T001' || notif.isMessage
+  return isCounselor ? 'bg-orange-50 text-orange-600 border border-orange-100/50' : 'bg-blue-50 text-blue-600 border border-blue-100/50'
 }
 
 const formatDate = (s) => {
@@ -413,16 +436,31 @@ const formatDate = (s) => {
   return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-const goNotification = (id) => {
-  router.push({ path: '/student/campus-life', query: { notifId: id } })
+const goNotification = async (notif) => {
+  if (notif.isMessage) {
+    try {
+      await request.put(`/api/communication/messages/${notif.messageId}/read`)
+    } catch (e) {
+      console.error('Failed to mark message as read', e)
+    }
+    router.push('/student/campus-life?select=chat')
+  } else {
+    router.push({ path: '/student/campus-life', query: { notifId: notif.id } })
+  }
 }
 
 const openProfile = inject('openProfile', () => {
   router.push('/student/profile')
 })
 
+let pollTimer = null
 onMounted(async () => {
   await Promise.all([loadStats(), loadNotifications(), loadAwards()])
+  pollTimer = setInterval(loadNotifications, 5000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>
 

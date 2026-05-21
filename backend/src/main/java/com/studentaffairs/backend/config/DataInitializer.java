@@ -26,6 +26,8 @@ import com.studentaffairs.backend.repository.StudentApplicationRepository;
 import com.studentaffairs.backend.repository.StudentProfileRepository;
 import com.studentaffairs.backend.repository.WorkStudyJobRepository;
 import com.studentaffairs.backend.repository.YouthAwardRepository;
+import com.studentaffairs.backend.entity.Feedback;
+import com.studentaffairs.backend.repository.FeedbackRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +54,8 @@ public class DataInitializer {
                                       HonorProjectRepository honorProjectRepository,
                                       HonorCandidateRepository honorCandidateRepository,
                                       SecondClassroomRecordRepository secondClassroomRecordRepository,
-                                      CourseRepository courseRepository) {
+                                      CourseRepository courseRepository,
+                                      FeedbackRepository feedbackRepository) {
         return args -> {
             // 初始化勤工助学岗位
             if (jobRepository.count() == 0) {
@@ -147,6 +150,7 @@ public class DataInitializer {
             }
 
             initYouthData(activityRepository, youthAwardRepository, honorProjectRepository, honorCandidateRepository, secondClassroomRecordRepository);
+            initFeedbacks(feedbackRepository);
         };
     }
 
@@ -289,8 +293,8 @@ public class DataInitializer {
 
         StudentApplication a2 = new StudentApplication();
         a2.setStudentId("202301042"); a2.setStudentName("张小明");
-        a2.setType("LEAVE"); a2.setTitle("周末外出报备（2024-11-16至11-17）");
-        a2.setReason("本周末需返回家乡参加家庭事务，请批准2天外出申请，保证按时返校。");
+        a2.setType("LEAVE"); a2.setTitle("周末外出报备（2026-05-16至05-17）");
+        a2.setReason("{\"leaveType\":\"HOMETOWN\",\"startDate\":\"2026-05-16\",\"endDate\":\"2026-05-17\",\"destination\":\"四川省成都市·家庭住址\",\"reason\":\"本周末需返回家乡参加家庭事务，请批准2天外出申请，保证按时返校。\",\"contact\":\"13912345678\"}");
         a2.setStatus("APPROVED"); a2.setApplyTime(LocalDateTime.now().minusDays(10));
         a2.setReviewComment("同意，注意安全"); a2.setReviewerName("李辅导员");
         a2.setReviewTime(LocalDateTime.now().minusDays(9));
@@ -454,54 +458,156 @@ public class DataInitializer {
                                HonorProjectRepository honorProjectRepo,
                                HonorCandidateRepository honorCandidateRepo,
                                SecondClassroomRecordRepository secondClassroomRepo) {
-        if (activityRepo.count() == 0) {
+        if (activityRepo.count() < 12) {
+            activityRepo.deleteAll();
             List<Activity> activities = new ArrayList<>();
+            
             Activity act1 = new Activity();
-            act1.setTitle("2024校园文化艺术节闭幕式");
-            act1.setDescription("校园文化艺术节闭幕式暨优秀作品展演，包含舞蹈、合唱、器乐等节目，展现大学生艺术风采。");
-            act1.setDate("2024-06-15"); act1.setLocation("大学生活动中心"); act1.setParticipants(120);
+            act1.setTitle("第十七届电脑文化艺术节闭幕式");
+            act1.setDescription("校园文化艺术节闭幕式暨优秀作品展演，包含舞蹈、合唱、器乐及程序作品展览，展现大学生科技艺术风采。");
+            act1.setDate("2026-06-15"); act1.setLocation("大学生活动中心大礼堂"); act1.setParticipants(120);
             act1.setMaxParticipants(500); act1.setStatus("报名中"); act1.setCredits(2.0);
             act1.setLevel("校级"); act1.setBgGradient("from-purple-500 to-pink-500");
-            act1.setCoverImage(""); act1.setEnrollTime("2024-05-20 ~ 2024-06-10");
-            act1.setTimeDetail("2024-06-15 18:30-21:00"); act1.setRangeName("全体学生");
-            act1.setLeaveSupport("支持请假"); act1.setCreditType("2学时"); act1.setEnrollLimit("不限");
+            act1.setCoverImage("https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg");
+            act1.setEnrollTime("2026-05-20 ~ 2026-06-10");
+            act1.setTimeDetail("2026-06-15 18:30-21:00"); act1.setRangeName("全体学生");
+            act1.setLeaveSupport("支持请假"); act1.setCreditType("文艺体育项目学分"); act1.setEnrollLimit("500人");
             activities.add(act1);
 
             Activity act2 = new Activity();
             act2.setTitle("软件工程专业编程马拉松");
-            act2.setDescription("48小时编程挑战赛，自由组队（2-4人），完成指定项目开发任务，评委打分评选优胜团队。");
-            act2.setDate("2024-06-20"); act2.setLocation("计算机学院实验室"); act2.setParticipants(45);
+            act2.setDescription("48小时极限编程挑战赛，自由组队（2-4人），在规定时间内完成指定方向的项目系统研发。");
+            act2.setDate("2026-06-20"); act2.setLocation("计算机学院协同创新实验室"); act2.setParticipants(45);
             act2.setMaxParticipants(80); act2.setStatus("报名中"); act2.setCredits(3.0);
             act2.setLevel("院级"); act2.setBgGradient("from-blue-500 to-cyan-500");
-            act2.setCoverImage(""); act2.setEnrollTime("2024-05-25 ~ 2024-06-18");
-            act2.setTimeDetail("2024-06-20 08:00 - 2024-06-22 08:00"); act2.setRangeName("计算机学院");
-            act2.setLeaveSupport("支持请假"); act2.setCreditType("3学时"); act2.setEnrollLimit("80人");
+            act2.setCoverImage("https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg");
+            act2.setEnrollTime("2026-05-25 ~ 2026-06-18");
+            act2.setTimeDetail("2026-06-20 08:00 - 2026-06-22 08:00"); act2.setRangeName("计算机学院");
+            act2.setLeaveSupport("支持请假"); act2.setCreditType("创新创造项目学分"); act2.setEnrollLimit("80人");
             activities.add(act2);
 
             Activity act3 = new Activity();
             act3.setTitle("志愿者服务：社区义务支教");
-            act3.setDescription("前往北湖社区小学开展义务支教活动，辅导小学生作业，开展趣味科学实验。");
-            act3.setDate("2024-06-10"); act3.setLocation("北湖社区小学"); act3.setParticipants(30);
-            act3.setMaxParticipants(30); act3.setStatus("进行中"); act3.setCredits(1.5);
+            act3.setDescription("前往北湖社区小学开展义务支教活动，辅导困难家庭小学生课业，并策划开展趣味科学小实验。");
+            act3.setDate("2026-05-18"); act3.setLocation("北湖社区小学教室"); act3.setParticipants(30);
+            act3.setMaxParticipants(30); act3.setStatus("已结束"); act3.setCredits(1.5);
             act3.setLevel("院级"); act3.setBgGradient("from-green-500 to-teal-500");
-            act3.setCoverImage(""); act3.setEnrollTime("2024-05-15 ~ 2024-06-05");
-            act3.setTimeDetail("2024-06-10 14:00-17:00"); act3.setRangeName("计算机学院");
-            act3.setLeaveSupport("不支持请假"); act3.setCreditType("1.5学时"); act3.setEnrollLimit("30人");
+            act3.setCoverImage("https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg");
+            act3.setEnrollTime("2026-05-01 ~ 2026-05-15");
+            act3.setTimeDetail("2026-05-18 14:00-17:00"); act3.setRangeName("计算机学院");
+            act3.setLeaveSupport("不支持"); act3.setCreditType("志愿服务项目学分"); act3.setEnrollLimit("30人");
             activities.add(act3);
 
             Activity act4 = new Activity();
             act4.setTitle("毕业季摄影大赛");
-            act4.setDescription("用镜头记录校园最美的瞬间，参赛作品将在图书馆一楼展厅进行为期两周的展出。");
-            act4.setDate("2024-06-01"); act4.setLocation("全校范围"); act4.setParticipants(85);
+            act4.setDescription("用镜头和快门记录最美校园瞬间。所有参赛照片经评审后将在校图书馆一楼大厅进行为期半个月的展览展示。");
+            act4.setDate("2026-05-10"); act4.setLocation("全校范围"); act4.setParticipants(85);
             act4.setMaxParticipants(200); act4.setStatus("已结束"); act4.setCredits(1.0);
             act4.setLevel("校级"); act4.setBgGradient("from-orange-500 to-red-500");
-            act4.setCoverImage(""); act4.setEnrollTime("2024-05-01 ~ 2024-05-30");
-            act4.setTimeDetail("2024-06-01 00:00 - 2024-06-30 23:59"); act4.setRangeName("全体学生");
-            act4.setLeaveSupport("不需要"); act4.setCreditType("1学时"); act4.setEnrollLimit("不限");
+            act4.setCoverImage("https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg");
+            act4.setEnrollTime("2026-04-15 ~ 2026-05-08");
+            act4.setTimeDetail("2026-05-10 09:00-18:00"); act4.setRangeName("全体学生");
+            act4.setLeaveSupport("不需要"); act4.setCreditType("文艺体育项目学分"); act4.setEnrollLimit("200人");
             activities.add(act4);
 
+            Activity act5 = new Activity();
+            act5.setTitle("AI赋能未来技术前沿讲座");
+            act5.setDescription("特邀人工智能领域知名教授，围绕大语言模型、深度学习及智能机器人产业应用展开学术前沿交流分享。");
+            act5.setDate("2026-05-25"); act5.setLocation("学术报告厅"); act5.setParticipants(185);
+            act5.setMaxParticipants(300); act5.setStatus("报名中"); act5.setCredits(1.5);
+            act5.setLevel("校级"); act5.setBgGradient("from-indigo-500 to-purple-500");
+            act5.setCoverImage("https://images.unsplash.com/photo-1591453089816-0fbb971b454c?q=80&w=200");
+            act5.setEnrollTime("2026-05-15 ~ 2026-05-24");
+            act5.setTimeDetail("2026-05-25 19:00-21:00"); act5.setRangeName("全体学生");
+            act5.setLeaveSupport("支持请假"); act5.setCreditType("思想素质项目学分"); act5.setEnrollLimit("300人");
+            activities.add(act5);
+
+            Activity act6 = new Activity();
+            act6.setTitle("心理健康与减压交流沙龙");
+            act6.setDescription("邀请校心理咨询中心专业导师，通过心理小游戏与小组共创交流，帮助大家舒缓课业压力，建立积极心态。");
+            act6.setDate("2026-05-28"); act6.setLocation("心理疏导中心多功能厅"); act6.setParticipants(25);
+            act6.setMaxParticipants(40); act6.setStatus("报名中"); act6.setCredits(1.0);
+            act6.setLevel("院级"); act6.setBgGradient("from-teal-400 to-emerald-500");
+            act6.setCoverImage("https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?q=80&w=200");
+            act6.setEnrollTime("2026-05-18 ~ 2026-05-27");
+            act6.setTimeDetail("2026-05-28 15:00-17:00"); act6.setRangeName("计算机学院");
+            act6.setLeaveSupport("不支持"); act6.setCreditType("思想素质项目学分"); act6.setEnrollLimit("40人");
+            activities.add(act6);
+
+            Activity act7 = new Activity();
+            act7.setTitle("校园3V3篮球挑战赛");
+            act7.setDescription("激情夏日，燃动球场！校园3V3街头篮球争霸赛，团队自由组合，赢取丰厚运动装备奖励及优胜奖杯。");
+            act7.setDate("2026-05-30"); act7.setLocation("东区篮球场"); act7.setParticipants(48);
+            act7.setMaxParticipants(64); act7.setStatus("报名中"); act7.setCredits(2.0);
+            act7.setLevel("校级"); act7.setBgGradient("from-orange-400 to-amber-500");
+            act7.setCoverImage("https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=200");
+            act7.setEnrollTime("2026-05-20 ~ 2026-05-29");
+            act7.setTimeDetail("2026-05-30 08:30-18:00"); act7.setRangeName("全体学生");
+            act7.setLeaveSupport("不需要"); act7.setCreditType("文艺体育项目学分"); act7.setEnrollLimit("64人");
+            activities.add(act7);
+
+            Activity act8 = new Activity();
+            act8.setTitle("英语角：跨文化交流研讨会");
+            act8.setDescription("与来自各国的留学生 and 专业外教面对面探讨中西方文化差异，通过趣味话题PK锻炼口语和跨文化交际能力。");
+            act8.setDate("2026-05-14"); act8.setLocation("外语沙龙大厅"); act8.setParticipants(38);
+            act8.setMaxParticipants(60); act8.setStatus("已结束"); act8.setCredits(1.0);
+            act8.setLevel("院级"); act8.setBgGradient("from-sky-400 to-blue-500");
+            act8.setCoverImage("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=200");
+            act8.setEnrollTime("2026-05-01 ~ 2026-05-12");
+            act8.setTimeDetail("2026-05-14 19:00-21:00"); act8.setRangeName("外国语学院");
+            act8.setLeaveSupport("不支持"); act8.setCreditType("技能特长项目学分"); act8.setEnrollLimit("60人");
+            activities.add(act8);
+
+            Activity act9 = new Activity();
+            act9.setTitle("环境美化绿植种植志愿活动");
+            act9.setDescription("弘扬低碳环保精神，在校园绿化带开展初夏绿植亲手种植与挂牌科普志愿服务，美化校园生态环境。");
+            act9.setDate("2026-05-12"); act9.setLocation("校园西区绿地"); act9.setParticipants(50);
+            act9.setMaxParticipants(50); act9.setStatus("已结束"); act9.setCredits(1.5);
+            act9.setLevel("校级"); act9.setBgGradient("from-emerald-500 to-green-600");
+            act9.setCoverImage("https://images.unsplash.com/photo-1559027615-cd4487c6592a?q=80&w=200");
+            act9.setEnrollTime("2026-05-01 ~ 2026-05-10");
+            act9.setTimeDetail("2026-05-12 09:00-12:00"); act9.setRangeName("全体学生");
+            act9.setLeaveSupport("支持请假"); act9.setCreditType("志愿服务项目学分"); act9.setEnrollLimit("50人");
+            activities.add(act9);
+
+            Activity act10 = new Activity();
+            act10.setTitle("大学生创新创业大赛项目宣讲会");
+            act10.setDescription("深入解读本届全国大学生“互联网+”、“挑战杯”等创新创业赛事最新政策与红头文件，梳理优秀商业计划书逻辑。");
+            act10.setDate("2026-05-23"); act10.setLocation("图书馆报告厅"); act10.setParticipants(92);
+            act10.setMaxParticipants(150); act10.setStatus("报名中"); act10.setCredits(1.5);
+            act10.setLevel("校级"); act10.setBgGradient("from-pink-500 to-rose-600");
+            act10.setCoverImage("https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=200");
+            act10.setEnrollTime("2026-05-12 ~ 2026-05-22");
+            act10.setTimeDetail("2026-05-23 14:30-16:30"); act10.setRangeName("全体学生");
+            act10.setLeaveSupport("不需要"); act10.setCreditType("创新创造项目学分"); act10.setEnrollLimit("150人");
+            activities.add(act10);
+
+            Activity act11 = new Activity();
+            act11.setTitle("经典诗词诵读大赛");
+            act11.setDescription("“雅言传承文明，经典浸润人生”，通过诵读红色经典和传统诗词，提升人文素养与经典赏析水平。");
+            act11.setDate("2026-05-15"); act11.setLocation("博学楼学术多功能报告厅"); act11.setParticipants(60);
+            act11.setMaxParticipants(100); act11.setStatus("已结束"); act11.setCredits(2.0);
+            act11.setLevel("校级"); act11.setBgGradient("from-amber-500 to-yellow-600");
+            act11.setCoverImage("https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?q=80&w=200");
+            act11.setEnrollTime("2026-05-01 ~ 2026-05-12");
+            act11.setTimeDetail("2026-05-15 14:00-17:00"); act11.setRangeName("全体学生");
+            act11.setLeaveSupport("不需要"); act11.setCreditType("思想素质项目学分"); act11.setEnrollLimit("100人");
+            activities.add(act11);
+
+            Activity act12 = new Activity();
+            act12.setTitle("金秋校园十佳歌手大决选");
+            act12.setDescription("青春唱响，声动飞扬！本届十佳歌手总决赛正式开放门票和大众评委报名预约，见证巅峰之声。");
+            act12.setDate("2026-10-18"); act12.setLocation("体育馆主场馆"); act12.setParticipants(320);
+            act12.setMaxParticipants(800); act12.setStatus("报名中"); act12.setCredits(2.0);
+            act12.setLevel("校级"); act12.setBgGradient("from-violet-500 to-fuchsia-500");
+            act12.setCoverImage("https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=200");
+            act12.setEnrollTime("2026-10-01 ~ 2026-10-15");
+            act12.setTimeDetail("2026-10-18 19:00-22:00"); act12.setRangeName("全体学生");
+            act12.setLeaveSupport("不需要"); act12.setCreditType("文艺体育项目学分"); act12.setEnrollLimit("800人");
+            activities.add(act12);
+
             activityRepo.saveAll(activities);
-            System.out.println("Initialized default Activities.");
+            System.out.println("Initialized default Activities (12 elements).");
         }
 
         if (awardRepo.count() == 0) {
@@ -630,5 +736,44 @@ public class DataInitializer {
         c.setTeacher(teacher);
         c.setClassName(className);
         return c;
+    }
+
+    private void initFeedbacks(FeedbackRepository feedbackRepo) {
+        if (feedbackRepo.count() == 0) {
+            List<Feedback> list = new ArrayList<>();
+
+            Feedback f1 = new Feedback();
+            f1.setStudentId("202301043");
+            f1.setStudentName("李四");
+            f1.setContent("学校南门的共享单车停放区太小了，经常停不下，建议扩建。");
+            f1.setReply("感谢建议，后勤处已将南门外区域纳入下个月的扩建规划。");
+            f1.setReplyTime(LocalDateTime.now().minusDays(1));
+            f1.setCreateTime(LocalDateTime.now().minusDays(1).minusHours(1).minusMinutes(30));
+            f1.setStatus("REPLIED");
+            list.add(f1);
+
+            Feedback f2 = new Feedback();
+            f2.setStudentId("202301044");
+            f2.setStudentName("王五");
+            f2.setContent("图书馆二楼的空调制冷效果不好，希望能报修。");
+            f2.setReply("已通知维修人员，预计本周五前完成检修。");
+            f2.setReplyTime(LocalDateTime.now().minusDays(3));
+            f2.setCreateTime(LocalDateTime.now().minusDays(3).minusHours(2).minusMinutes(30));
+            f2.setStatus("REPLIED");
+            list.add(f2);
+
+            Feedback f3 = new Feedback();
+            f3.setStudentId("202301045");
+            f3.setStudentName("赵六");
+            f3.setContent("希望食堂能增加一些清淡口味的窗口。");
+            f3.setReply(null);
+            f3.setReplyTime(null);
+            f3.setCreateTime(LocalDateTime.now().minusHours(8));
+            f3.setStatus("PENDING");
+            list.add(f3);
+
+            feedbackRepo.saveAll(list);
+            System.out.println("Initialized default Feedbacks.");
+        }
     }
 }

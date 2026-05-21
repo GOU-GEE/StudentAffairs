@@ -244,7 +244,7 @@
         </div>
 
         <!-- 查看更多 -->
-        <button class="mt-4 w-full py-2.5 text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1">
+        <button @click="router.push('/student/applications')" class="mt-4 w-full py-2.5 text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1">
           查看更多记录
           <el-icon :size="12"><ArrowDown /></el-icon>
         </button>
@@ -261,8 +261,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+
+const router = useRouter()
 
 const API = '/api/applications'
 const studentId = sessionStorage.getItem('userId') || '202301042'

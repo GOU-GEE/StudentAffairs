@@ -2,16 +2,13 @@
   <div class="h-full flex flex-col">
     <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 overflow-hidden">
       <!-- 左侧：发布活动表单 -->
-      <div class="md:col-span-7 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] flex flex-col">
+      <div class="md:col-span-7 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] flex flex-col h-full overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between mb-5">
-          <h3 class="text-lg font-semibold text-on-surface tracking-tight">发布活动</h3>
-          <button @click="publishActivity"
-                  class="px-8 py-2 bg-emerald-400 text-white rounded-xl font-bold text-sm hover:bg-emerald-500 transition-colors flex items-center gap-2 shadow-md">
-            <el-icon><Check /></el-icon>
-            发布
-          </button>
+          <h3 class="text-lg font-semibold text-on-surface tracking-tight">
+            {{ isEditing ? '编辑活动' : '发布活动' }}
+          </h3>
         </div>
-        <div class="space-y-4">
+        <div class="space-y-4 flex-1">
           <div>
             <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">标题</label>
             <el-input v-model="form.title" placeholder="例如：红色经典诵读比赛" />
@@ -97,7 +94,7 @@
               <el-input v-model="form.description" type="textarea" :rows="6" placeholder="请输入活动详情..." class="custom-textarea !h-[140px]" />
             </div>
             <div class="flex-shrink-0 flex flex-col" style="width: 140px;">
-              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面</label>
+              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面（选择性上传）</label>
               <el-upload
                 action="http://localhost:8080/api/upload"
                 :headers="uploadHeaders"
@@ -121,10 +118,23 @@
             </div>
           </div>
         </div>
+
+        <!-- 底部发布按钮区域 (从右上角移动到右下角) -->
+        <div class="flex justify-end pt-4 mt-6 border-t border-outline-variant/10 gap-3">
+          <button v-if="isEditing" @click="cancelEdit"
+                  class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl font-bold text-sm transition-colors">
+            取消编辑
+          </button>
+          <button @click="publishActivity"
+                  class="px-8 py-2.5 bg-emerald-400 text-white rounded-xl font-bold text-sm hover:bg-emerald-500 transition-colors flex items-center gap-2 shadow-md">
+            <el-icon><Check /></el-icon>
+            {{ isEditing ? '保存修改' : '发布' }}
+          </button>
+        </div>
       </div>
 
       <!-- 右侧：已发布活动历史 -->
-      <div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] overflow-hidden flex flex-col">
+      <div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/15 shadow-[0_4px_12px_rgba(25,28,30,0.04)] overflow-hidden flex flex-col h-full">
         <h3 class="text-lg font-semibold text-on-surface tracking-tight mb-5">已发布活动</h3>
         <div class="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
           <div v-for="a in activities" :key="a.id"
@@ -141,8 +151,11 @@
             <div class="flex justify-between items-center text-xs text-outline">
               <span>{{ a.location }}</span>
               <div class="flex gap-2">
-                <button @click="toggleStatus(a)" class="opacity-0 group-hover:opacity-100 font-semibold text-secondary hover:text-emerald-600 transition-colors">
-                  {{ a.status === '已结束' ? '重新开放' : '关闭' }}
+                <button @click.stop="startEdit(a)" class="opacity-0 group-hover:opacity-100 font-bold text-blue-600 hover:text-blue-700 transition-colors mr-3">
+                  编辑
+                </button>
+                <button @click.stop="deleteActivity(a)" class="opacity-0 group-hover:opacity-100 font-bold text-red-500 hover:text-red-600 transition-colors">
+                  删除
                 </button>
               </div>
             </div>
@@ -160,13 +173,15 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { Check, Calendar, Upload } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
 const uploadHeaders = { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
 
 const activities = ref([])
+const isEditing = ref(false)
+const editingId = ref(null)
 
 const defaultForm = () => ({
   coverImage: '',
@@ -180,7 +195,8 @@ const defaultForm = () => ({
   creditType: '思想素质',
   credits: 2,
   enrollLimit: '不限',
-  description: ''
+  description: '',
+  bgGradient: ''
 })
 
 const form = ref(defaultForm())
@@ -209,7 +225,7 @@ const loadActivities = async () => {
   try {
     const res = await request.get(API)
     if (res.data.code === 200) {
-      activities.value = res.data.data
+      activities.value = res.data.data.sort((a, b) => b.id - a.id)
     }
   } catch (e) {
     console.error('Failed to load activities', e)
@@ -222,47 +238,123 @@ const publishActivity = async () => {
     return
   }
 
+  // 封面非必选，若未上传封面，则填入后端服务器上的默认图片
   if (!form.value.coverImage) {
-    form.value.coverImage = ''
+    form.value.coverImage = 'http://localhost:8080/uploads/default-cover.jpg'
   }
 
   const gradients = ['from-emerald-400 to-teal-500', 'from-blue-400 to-indigo-500', 'from-purple-400 to-violet-500', 'from-orange-400 to-amber-500']
-  form.value.bgGradient = gradients[Math.floor(Math.random() * gradients.length)]
+  if (!form.value.bgGradient) {
+    form.value.bgGradient = gradients[Math.floor(Math.random() * gradients.length)]
+  }
 
   form.value.enrollLimit = isUnlimited.value ? '不限' : String(enrollNumber.value)
   form.value.maxParticipants = isUnlimited.value ? 9999 : enrollNumber.value
   if (!form.value.rangeName) form.value.rangeName = '学校内'
 
+  if (form.value.timeDetail && form.value.timeDetail.length >= 10) {
+    form.value.date = form.value.timeDetail.substring(0, 10)
+  } else {
+    form.value.date = ''
+  }
+  form.value.status = '报名中'
+
   try {
-    const res = await request.post(API, form.value)
+    let res
+    if (isEditing.value) {
+      res = await request.put(`${API}/${editingId.value}`, form.value)
+    } else {
+      res = await request.post(API, form.value)
+    }
+
     if (res.data.code === 200) {
-      ElMessage.success('活动已发布')
-      form.value = defaultForm()
-      enrollTimeRange.value = []
-      activityTimeRange.value = []
-      isUnlimited.value = false
-      enrollNumber.value = 200
+      ElMessage.success(isEditing.value ? '活动已修改' : '活动已发布')
+      cancelEdit()
       await loadActivities()
+    } else {
+      ElMessage.warning(res.data.msg || '操作失败')
     }
   } catch (e) {
-    ElMessage.error('发布失败')
+    ElMessage.error(isEditing.value ? '修改失败' : '发布失败')
   }
 }
 
-const toggleStatus = async (act) => {
+const startEdit = (a) => {
+  isEditing.value = true
+  editingId.value = a.id
+
+  // 回填活动数据，若图片是默认图片，则不用回填，显示为清除状态
+  const isDefaultImage = a.coverImage && a.coverImage.includes('default-cover.jpg')
+  form.value = {
+    coverImage: isDefaultImage ? '' : (a.coverImage || ''),
+    title: a.title || '',
+    enrollTime: a.enrollTime || '',
+    timeDetail: a.timeDetail || '',
+    level: a.level || '校级',
+    rangeName: a.rangeName || '学校内',
+    leaveSupport: a.leaveSupport || '支持',
+    location: a.location || '',
+    creditType: a.creditType || '思想素质',
+    credits: a.credits || 2,
+    enrollLimit: a.enrollLimit || '不限',
+    description: a.description || '',
+    bgGradient: a.bgGradient || ''
+  }
+
+  isUnlimited.value = (a.enrollLimit === '不限')
+  enrollNumber.value = isUnlimited.value ? 200 : Number(a.enrollLimit || 200)
+
+  if (a.enrollTime && a.enrollTime.includes(' ~ ')) {
+    enrollTimeRange.value = a.enrollTime.split(' ~ ')
+  } else {
+    enrollTimeRange.value = []
+  }
+
+  if (a.timeDetail && a.timeDetail.includes(' ~ ')) {
+    activityTimeRange.value = a.timeDetail.split(' ~ ')
+  } else {
+    activityTimeRange.value = []
+  }
+}
+
+const cancelEdit = () => {
+  isEditing.value = false
+  editingId.value = null
+  form.value = defaultForm()
+  enrollTimeRange.value = []
+  activityTimeRange.value = []
+  isUnlimited.value = false
+  enrollNumber.value = 200
+}
+
+const deleteActivity = async (a) => {
   try {
-    await request.put(`${API}/${act.id}/toggle-status`)
-    ElMessage.success(`活动已${act.status === '已结束' ? '重新开放' : '关闭'}`)
-    loadActivities()
-  } catch (e) {
-    ElMessage.error('操作失败')
-  }
-}
+    await ElMessageBox.confirm(
+      `确定要删除活动“${a.title}”吗？此操作无法撤销。`,
+      '确认删除',
+      {
+        confirmButtonText: '确定删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+        buttonSize: 'default'
+      }
+    )
 
-const handleCoverUploadSuccess = (response) => {
-  if (response.code === 200) {
-    form.value.coverImage = 'http://localhost:8080' + response.data.url
-    ElMessage.success('封面上传成功')
+    const res = await request.delete(`${API}/${a.id}`)
+    if (res.data.code === 200) {
+      ElMessage.success('活动已删除')
+      if (isEditing.value && editingId.value === a.id) {
+        cancelEdit()
+      }
+      await loadActivities()
+    } else {
+      ElMessage.warning(res.data.msg || '删除失败')
+    }
+  } catch (e) {
+    if (e !== 'cancel') {
+      console.error(e)
+      ElMessage.error('删除失败')
+    }
   }
 }
 
@@ -281,5 +373,23 @@ onMounted(loadActivities)
   min-height: 140px !important;
   max-height: 140px !important;
   resize: none;
+}
+:deep(.cover-uploader) {
+  width: 100%;
+}
+:deep(.cover-uploader .el-upload) {
+  width: 100%;
+  display: block;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>
