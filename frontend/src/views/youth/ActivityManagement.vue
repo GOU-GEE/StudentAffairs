@@ -240,7 +240,7 @@ const publishActivity = async () => {
 
   // 封面非必选，若未上传封面，则填入后端服务器上的默认图片
   if (!form.value.coverImage) {
-    form.value.coverImage = '/uploads/default-cover.jpg'
+    form.value.coverImage = '/api/uploads/default-cover.jpg'
   }
 
   const gradients = ['from-emerald-400 to-teal-500', 'from-blue-400 to-indigo-500', 'from-purple-400 to-violet-500', 'from-orange-400 to-amber-500']
@@ -355,6 +355,15 @@ const deleteActivity = async (a) => {
       console.error(e)
       ElMessage.error('删除失败')
     }
+  }
+}
+
+const handleCoverUploadSuccess = (response) => {
+  if (response.code === 200 && response.data) {
+    ElMessage.success('封面上传成功')
+    form.value.coverImage = response.data.url
+  } else {
+    ElMessage.error(response.msg || '封面上传失败')
   }
 }
 

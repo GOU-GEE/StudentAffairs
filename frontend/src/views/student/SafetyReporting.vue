@@ -28,21 +28,25 @@
         <div v-if="activeTab === 'late'" class="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">预计回宿舍时间 <span class="text-red-500">*</span></label>
+              <label for="lateTime" class="text-sm text-gray-700 font-medium block mb-1.5">预计回宿舍时间 <span class="text-red-500">*</span></label>
               <input 
+                id="lateTime"
+                name="lateTime"
                 v-model="lateForm.time"
                 placeholder="请输入时间，如 23:30"
                 class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 bg-white outline-none focus:border-red-500 hover:border-gray-400 transition-colors" 
               />
             </div>
             <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">报备日期</label>
-              <input :value="today" disabled class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-400 bg-gray-50 outline-none" />
+              <label for="lateDate" class="text-sm text-gray-700 font-medium block mb-1.5">报备日期</label>
+              <input id="lateDate" name="lateDate" :value="today" disabled class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-400 bg-gray-50 outline-none" />
             </div>
           </div>
           <div>
-            <label class="text-sm text-gray-700 font-medium block mb-1.5">晚归原因 <span class="text-red-500">*</span></label>
+            <label for="lateReason" class="text-sm text-gray-700 font-medium block mb-1.5">晚归原因 <span class="text-red-500">*</span></label>
             <textarea 
+              id="lateReason"
+              name="lateReason"
               v-model="lateForm.reason" 
               rows="4" 
               placeholder="请如实说明晚归原因（如：科研实验延时、社团活动、家庭突发状况等）"
@@ -62,8 +66,8 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">事件类型 <span class="text-red-500">*</span></label>
-              <el-select v-model="emergencyForm.type" placeholder="请选择" class="w-full custom-el-select">
+              <label for="emergencyType" class="text-sm text-gray-700 font-medium block mb-1.5">事件类型 <span class="text-red-500">*</span></label>
+              <el-select id="emergencyType" name="emergencyType" v-model="emergencyForm.type" placeholder="请选择" class="w-full custom-el-select">
                 <el-option label="校园安全隐患" value="safety" />
                 <el-option label="个人健康突发" value="medical" />
                 <el-option label="财产丢失/被盗" value="theft" />
@@ -72,8 +76,10 @@
               </el-select>
             </div>
             <div>
-              <label class="text-sm text-gray-700 font-medium block mb-1.5">发生地点 <span class="text-red-500">*</span></label>
+              <label for="emergencyLocation" class="text-sm text-gray-700 font-medium block mb-1.5">发生地点 <span class="text-red-500">*</span></label>
               <input 
+                id="emergencyLocation"
+                name="emergencyLocation"
                 v-model="emergencyForm.location"
                 placeholder="如：西二教学楼 3 楼走廊"
                 class="w-full h-11 border border-gray-200 rounded-xl px-3 text-sm text-gray-700 bg-white outline-none focus:border-red-500 hover:border-gray-400 transition-colors" 
@@ -81,8 +87,10 @@
             </div>
           </div>
           <div>
-            <label class="text-sm text-gray-700 font-medium block mb-1.5">详情描述 <span class="text-red-500">*</span></label>
+            <label for="emergencyDesc" class="text-sm text-gray-700 font-medium block mb-1.5">详情描述 <span class="text-red-500">*</span></label>
             <textarea 
+              id="emergencyDesc"
+              name="emergencyDesc"
               v-model="emergencyForm.desc" 
               rows="4" 
               placeholder="请详细描述异常情况，包括时间、人物及现状..."
@@ -93,6 +101,7 @@
             <label class="text-sm text-gray-700 font-medium block mb-1.5">现场照片 (可选)</label>
             <div class="flex gap-3">
               <el-upload
+                ref="safetyUploadRef"
                 action="/api/upload"
                 :headers="uploadHeaders"
                 :limit="3"
@@ -282,6 +291,7 @@ const activeTab = ref('late')
 const today = new Date().toISOString().split('T')[0]
 const submitting = ref(false)
 
+const safetyUploadRef = ref(null)
 const lateForm = ref({ time: '', reason: '' })
 const outForm = ref({ destination: '', range: [], reason: '' })
 const emergencyForm = ref({ type: '', location: '', desc: '', photoUrl: '' })
@@ -399,7 +409,8 @@ const submitReport = async () => {
       loadHistory()
       lateForm.value = { time: '', reason: '' }
       outForm.value = { destination: '', range: [], reason: '' }
-      emergencyForm.value = { type: '', location: '', desc: '' }
+      emergencyForm.value = { type: '', location: '', desc: '', photoUrl: '' }
+      safetyUploadRef.value?.clearFiles()
     } else {
       ElMessage.error(res.data.msg || '提交失败')
     }

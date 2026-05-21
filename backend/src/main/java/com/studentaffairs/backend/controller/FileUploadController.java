@@ -34,7 +34,7 @@ public class FileUploadController {
             Files.write(target, file.getBytes());
 
             Map<String, String> data = new HashMap<>();
-            data.put("url", "/uploads/" + newName);
+            data.put("url", "/api/uploads/" + newName);
             return Result.success(data);
         } catch (IOException e) {
             return Result.error(500, "上传失败: " + e.getMessage());
