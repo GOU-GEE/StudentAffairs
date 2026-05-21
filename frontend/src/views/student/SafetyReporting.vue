@@ -93,7 +93,7 @@
             <label class="text-sm text-gray-700 font-medium block mb-1.5">现场照片 (可选)</label>
             <div class="flex gap-3">
               <el-upload
-                action="http://localhost:8080/api/upload"
+                action="/api/upload"
                 :headers="uploadHeaders"
                 :limit="3"
                 list-type="picture-card"

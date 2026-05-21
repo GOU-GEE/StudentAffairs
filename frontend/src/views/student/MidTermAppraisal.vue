@@ -67,7 +67,7 @@
             </div>
             
             <el-upload
-              action="http://localhost:8080/api/upload"
+              action="/api/upload"
               :headers="uploadHeaders"
               multiple
               :limit="5"

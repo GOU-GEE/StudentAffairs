@@ -96,7 +96,7 @@
             <div class="flex-shrink-0 flex flex-col" style="width: 140px;">
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">封面（选择性上传）</label>
               <el-upload
-                action="http://localhost:8080/api/upload"
+                action="/api/upload"
                 :headers="uploadHeaders"
                 :show-file-list="false"
                 :on-success="handleCoverUploadSuccess"
@@ -240,7 +240,7 @@ const publishActivity = async () => {
 
   // 封面非必选，若未上传封面，则填入后端服务器上的默认图片
   if (!form.value.coverImage) {
-    form.value.coverImage = 'http://localhost:8080/uploads/default-cover.jpg'
+    form.value.coverImage = '/uploads/default-cover.jpg'
   }
 
   const gradients = ['from-emerald-400 to-teal-500', 'from-blue-400 to-indigo-500', 'from-purple-400 to-violet-500', 'from-orange-400 to-amber-500']

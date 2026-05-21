@@ -129,7 +129,7 @@
               证明材料（证书照片/扫描件）<span class="text-red-500">*</span>
             </label>
             <el-upload
-              action="http://localhost:8080/api/upload"
+              action="/api/upload"
               :headers="uploadHeaders"
               list-type="picture-card"
               :limit="5"
