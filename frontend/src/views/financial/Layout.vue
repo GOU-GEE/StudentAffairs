@@ -80,15 +80,15 @@
                   <button @click="markAllRead" class="text-xs text-amber-600 hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-amber-50/50' : ''">
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-amber-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span>
                       <span class="text-xs text-outline ml-auto">{{ n.time }}</span>
                       <span v-if="!n.read" class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
-                    <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
                   </div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
@@ -186,13 +186,12 @@ const notifications = ref([
   { id: 1, tag: '待审批', tagStyle: 'bg-amber-100 text-amber-700', time: '05-16 10:00', title: '张小明 提交了国家励志奖学金申请', content: 'GPA 3.85，专业排名前10%，已提交证明材料。请及时审核。', read: false, expanded: false, path: '/financial/scholarships' },
   { id: 2, tag: '岗位', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 15:00', title: '勤工助学岗位申请数已达上限', content: '图书馆阅览室助理岗位已满员，请关注其他岗位的申请情况。', read: true, expanded: false, path: '/financial/work-study' },
 ])
-const unreadCount = ref(notifications.value.filter(n => !n.read).length)
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 const toggleNotif = (n) => {
-  n.expanded = !n.expanded
-  if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length }
+  if (!n.read) { n.read = true }
   if (n.path) { router.push(n.path); notifOpen.value = false }
 }
-const markAllRead = () => { notifications.value.forEach(n => n.read = true); unreadCount.value = 0 }
+const markAllRead = () => { notifications.value.forEach(n => n.read = true) }
 const closeNotif = () => { notifOpen.value = false }
 onMounted(() => document.addEventListener('click', closeNotif))
 onUnmounted(() => document.removeEventListener('click', closeNotif))

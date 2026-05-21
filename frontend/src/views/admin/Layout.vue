@@ -61,15 +61,15 @@
                   <button @click="markAllRead" class="text-xs text-error hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-red-50/50' : ''">
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-red-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span>
                       <span class="text-xs text-outline ml-auto">{{ n.time }}</span>
                       <span v-if="!n.read" class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
-                    <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
                   </div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -153,7 +153,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
@@ -183,16 +183,15 @@ const notifications = ref([
   { id: 1, tag: '系统', tagStyle: 'bg-red-100 text-red-700', time: '05-16 09:00', title: '新账号注册待审核', content: '有 2 个新的教师账号注册申请待审核，请前往「账号管理」处理。', read: false, expanded: false, path: '/admin/accounts' },
   { id: 2, tag: '导入', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 14:30', title: '成绩批量导入完成', content: '上学期成绩数据已成功导入 156 条记录，0 条失败。', read: true, expanded: false, path: '/admin/grades' },
 ])
-const unreadCount = ref(notifications.value.filter(n => !n.read).length)
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 const toggleNotif = (n) => {
-  n.expanded = !n.expanded;
-  if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length; }
+  if (!n.read) { n.read = true; }
   if (n.path) {
     router.push(n.path);
     notifOpen.value = false;
   }
 }
-const markAllRead = () => { notifications.value.forEach(n => n.read = true); unreadCount.value = 0 }
+const markAllRead = () => { notifications.value.forEach(n => n.read = true) }
 const closeNotif = () => { notifOpen.value = false }
 onMounted(() => document.addEventListener('click', closeNotif))
 onUnmounted(() => document.removeEventListener('click', closeNotif))

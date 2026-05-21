@@ -44,11 +44,11 @@
                 <div class="absolute -top-2 right-3 w-4 h-4 bg-surface/95 border-l border-t border-outline-variant/20 rotate-45"></div>
                 <div class="px-4 py-3.5 border-b border-outline-variant/10 flex items-center justify-between"><span class="font-bold text-sm">系统消息</span><button @click="markAllRead" class="text-xs text-purple-600 hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon>全部已读</button></div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-purple-50/50' : ''">
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-purple-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span><span class="text-xs text-outline ml-auto">{{ n.time }}</span><span v-if="!n.read" class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></span></div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
-                    <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
                   </div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
@@ -101,9 +101,9 @@ const notifications = ref([
   { id: 1, tag: '预警', tagStyle: 'bg-purple-100 text-purple-700', time: '05-16 03:00', title: '定时预警引擎完成本期扫描', content: '发现 3 名学生触发学业预警，请前往「学业预警」查看详情并安排约谈。', read: false, expanded: false, path: '/academic/warnings' },
   { id: 2, tag: '成绩', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 09:00', title: '期末成绩录入截止提醒', content: '本学期期末成绩录入截止日期为 6月30日，请各任课教师及时录入。', read: true, expanded: false, path: '/academic/grades' },
 ])
-const unreadCount = ref(notifications.value.filter(n => !n.read).length)
-const toggleNotif = (n) => { n.expanded = !n.expanded; if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length } if (n.path) { router.push(n.path); notifOpen.value = false } }
-const markAllRead = () => { notifications.value.forEach(n => n.read = true); unreadCount.value = 0 }
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+const toggleNotif = (n) => { if (!n.read) { n.read = true } if (n.path) { router.push(n.path); notifOpen.value = false } }
+const markAllRead = () => { notifications.value.forEach(n => n.read = true) }
 const closeNotif = () => { notifOpen.value = false }
 onMounted(() => document.addEventListener('click', closeNotif))
 onUnmounted(() => document.removeEventListener('click', closeNotif))

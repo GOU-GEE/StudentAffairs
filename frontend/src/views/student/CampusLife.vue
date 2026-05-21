@@ -249,8 +249,8 @@ const API = '/api/communication'
 const studentId = sessionStorage.getItem('userId') || '202301042'
 const teacherId = 'T001'
 const teacherName = '李老师'
-const teacherAvatar = 'https://i.pravatar.cc/150?u=teacher_li'
-const studentAvatar = 'https://i.pravatar.cc/150?u=student1'
+const teacherAvatar = '/avatar-placeholder.png'
+const studentAvatar = '/avatar-placeholder.png'
 
 const currentTab = ref('全部')
 const activeId = ref(null)

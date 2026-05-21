@@ -7,7 +7,7 @@
       <div class="md:col-span-5 bg-white/30 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-white/40 flex flex-col justify-between hover:bg-white/50 transition-all">
         <div class="flex gap-6 mb-4">
           <div class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
-            <img src="https://i.pravatar.cc/150?u=student1" class="w-full h-full object-cover">
+            <img src="/avatar-placeholder.png" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
             <div class="flex justify-between items-center mb-2">

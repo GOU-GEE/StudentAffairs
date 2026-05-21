@@ -133,15 +133,15 @@
                   <button @click="markAllRead" class="text-xs text-primary hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-blue-50/50' : ''">
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-blue-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span>
                       <span class="text-xs text-outline ml-auto">{{ n.time }}</span>
                       <span v-if="!n.read" class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
-                    <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
                   </div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -294,7 +294,6 @@ const fetchMessageAlerts = async () => {
 let pollTimer = null
 
 const toggleNotif = (n) => {
-  n.expanded = !n.expanded
   if (!n.read) { n.read = true }
   if (n.path) {
     router.push(n.path)

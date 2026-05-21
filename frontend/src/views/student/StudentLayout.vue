@@ -69,7 +69,7 @@
                   </button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)"
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)"
                        class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer"
                        :class="!n.read ? 'bg-blue-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
@@ -78,11 +78,8 @@
                       <span v-if="!n.read" class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface leading-snug">{{ n.title }}</p>
-                    <transition name="expand">
-                      <p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p>
-                    </transition>
                   </div>
-                  <div v-if="notifications.length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -93,7 +90,7 @@
           </button>
           <!-- 头像 -->
           <div class="flex items-center gap-2 cursor-pointer group">
-            <img src="https://i.pravatar.cc/150?u=student1" class="w-8 h-8 rounded-full border border-outline-variant/30">
+            <img src="/avatar-placeholder.png" class="w-8 h-8 rounded-full border border-outline-variant/30">
             <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">张小明</span>
           </div>
         </div>
@@ -109,7 +106,7 @@
               <div class="flex gap-5 items-center">
                 <!-- 最左列：头像 + 在读标签，上下居中 -->
                 <div class="flex flex-col items-center justify-center gap-2 flex-shrink-0 w-[6.5rem]">
-                  <img src="https://i.pravatar.cc/150?u=student_profile" class="w-24 h-24 rounded-full object-cover shadow-md ring-2 ring-white">
+                  <img src="/avatar-placeholder.png" class="w-24 h-24 rounded-full object-cover shadow-md ring-2 ring-white">
                   <span class="px-2.5 py-0.5 bg-green-50 text-green-700 text-[0.65rem] font-bold rounded-full border border-green-100">在读</span>
                 </div>
 
@@ -563,7 +560,6 @@ const fetchNotifications = async () => {
 }
 
 const toggleNotif = (n) => {
-  n.expanded = !n.expanded
   if (!n.read) {
     n.read = true
     const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')

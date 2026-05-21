@@ -67,15 +67,15 @@
                   <button @click="markAllRead" class="text-xs text-emerald-600 hover:underline font-semibold flex items-center gap-1"><el-icon :size="12"><CircleCheck /></el-icon> 全部已读</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto">
-                  <div v-for="n in notifications" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-emerald-50/50' : ''">
+                  <div v-for="n in notifications.filter(x => !x.read)" :key="n.id" @click="toggleNotif(n)" class="px-4 py-3 border-b border-outline-variant/8 hover:bg-surface-container-low transition-colors cursor-pointer" :class="!n.read ? 'bg-emerald-50/50' : ''">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md" :class="n.tagStyle">{{ n.tag }}</span>
                       <span class="text-xs text-outline ml-auto">{{ n.time }}</span>
                       <span v-if="!n.read" class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
                     </div>
                     <p class="text-sm font-semibold text-on-surface">{{ n.title }}</p>
-                    <transition name="expand"><p v-if="n.expanded" class="mt-2 text-xs text-secondary leading-relaxed">{{ n.content }}</p></transition>
                   </div>
+                  <div v-if="notifications.filter(x => !x.read).length === 0" class="py-8 text-center text-secondary text-sm">暂无通知</div>
                 </div>
               </div>
             </transition>
@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
@@ -155,9 +155,9 @@ const notifications = ref([
   { id: 1, tag: '待审核', tagStyle: 'bg-emerald-100 text-emerald-700', time: '05-16 09:30', title: '张小明 提交了获奖记录审核', content: '全国数学建模省级一等奖，证明材料已上传，请及时审核。', read: false, expanded: false, path: '/youth/awards' },
   { id: 2, tag: '学时', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 16:00', title: '第二课堂学时批量导入完成', content: '志愿服务类学时已成功为 45 名学生发放共 180 学时。', read: true, expanded: false, path: '/youth/second-classroom' },
 ])
-const unreadCount = ref(notifications.value.filter(n => !n.read).length)
-const toggleNotif = (n) => { n.expanded = !n.expanded; if (!n.read) { n.read = true; unreadCount.value = notifications.value.filter(x => !x.read).length } if (n.path) { router.push(n.path); notifOpen.value = false } }
-const markAllRead = () => { notifications.value.forEach(n => n.read = true); unreadCount.value = 0 }
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+const toggleNotif = (n) => { if (!n.read) { n.read = true } if (n.path) { router.push(n.path); notifOpen.value = false } }
+const markAllRead = () => { notifications.value.forEach(n => n.read = true) }
 const closeNotif = () => { notifOpen.value = false }
 onMounted(() => document.addEventListener('click', closeNotif))
 onUnmounted(() => document.removeEventListener('click', closeNotif))
