@@ -220,8 +220,8 @@
             
             <!-- 封面图 (如果选中项有真实封面则显示，此处模拟) -->
             <div class="h-[180px] w-full relative bg-surface-container-low">
-              <img v-if="selectedActivity.image && !selectedActivity.image.includes('default') && !imageErrors.has(selectedActivity.id)" 
-                   :src="selectedActivity.image" 
+              <img v-if="selectedActivity.image && !imageErrors.has(selectedActivity.id)" 
+                   :src="selectedActivity.image"  
                    @error="handleImageError(selectedActivity.id)"
                    class="w-full h-full object-cover">
               <div v-else class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-800 flex items-center justify-center text-white font-black text-2xl tracking-widest select-none">
@@ -382,7 +382,7 @@
             <div v-if="selectedHistoryActivity" class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col">
               <!-- 图片展示 -->
               <div class="h-48 relative overflow-hidden flex-shrink-0 bg-surface-container-low">
-                <img v-if="selectedHistoryActivity.image && !selectedHistoryActivity.image.includes('default') && !imageErrors.has(selectedHistoryActivity.id)" 
+                <img v-if="selectedHistoryActivity.image && !imageErrors.has(selectedHistoryActivity.id)" 
                      :src="selectedHistoryActivity.image" 
                      @error="handleImageError(selectedHistoryActivity.id)"
                      class="w-full h-full object-cover">
@@ -699,11 +699,39 @@ const handleActivityAction = async (activity) => {
 
 const shareActivity = () => {
   const url = window.location.href
-  navigator.clipboard.writeText(url).then(() => {
-    ElMessage.success('活动链接已复制到剪贴板')
-  }).catch(() => {
-    ElMessage.info('分享功能：复制当前页面链接即可分享')
-  })
+  const successMessage = '活动链接已复制到剪贴板！'
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(url).then(() => {
+      ElMessage.success(successMessage)
+    }).catch(() => {
+      fallbackCopy(url)
+    })
+  } else {
+    fallbackCopy(url)
+  }
+}
+
+const fallbackCopy = (text) => {
+  try {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.position = 'fixed'
+    textArea.style.opacity = '0'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+    if (successful) {
+      ElMessage.success('活动链接已复制到剪贴板！')
+    } else {
+      ElMessage.warning('复制失败，请手动复制浏览器地址栏链接。')
+    }
+  } catch (err) {
+    ElMessage.warning('复制失败，请手动复制浏览器地址栏链接。')
+  }
 }
 
 const prevMonth = () => {
