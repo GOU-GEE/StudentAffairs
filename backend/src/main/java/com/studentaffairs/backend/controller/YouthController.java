@@ -36,6 +36,10 @@ public class YouthController {
     @Autowired
     private StudentProfileRepository studentProfileRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+
     private Map<String, Object> success(Object data) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", 200);
@@ -151,14 +155,63 @@ public class YouthController {
     @PostMapping("/awards")
     public Map<String, Object> createAward(@RequestBody YouthAward award) {
         if (award.getStatus() == null) award.setStatus("PENDING");
-        return success(awardRepository.save(award));
+        
+        String studentName = award.getStudentName();
+        if (studentName == null || studentName.isEmpty()) {
+            studentName = studentProfileRepository.findByStudentId(award.getStudentId())
+                .map(StudentProfile::getName)
+                .orElse("学生");
+            award.setStudentName(studentName);
+        }
+        
+        YouthAward saved = awardRepository.save(award);
+        
+        // Generate notification for the youth group
+        Notification notif = new Notification();
+        notif.setUserId("youth");
+        notif.setTitle("新获奖审核申请");
+        notif.setContent("学生 " + saved.getStudentName() + " (" + saved.getStudentId() + ") 提交了获奖情况录入申请：《" + saved.getAwardName() + "》，请尽快审核。");
+        notif.setTag("待审核");
+        notif.setTagStyle("bg-orange-50 text-orange-600 border-orange-100");
+        notif.setPath("/youth/awards");
+        notif.setIsRead(false);
+        notif.setCreateTime(LocalDateTime.now());
+        notificationRepository.save(notif);
+        
+        return success(saved);
     }
 
     @PutMapping("/awards/{id}/review")
     public Map<String, Object> reviewAward(@PathVariable Long id, @RequestBody Map<String, String> body) {
         YouthAward award = awardRepository.findById(id).orElseThrow();
-        award.setStatus(body.get("status"));
-        return success(awardRepository.save(award));
+        String status = body.get("status");
+        String comment = body.get("reviewComment");
+        if (comment == null) {
+            comment = body.get("comment");
+        }
+        award.setStatus(status);
+        award.setReviewComment(comment);
+        YouthAward saved = awardRepository.save(award);
+
+        // Generate notification for the student
+        Notification notif = new Notification();
+        notif.setUserId(saved.getStudentId());
+        String statusZh = "APPROVED".equals(status) ? "已通过" : "已驳回";
+        notif.setTitle("获奖申请审核已处理");
+        notif.setContent("您的获奖申请《" + saved.getAwardName() + "》已被审核，状态更新为【" + statusZh + "】。" 
+            + (comment != null && !comment.trim().isEmpty() ? " 审核意见：" + comment : ""));
+        notif.setTag(statusZh);
+        if ("APPROVED".equals(status)) {
+            notif.setTagStyle("bg-green-50 text-green-600 border-green-100");
+        } else {
+            notif.setTagStyle("bg-red-50 text-red-600 border-red-100");
+        }
+        notif.setPath("/student/applications/awards");
+        notif.setIsRead(false);
+        notif.setCreateTime(LocalDateTime.now());
+        notificationRepository.save(notif);
+
+        return success(saved);
     }
 
     // ================= Honors Projects =================

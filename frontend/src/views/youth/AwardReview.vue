@@ -61,15 +61,15 @@
           </div>
 
           <!-- 详情内容（只读展示） -->
-          <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5 bg-white/20">
             <!-- 获奖名称 + 颁奖单位 -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">获奖名称</label>
-                <p class="text-sm font-semibold text-on-surface">{{ selectedApp?.awardName || '--' }}</p>
+                <label class="text-xs font-bold text-secondary block mb-1.5">获奖名称</label>
+                <p class="text-sm font-semibold text-on-surface leading-snug">{{ selectedApp?.awardName || '--' }}</p>
               </div>
               <div>
-                <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">颁奖单位</label>
+                <label class="text-xs font-bold text-secondary block mb-1.5">颁奖单位</label>
                 <p class="text-sm font-semibold text-on-surface">{{ selectedApp?.issuer || '--' }}</p>
               </div>
             </div>
@@ -77,36 +77,55 @@
             <!-- 获奖时间 + 获奖级别 + 获奖类别 -->
             <div class="grid grid-cols-3 gap-4">
               <div>
-                <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">获奖时间</label>
+                <label class="text-xs font-bold text-secondary block mb-1.5">获奖时间</label>
                 <p class="text-sm font-semibold text-on-surface">{{ formatMonth(selectedApp?.awardTime) || '--' }}</p>
               </div>
               <div>
-                <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">获奖级别</label>
+                <label class="text-xs font-bold text-secondary block mb-1.5">获奖级别</label>
                 <p class="text-sm font-semibold text-on-surface">{{ selectedApp?.level || '--' }}</p>
               </div>
               <div>
-                <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">获奖类别</label>
+                <label class="text-xs font-bold text-secondary block mb-1.5">获奖类别</label>
                 <p class="text-sm font-semibold text-on-surface">{{ selectedApp?.category || '--' }}</p>
               </div>
             </div>
 
             <!-- 获奖简述 -->
             <div>
-              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">获奖简述</label>
-              <p class="text-sm text-on-surface leading-relaxed">{{ selectedApp?.description || '--' }}</p>
+              <label class="text-xs font-bold text-secondary block mb-1.5">获奖简述</label>
+              <p class="text-sm text-on-surface leading-relaxed whitespace-pre-wrap">{{ selectedApp?.description || '--' }}</p>
             </div>
 
             <!-- 证明材料 -->
             <div>
-              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">证明材料</label>
-              <div class="border-2 border-dashed border-outline-variant/30 rounded-xl h-48 flex items-center justify-center bg-surface-container-lowest/50">
-                <span class="text-sm text-outline">获奖材料显示在这里</span>
+              <label class="text-xs font-bold text-secondary block mb-1.5">证明材料</label>
+              <div v-if="selectedApp?.proofUrl" class="flex flex-wrap gap-2.5">
+                <template v-for="url in (selectedApp.proofUrl || '').split(',')" :key="url">
+                  <template v-if="url.trim()">
+                    <!-- Image thumbnail -->
+                    <div v-if="isImageUrl(url)" class="w-40 h-40 rounded-xl overflow-hidden border border-outline-variant/30 bg-surface-container-lowest/50 flex items-center justify-center cursor-zoom-in hover:shadow-md transition-all">
+                      <img :src="url" alt="证明材料" class="w-full h-full object-cover" @click="zoomedImageUrl = url">
+                    </div>
+                    <!-- PDF link -->
+                    <a v-else :href="url" target="_blank" class="flex items-center gap-3 p-3 border border-outline-variant/30 rounded-xl hover:bg-surface-container-low transition-colors w-full group">
+                      <el-icon class="text-red-500 text-2xl"><Document /></el-icon>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-gray-800 truncate">证明材料.pdf</p>
+                        <p class="text-xs text-gray-400">PDF 格式文件 (点击查看)</p>
+                      </div>
+                      <el-icon class="text-gray-400 group-hover:text-primary"><Download /></el-icon>
+                    </a>
+                  </template>
+                </template>
+              </div>
+              <div v-else class="border border-dashed border-outline-variant/30 rounded-xl p-6 flex items-center justify-center bg-surface-container-lowest/50">
+                <span class="text-sm text-outline">未上传证明材料</span>
               </div>
             </div>
 
             <!-- 审核意见 -->
             <div>
-              <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">审核意见（选填）</label>
+              <label class="text-xs font-bold text-secondary block mb-1.5">审核意见（选填）</label>
               <textarea
                 :value="reviewComment"
                 @input="onCommentInput($event.target.value)"
@@ -115,6 +134,12 @@
                 placeholder="可填写审核意见..."
                 class="w-full px-3 py-2 rounded-xl border border-outline-variant/30 bg-white text-sm outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none disabled:bg-gray-50 disabled:text-gray-400"
               ></textarea>
+            </div>
+
+            <!-- 状态标签 (非 PENDING 状态显示) -->
+            <div v-if="selectedApp?.status !== 'PENDING'" class="flex items-center gap-2 pt-2">
+              <span class="text-xs text-secondary font-bold">处理结果：</span>
+              <span class="text-xs font-bold px-3 py-0.5 rounded-full" :class="statusBadgeStyle(selectedApp.status)">{{ statusLabel(selectedApp.status) }}</span>
             </div>
 
             <!-- 通过 / 驳回 -->
@@ -132,143 +157,37 @@
         </div>
       </transition>
     </div>
+
+    <!-- 图片放大预览遮罩层 -->
+    <teleport to="body">
+      <div 
+        v-if="zoomedImageUrl" 
+        class="fixed top-[56px] left-0 md:left-[256px] right-0 bottom-0 bg-black/80 z-[99999] flex items-center justify-center transition-all duration-300 animate-in fade-in"
+        @click="zoomedImageUrl = null"
+      >
+        <div class="relative max-w-[85vw] max-h-[75vh] flex items-center justify-center" @click.stop>
+          <img :src="zoomedImageUrl" class="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/10" />
+          <button @click="zoomedImageUrl = null" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors">
+            <el-icon :size="20"><Close /></el-icon>
+          </button>
+        </div>
+      </div>
+    </teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Medal } from '@element-plus/icons-vue'
+import { Search, Medal, Document, Download, Close } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
-// Mock 数据
-const MOCK_APPLICATIONS = [
-  {
-    id: 1,
-    studentId: '202301001',
-    studentName: '张小明',
-    awardName: '2024年全国大学生数学建模竞赛省级一等奖',
-    awardTime: '2024-09',
-    level: '省级',
-    category: '学科竞赛',
-    issuer: '教育部高等教育司',
-    description: '参赛作品《基于深度学习的城市交通流量预测模型》，团队排名第1，获省级一等奖。',
-    status: 'PENDING',
-    reviewComment: '',
-    hasProof: true,
-    proofName: '数学建模获奖证书.jpg',
-  },
-  {
-    id: 2,
-    studentId: '202301002',
-    studentName: '李小丽',
-    awardName: '蓝桥杯全国软件和信息技术专业人才大赛省级二等奖',
-    awardTime: '2024-06',
-    level: '省级',
-    category: '学科竞赛',
-    issuer: '工业和信息化部人才交流中心',
-    description: 'Java软件开发大学A组，个人参赛，成绩排名全省前10%。',
-    status: 'PENDING',
-    reviewComment: '',
-    hasProof: true,
-    proofName: '蓝桥杯获奖证书.pdf',
-  },
-  {
-    id: 3,
-    studentId: '202301003',
-    studentName: '王五',
-    awardName: '全国大学生英语竞赛国家级三等奖',
-    awardTime: '2024-05',
-    level: '国家级',
-    category: '学科竞赛',
-    issuer: '教育部高等教育司',
-    description: 'C类（非英语专业本科生），初赛全校排名第3，决赛获国家级三等奖。',
-    status: 'PENDING',
-    reviewComment: '',
-    hasProof: true,
-    proofName: '英语竞赛证书.jpg',
-  },
-  {
-    id: 4,
-    studentId: '202301004',
-    studentName: '赵六',
-    awardName: '校园程序设计大赛校级一等奖',
-    awardTime: '2024-04',
-    level: '校级',
-    category: '学科竞赛',
-    issuer: '西华师范大学',
-    description: '独立完成算法竞赛题目，总成绩排名第1。',
-    status: 'PENDING',
-    reviewComment: '',
-    hasProof: false,
-    proofName: '',
-  },
-  {
-    id: 5,
-    studentId: '202301005',
-    studentName: '周燕',
-    awardName: '全国大学生创新创业训练计划项目国家级立项',
-    awardTime: '2024-10',
-    level: '国家级',
-    category: '创新创业',
-    issuer: '教育部',
-    description: '项目《基于物联网的智慧校园垃圾分类系统》获国家级立项，项目负责人。',
-    status: 'APPROVED',
-    reviewComment: '材料齐全，项目有实际应用价值，予以通过。',
-    hasProof: true,
-    proofName: '大创立项通知书.pdf',
-  },
-  {
-    id: 6,
-    studentId: '202301006',
-    studentName: '钱七',
-    awardName: '四川省大学生艺术节舞蹈类省级二等奖',
-    awardTime: '2024-07',
-    level: '省级',
-    category: '文体活动',
-    issuer: '四川省教育厅',
-    description: '群舞《蜀韵》获舞蹈类甲组省级二等奖，团队共12人。',
-    status: 'APPROVED',
-    reviewComment: '艺术类获奖，予以通过。',
-    hasProof: true,
-    proofName: '艺术节获奖证书.jpg',
-  },
-  {
-    id: 7,
-    studentId: '202301007',
-    studentName: '孙八',
-    awardName: '社区志愿服务优秀志愿者校级表彰',
-    awardTime: '2024-03',
-    level: '校级',
-    category: '志愿服务',
-    issuer: '西华师范大学团委',
-    description: '2023-2024年度累计志愿服务时长120小时，获评优秀志愿者。',
-    status: 'REJECTED',
-    reviewComment: '志愿服务类奖项请走第二课堂学时认定流程，不在此处审核。',
-    hasProof: true,
-    proofName: '志愿证明.pdf',
-  },
-  {
-    id: 8,
-    studentId: '202301008',
-    studentName: '吴十',
-    awardName: 'ACM-ICPC国际大学生程序设计竞赛亚洲区域赛银奖',
-    awardTime: '2024-11',
-    level: '国家级',
-    category: '学科竞赛',
-    issuer: 'ACM中国理事会',
-    description: '团队3人参赛，获亚洲区域赛（成都站）银奖，队内排名第2。',
-    status: 'PENDING',
-    reviewComment: '',
-    hasProof: true,
-    proofName: 'ACM获奖证书.pdf',
-  },
-]
-
-const applications = ref([...MOCK_APPLICATIONS])
+const applications = ref([])
 const searchQuery = ref('')
 const selectedId = ref(null)
 const activeFilter = ref('all')
 const reviewComment = ref('')
+const zoomedImageUrl = ref(null)
 
 const statusTabs = computed(() => [
   { key: 'all', label: '全部', count: applications.value.length },
@@ -299,7 +218,9 @@ const selectedApp = computed(() => {
 
 const formatMonth = (val) => {
   if (!val) return ''
-  const [y, m] = val.split('-')
+  const parts = val.split('-')
+  if (parts.length < 2) return val
+  const [y, m] = parts
   return `${y}年${m}月`
 }
 
@@ -314,13 +235,59 @@ const onCommentInput = (val) => {
   if (app) app.reviewComment = val
 }
 
-const handleReview = (status) => {
-  const app = applications.value.find(a => a.id === selectedId.value)
-  if (!app) return
-  app.reviewComment = reviewComment.value || (status === 'APPROVED' ? '审核通过。' : '材料不符合要求，请重新提交。')
-  app.status = status
-  ElMessage.success(status === 'APPROVED' ? '已通过审核' : '已驳回申请')
+const isImageUrl = (url) => {
+  if (!url) return false
+  const ext = url.substring(url.lastIndexOf('.')).toLowerCase()
+  return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(x => ext.startsWith(x))
 }
+
+const loadAwards = async () => {
+  try {
+    const res = await request.get('/api/youth/awards')
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      applications.value = res.data.data
+    }
+  } catch (e) {
+    console.error('Failed to load awards', e)
+  }
+}
+
+const handleReview = async (status) => {
+  if (!selectedId.value) return
+  const comment = reviewComment.value || (status === 'APPROVED' ? '审核通过。' : '材料不符合要求，请重新提交。')
+  try {
+    const res = await request.put(`/api/youth/awards/${selectedId.value}/review`, {
+      status: status,
+      reviewComment: comment
+    })
+    if (res.data.code === 200) {
+      ElMessage.success(status === 'APPROVED' ? '已通过审核' : '已驳回申请')
+      await loadAwards()
+      const app = applications.value.find(a => a.id === selectedId.value)
+      if (app) {
+        reviewComment.value = app.reviewComment || ''
+      } else {
+        selectedId.value = null
+      }
+    }
+  } catch (e) {
+    ElMessage.error('审核提交失败')
+  }
+}
+
+const statusLabel = (s) => ({
+  PENDING: '待审核',
+  APPROVED: '已通过',
+  REJECTED: '已驳回'
+}[s] || s)
+
+const statusBadgeStyle = (s) => ({
+  PENDING: 'bg-orange-50 text-orange-600 border border-orange-100/50',
+  APPROVED: 'bg-emerald-50 text-emerald-700 border border-emerald-100/50',
+  REJECTED: 'bg-red-50 text-red-600 border border-red-100/50'
+}[s] || 'bg-gray-100 text-gray-500')
+
+onMounted(loadAwards)
 </script>
 
 <style scoped>

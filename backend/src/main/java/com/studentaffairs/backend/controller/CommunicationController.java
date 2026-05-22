@@ -5,10 +5,13 @@ import com.studentaffairs.backend.entity.Announcement;
 import com.studentaffairs.backend.entity.Feedback;
 import com.studentaffairs.backend.entity.Message;
 import com.studentaffairs.backend.entity.StudentProfile;
+import com.studentaffairs.backend.entity.Notification;
 import com.studentaffairs.backend.repository.AnnouncementRepository;
 import com.studentaffairs.backend.repository.FeedbackRepository;
 import com.studentaffairs.backend.repository.MessageRepository;
 import com.studentaffairs.backend.repository.StudentProfileRepository;
+import com.studentaffairs.backend.repository.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,6 +25,10 @@ public class CommunicationController {
     private final MessageRepository messageRepo;
     private final StudentProfileRepository studentProfileRepo;
     private final FeedbackRepository feedbackRepo;
+
+    @Autowired
+    private NotificationRepository notificationRepo;
+
 
     public CommunicationController(AnnouncementRepository announcementRepo,
                                    MessageRepository messageRepo,
@@ -177,5 +184,34 @@ public class CommunicationController {
         feedback.setReplyTime(LocalDateTime.now());
         feedback.setStatus("REPLIED");
         return Result.success(feedbackRepo.save(feedback));
+    }
+
+    // ==================== 通知 ====================
+
+    @GetMapping("/notifications")
+    public Result<List<Notification>> getNotifications(@RequestParam String userId, @RequestParam(required = false) Boolean unreadOnly) {
+        if (Boolean.TRUE.equals(unreadOnly)) {
+            return Result.success(notificationRepo.findByUserIdAndIsReadOrderByCreateTimeDesc(userId, false));
+        }
+        return Result.success(notificationRepo.findByUserIdOrderByCreateTimeDesc(userId));
+    }
+
+    @PutMapping("/notifications/{id}/read")
+    public Result<Notification> markNotificationRead(@PathVariable Long id) {
+        Optional<Notification> opt = notificationRepo.findById(id);
+        if (opt.isEmpty()) return Result.error(404, "通知不存在");
+        Notification notif = opt.get();
+        notif.setIsRead(true);
+        return Result.success(notificationRepo.save(notif));
+    }
+
+    @PutMapping("/notifications/read-all")
+    public Result<String> markAllNotificationsRead(@RequestParam String userId) {
+        List<Notification> list = notificationRepo.findByUserIdAndIsReadOrderByCreateTimeDesc(userId, false);
+        for (Notification notif : list) {
+            notif.setIsRead(true);
+            notificationRepo.save(notif);
+        }
+        return Result.success("所有通知已标记为已读");
     }
 }

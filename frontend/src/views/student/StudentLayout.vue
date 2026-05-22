@@ -539,6 +539,34 @@ const fetchNotifications = async () => {
   const readIds = JSON.parse(localStorage.getItem('student_read_notifs') || '[]')
   const list = []
 
+  // Fetch System Notifications
+  try {
+    const resNotif = await request.get(`/api/communication/notifications?userId=${STUDENT_ID}`)
+    if (resNotif.data.code === 200 && Array.isArray(resNotif.data.data)) {
+      resNotif.data.data.forEach(n => {
+        const d = new Date(n.createTime)
+        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        list.push({
+          id: `sys-${n.id}`,
+          sysId: n.id,
+          tag: n.tag || '系统',
+          tagStyle: n.tagStyle || 'bg-blue-50 text-blue-600 border border-blue-100/50',
+          time: timeStr,
+          title: n.title,
+          content: n.content,
+          read: n.isRead,
+          expanded: false,
+          publishTime: n.createTime,
+          isMessage: false,
+          isSystem: true,
+          path: n.path
+        })
+      })
+    }
+  } catch (e) {
+    console.error('Failed to load system notifications', e)
+  }
+
   // Fetch Announcements
   try {
     const resAnn = await request.get('/api/communication/announcements')
@@ -558,6 +586,7 @@ const fetchNotifications = async () => {
           expanded: false,
           publishTime: a.publishTime,
           isMessage: false,
+          isSystem: false,
           path: `/student/campus-life?notifId=${a.id}`
         })
       })
@@ -587,6 +616,7 @@ const fetchNotifications = async () => {
           expanded: false,
           publishTime: m.sentTime,
           isMessage: true,
+          isSystem: false,
           path: `/student/campus-life?select=chat`
         })
       })
@@ -601,7 +631,13 @@ const fetchNotifications = async () => {
 }
 
 const toggleNotif = async (n) => {
-  if (n.isMessage) {
+  if (n.isSystem) {
+    try {
+      await request.put(`/api/communication/notifications/${n.sysId}/read`)
+    } catch (e) {
+      console.error('Failed to mark system notification as read', e)
+    }
+  } else if (n.isMessage) {
     try {
       await request.put(`/api/communication/messages/${n.messageId}/read`)
     } catch (e) {
@@ -631,14 +667,22 @@ const toggleNotif = async (n) => {
   }
   fetchNotifications()
 }
+
 const markAllRead = async () => {
+  // Mark all system notifications as read
+  try {
+    await request.put(`/api/communication/notifications/read-all?userId=${STUDENT_ID}`)
+  } catch (e) {
+    console.error('Failed to mark all system notifications as read', e)
+  }
+
   // Mark all announcements as read
   notifications.value.forEach(n => {
-    if (!n.isMessage) {
+    if (!n.isMessage && !n.isSystem) {
       n.read = true
     }
   })
-  const annIds = notifications.value.filter(n => !n.isMessage).map(n => n.id)
+  const annIds = notifications.value.filter(n => !n.isMessage && !n.isSystem).map(n => n.id)
   localStorage.setItem('student_read_notifs', JSON.stringify(annIds))
 
   // Mark all messages as read

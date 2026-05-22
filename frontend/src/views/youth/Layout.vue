@@ -139,16 +139,69 @@ const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
 const notifOpen = ref(false)
 
-const notifications = ref([
-  { id: 1, tag: '待审核', tagStyle: 'bg-emerald-100 text-emerald-700', time: '05-16 09:30', title: '张小明 提交了获奖记录审核', content: '全国数学建模省级一等奖，证明材料已上传，请及时审核。', read: false, expanded: false, path: '/youth/awards' },
-  { id: 2, tag: '学时', tagStyle: 'bg-blue-100 text-blue-700', time: '05-15 16:00', title: '第二课堂学时批量导入完成', content: '志愿服务类学时已成功为 45 名学生发放共 180 学时。', read: true, expanded: false, path: '/youth/second-classroom' },
-])
+const notifications = ref([])
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
-const toggleNotif = (n) => { if (!n.read) { n.read = true } if (n.path) { router.push(n.path); notifOpen.value = false } }
-const markAllRead = () => { notifications.value.forEach(n => n.read = true) }
+
+const fetchNotifications = async () => {
+  try {
+    const res = await request.get('/api/communication/notifications?userId=youth')
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      notifications.value = res.data.data.map(n => {
+        const d = new Date(n.createTime)
+        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        return {
+          id: n.id,
+          tag: n.tag || '待审核',
+          tagStyle: n.tagStyle || 'bg-emerald-100 text-emerald-700',
+          time: timeStr,
+          title: n.title,
+          content: n.content,
+          read: n.isRead,
+          expanded: false,
+          path: n.path
+        }
+      })
+    }
+  } catch (e) {
+    console.error('Failed to fetch notifications', e)
+  }
+}
+
+const toggleNotif = async (n) => {
+  try {
+    await request.put(`/api/communication/notifications/${n.id}/read`)
+  } catch (e) {
+    console.error('Failed to mark notification as read', e)
+  }
+  if (n.path) {
+    router.push(n.path)
+    notifOpen.value = false
+  }
+  await fetchNotifications()
+}
+
+const markAllRead = async () => {
+  try {
+    await request.put('/api/communication/notifications/read-all?userId=youth')
+    await fetchNotifications()
+  } catch (e) {
+    console.error('Failed to mark all notifications as read', e)
+  }
+}
+
 const closeNotif = () => { notifOpen.value = false }
-onMounted(() => document.addEventListener('click', closeNotif))
-onUnmounted(() => document.removeEventListener('click', closeNotif))
+let pollTimer = null
+
+onMounted(() => {
+  document.addEventListener('click', closeNotif)
+  fetchNotifications()
+  pollTimer = setInterval(fetchNotifications, 5000)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeNotif)
+  if (pollTimer) clearInterval(pollTimer)
+})
 
 const changePwd = async () => {
   if (!pwdForm.value.current || !pwdForm.value.newPwd || !pwdForm.value.confirm) { ElMessage.warning('请填写完整的密码信息'); return }

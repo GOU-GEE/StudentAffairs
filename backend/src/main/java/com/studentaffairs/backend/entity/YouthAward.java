@@ -20,4 +20,13 @@ public class YouthAward {
     
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "issuer")
+    private String issuer;
+
+    @Column(name = "review_comment", columnDefinition = "TEXT")
+    private String reviewComment;
+
+    @Column(name = "proof_url", columnDefinition = "TEXT")
+    private String proofUrl;
 }
