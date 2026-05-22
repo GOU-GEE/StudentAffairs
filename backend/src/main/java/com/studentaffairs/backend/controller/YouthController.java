@@ -225,6 +225,14 @@ public class YouthController {
         String reason = (String) req.get("reason");
         
         Activity activity = activityRepository.findById(activityId).orElseThrow();
+        
+        if (!"已结束".equals(activity.getStatus())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("code", 400);
+            error.put("msg", "活动未结束，无法发放学时");
+            return error;
+        }
+        
         List<ActivityEnrollment> enrollments = enrollmentRepository.findByActivityId(activityId);
         
         if (enrollments.isEmpty()) {

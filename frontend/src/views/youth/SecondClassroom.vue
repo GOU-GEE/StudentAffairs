@@ -57,6 +57,11 @@
                 class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-gray-100 text-gray-400 cursor-default">
                 已发放
               </button>
+              <button v-else-if="activity.status !== 'completed'"
+                disabled
+                class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-gray-100 text-gray-400 cursor-not-allowed">
+                未结束
+              </button>
               <button v-else @click.stop="grantHours(activity)"
                 class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-emerald-500 text-white hover:bg-emerald-600">
                 发放学时
@@ -194,6 +199,11 @@
                 class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-gray-200 text-gray-400 cursor-default">
                 已发放学时
               </button>
+              <button v-else-if="selectedActivity.status !== 'completed'"
+                disabled
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-gray-200 text-gray-400 cursor-not-allowed">
+                活动未结束
+              </button>
               <button v-else @click="grantHours(selectedActivity)"
                 class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-emerald-500 text-white hover:bg-emerald-600">
                 立即发放学时
@@ -308,6 +318,10 @@ const selectActivity = (activity) => {
 }
 
 const grantHours = async (activity) => {
+  if (activity.status !== 'completed') {
+    ElMessage.warning('活动未结束，无法发放学时')
+    return
+  }
   if (activity.participants === 0) {
     ElMessage.warning('无人可发放')
     return

@@ -542,13 +542,27 @@ const filteredEvents = computed(() => {
     const isEnrolled = enrolledActivityIds.value.has(activity.id)
     const isPast = activity.date < '2026-05-21'
     
+    let notStarted = false
+    let enrollmentEnded = false
+    if (activity.enrollTime && activity.enrollTime.includes(' ~ ')) {
+      const parts = activity.enrollTime.split(' ~ ')
+      const startPart = parts[0] ? parts[0].substring(0, 10) : ''
+      const endPart = parts[1] ? parts[1].substring(0, 10) : ''
+      if (startPart && startPart > '2026-05-21') {
+        notStarted = true
+      }
+      if (endPart && endPart < '2026-05-21') {
+        enrollmentEnded = true
+      }
+    }
+    
     let matchTab = true
     if (activeTab.value === 'enrolling') {
-      matchTab = !isEnrolled && !isPast && (activity.participants < activity.maxParticipants)
+      matchTab = !isEnrolled && !isPast && !notStarted && !enrollmentEnded && (activity.participants < activity.maxParticipants)
     } else if (activeTab.value === 'enrolled') {
       matchTab = isEnrolled
     } else if (activeTab.value === 'completed') {
-      matchTab = isPast
+      matchTab = isPast || enrollmentEnded
     }
     
     const matchSearch = !searchQuery.value ||
@@ -613,8 +627,22 @@ const getActivityState = (activity) => {
   const isEnrolled = enrolledActivityIds.value.has(activity.id)
   const isPast = activity.date < '2026-05-21'
   
+  let notStarted = false
+  let enrollmentEnded = false
+  if (activity.enrollTime && activity.enrollTime.includes(' ~ ')) {
+    const parts = activity.enrollTime.split(' ~ ')
+    const startPart = parts[0] ? parts[0].substring(0, 10) : ''
+    const endPart = parts[1] ? parts[1].substring(0, 10) : ''
+    if (startPart && startPart > '2026-05-21') {
+      notStarted = true
+    }
+    if (endPart && endPart < '2026-05-21') {
+      enrollmentEnded = true
+    }
+  }
+  
   if (isEnrolled) {
-    if (isPast) {
+    if (isPast || enrollmentEnded) {
       return {
         label: '已结束',
         bg: 'bg-gray-400',
@@ -634,12 +662,21 @@ const getActivityState = (activity) => {
       }
     }
   } else {
-    if (isPast) {
+    if (isPast || enrollmentEnded) {
       return {
         label: '已结束',
         bg: 'bg-gray-400',
         textColor: 'text-gray-500',
         btnText: '已结束',
+        btnClass: 'bg-gray-200 text-gray-400 cursor-not-allowed',
+        disabled: true
+      }
+    } else if (notStarted) {
+      return {
+        label: '未开始',
+        bg: 'bg-gray-400',
+        textColor: 'text-gray-500',
+        btnText: '未开始',
         btnClass: 'bg-gray-200 text-gray-400 cursor-not-allowed',
         disabled: true
       }

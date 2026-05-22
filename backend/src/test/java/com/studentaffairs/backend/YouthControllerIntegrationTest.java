@@ -85,7 +85,24 @@ public class YouthControllerIntegrationTest {
     }
 
     @Test
+    public void testGrantHoursBatchNotEnded() {
+        // Activity status is "报名中" by default in setup()
+        Map<String, Object> req = new HashMap<>();
+        req.put("activityId", testActivity.getId());
+        req.put("hours", 2);
+        req.put("reason", "参与测试活动");
+
+        Map<String, Object> result = youthController.grantHoursBatch(req);
+        assertEquals(400, result.get("code"));
+        assertEquals("活动未结束，无法发放学时", result.get("msg"));
+    }
+
+    @Test
     public void testGrantHoursBatchEmptyParticipants() {
+        // Set status to "已结束" so we bypass status check
+        testActivity.setStatus("已结束");
+        activityRepository.save(testActivity);
+
         // Grant hours for testActivity when no one has registered
         Map<String, Object> req = new HashMap<>();
         req.put("activityId", testActivity.getId());
@@ -102,6 +119,10 @@ public class YouthControllerIntegrationTest {
         // 1. Enroll two students
         youthController.enrollActivity(testActivity.getId(), "202301042");
         youthController.enrollActivity(testActivity.getId(), "202301043");
+
+        // Set status to "已结束" so we can grant hours
+        testActivity.setStatus("已结束");
+        activityRepository.save(testActivity);
 
         // 2. Grant hours
         Map<String, Object> req = new HashMap<>();
