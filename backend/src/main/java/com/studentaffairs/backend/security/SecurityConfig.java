@@ -1,5 +1,6 @@
 package com.studentaffairs.backend.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -36,14 +37,23 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/uploads/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/uploads/**")).permitAll()
+                .requestMatchers(antMatch("/api/auth/**")).permitAll()
+                .requestMatchers(antMatch("/auth/**")).permitAll()
+                .requestMatchers(antMatch("/uploads/**")).permitAll()
+                .requestMatchers(antMatch("/api/uploads/**")).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    /** 简易 Ant 风格路径匹配：去掉 /** 后缀后做前缀匹配，不依赖 AntPathRequestMatcher */
+    private static RequestMatcher antMatch(String pattern) {
+        String prefix = pattern.replace("/**", "");
+        return (HttpServletRequest request) -> {
+            String path = request.getRequestURI();
+            return path.equals(prefix) || path.startsWith(prefix + "/");
+        };
     }
 }
