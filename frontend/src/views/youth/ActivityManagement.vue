@@ -17,14 +17,14 @@
             <div>
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">报名时间</label>
               <el-date-picker v-model="enrollTimeRange" type="datetimerange" range-separator="至"
-                start-placeholder="开始时间" end-placeholder="结束时间" format="YYYY/MM/DD HH:00"
-                value-format="YYYY-MM-DD HH:00" :disabled-minutes="disabledMinutes" class="!w-full" />
+                start-placeholder="开始时间" end-placeholder="结束时间" format="YYYY/MM/DD HH:mm"
+                value-format="YYYY-MM-DD HH:mm" class="!w-full" />
             </div>
             <div>
               <label class="text-xs font-bold text-secondary uppercase tracking-wider block mb-1.5">活动时间</label>
               <el-date-picker v-model="activityTimeRange" type="datetimerange" range-separator="至"
-                start-placeholder="开始时间" end-placeholder="结束时间" format="YYYY/MM/DD HH:00"
-                value-format="YYYY-MM-DD HH:00" :disabled-minutes="disabledMinutes" class="!w-full" />
+                start-placeholder="开始时间" end-placeholder="结束时间" format="YYYY/MM/DD HH:mm"
+                value-format="YYYY-MM-DD HH:mm" class="!w-full" />
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
@@ -204,10 +204,6 @@ const enrollTimeRange = ref([])
 const activityTimeRange = ref([])
 const isUnlimited = ref(false)
 const enrollNumber = ref(200)
-
-const disabledMinutes = () => {
-  return Array.from({ length: 59 }, (_, i) => i + 1)
-}
 
 watch(enrollTimeRange, (val) => {
   if (val && val.length === 2) {
