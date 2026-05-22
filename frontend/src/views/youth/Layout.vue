@@ -32,19 +32,7 @@
         </li>
       </ul>
 
-      <div class="mt-auto px-4">
-        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/15 flex flex-col gap-2">
-           <div class="text-[0.6875rem] font-bold text-secondary uppercase">系统状态</div>
-           <div class="flex items-center gap-2">
-             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-             <span class="text-xs text-secondary font-medium">后端服务正常</span>
-           </div>
-           <div class="flex items-center gap-2">
-             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-             <span class="text-xs text-secondary font-medium">团委/第二课堂模式</span>
-           </div>
-        </div>
-      </div>
+
     </nav>
 
     <div class="main-content-wrapper flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden">
