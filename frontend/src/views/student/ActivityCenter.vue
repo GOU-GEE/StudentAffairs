@@ -557,7 +557,9 @@ const filteredEvents = computed(() => {
     }
     
     let matchTab = true
-    if (activeTab.value === 'enrolling') {
+    if (activeTab.value === 'upcoming') {
+      matchTab = !isEnrolled && !isPast && notStarted
+    } else if (activeTab.value === 'enrolling') {
       matchTab = !isEnrolled && !isPast && !notStarted && !enrollmentEnded && (activity.participants < activity.maxParticipants)
     } else if (activeTab.value === 'enrolled') {
       matchTab = isEnrolled
@@ -790,6 +792,7 @@ const calendarMonthLabel = computed(() => {
 
 const tabs = [
   { label: '全部活动', value: 'all' },
+  { label: '未开始', value: 'upcoming' },
   { label: '报名中', value: 'enrolling' },
   { label: '已报名', value: 'enrolled' },
   { label: '已结束', value: 'completed' },
