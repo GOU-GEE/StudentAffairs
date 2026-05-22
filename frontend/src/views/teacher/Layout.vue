@@ -257,15 +257,58 @@ const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
 const notifOpen = ref(false)
 
 const staticNotifications = ref([
-  { id: 'static-1', tag: '申请待审', tagStyle: 'bg-orange-100 text-orange-700', time: '05-03 16:20', title: '张小明 提交了请假申请，待审批', content: '申请人: 张小明（202301042）｜类型: 返乡假｜时间: 11月16日至11月17日。请及时处理。', read: false, expanded: false, path: '/teacher' },
+  { id: 'static-1', tag: '申请待审', tagStyle: 'bg-orange-100 text-orange-700', time: '05-03 16:20', title: '张小明 提交了请假申请，待审批', content: '申请人: 张小明（202301042）｜类型: 返乡假｜时间: 11月16日至11月17日。请及时处理。', read: false, expanded: false, path: '/teacher/leaves' },
   { id: 'static-2', tag: '系统', tagStyle: 'bg-blue-100 text-blue-700', time: '05-03 09:00', title: '学业预警引擎已完成本期检测', content: '本次检测发现 3 名学生触发学业预警条件，请前往「学业预警支持」查看详情。', read: true, expanded: false, path: '/teacher/academic-warning' },
 ])
 const msgNotifications = ref([])
+const systemNotifications = ref([])
 
 const notifications = computed(() => {
-  return [...msgNotifications.value, ...staticNotifications.value]
+  return [...msgNotifications.value, ...systemNotifications.value, ...staticNotifications.value]
 })
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+
+const getReadNotifsFromStorage = () => {
+  try {
+    const val = localStorage.getItem('teacher_read_notifs')
+    return val ? JSON.parse(val) : []
+  } catch (e) {
+    return []
+  }
+}
+
+const saveReadNotifToStorage = (id) => {
+  try {
+    const readList = getReadNotifsFromStorage()
+    if (!readList.includes(id)) {
+      readList.push(id)
+      localStorage.setItem('teacher_read_notifs', JSON.stringify(readList))
+    }
+  } catch (e) {}
+}
+
+const loadStaticNotifications = () => {
+  const readList = getReadNotifsFromStorage()
+  staticNotifications.value.forEach(n => {
+    if (readList.includes(n.id)) {
+      n.read = true
+    }
+  })
+}
+
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return ''
+  try {
+    const date = new Date(dateTimeStr)
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    const hh = String(date.getHours()).padStart(2, '0')
+    const mm = String(date.getMinutes()).padStart(2, '0')
+    return `${m}-${d} ${hh}:${mm}`
+  } catch (e) {
+    return dateTimeStr
+  }
+}
 
 const fetchMessageAlerts = async () => {
   try {
@@ -284,38 +327,136 @@ const fetchMessageAlerts = async () => {
             content: '',
             read: false,
             expanded: false,
-            path: `/teacher/communication?studentId=${c.id}`
+            path: `/teacher/communication?studentId=${c.id}`,
+            unreadCount: c.unread
           })
         }
       }
-      // 保留已读状态：之前标记为已读的保持已读
-      const oldMap = new Map(msgNotifications.value.map(n => [n.id, n.read]))
+      // 保留已读状态：之前标记为已读的且未读消息数量未发生变化的保持已读
+      const oldMap = new Map(msgNotifications.value.map(n => [n.id, n]))
       for (const a of alerts) {
-        if (oldMap.get(a.id) === true) a.read = true
+        const old = oldMap.get(a.id)
+        if (old && old.read && old.unreadCount === a.unreadCount) {
+          a.read = true
+        }
       }
       msgNotifications.value = alerts
     }
   } catch (e) { /* ignore polling errors */ }
 }
 
+const fetchSystemAlerts = async () => {
+  try {
+    const readList = getReadNotifsFromStorage()
+    const alerts = []
+
+    // 1. Fetch pending leaves
+    const leaveRes = await request.get('/api/applications/pending')
+    if (leaveRes.data.code === 200) {
+      const pendingApps = leaveRes.data.data
+      for (const app of pendingApps) {
+        if (app.type === 'LEAVE') {
+          const alertId = `leave-${app.id}`
+          alerts.push({
+            id: alertId,
+            tag: '申请待审',
+            tagStyle: 'bg-orange-100 text-orange-700',
+            time: formatDateTime(app.applyTime),
+            title: `${app.studentName} 提交了请假申请，待审批`,
+            content: `申请人: ${app.studentName}（${app.studentId}）｜类型: ${app.title}｜时间/原因: ${app.reason}。请及时处理。`,
+            read: readList.includes(alertId),
+            expanded: false,
+            path: '/teacher/leaves'
+          })
+        }
+      }
+    }
+
+    // 2. Fetch safety incidents
+    const safetyRes = await request.get('/api/safety/incidents')
+    if (safetyRes.data.code === 200) {
+      const activeIncidents = safetyRes.data.data.filter(i => i.status === 'OPEN' || i.status === 'PROCESSING')
+      for (const incident of activeIncidents) {
+        const alertId = `safety-${incident.id}`
+        let descText = incident.description
+        try {
+          const parsed = JSON.parse(incident.description)
+          descText = parsed.reason || parsed.desc || parsed.title || incident.description
+        } catch (e) {}
+
+        const isLate = incident.type === 'LATE'
+        alerts.push({
+          id: alertId,
+          tag: isLate ? '晚归报备' : '安全异常',
+          tagStyle: isLate ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700',
+          time: formatDateTime(incident.reportTime),
+          title: isLate ? `${incident.studentName} 提交了晚归报备` : `${incident.studentName} 上报了安全异常`,
+          content: `上报人: ${incident.studentName}（${incident.studentId}）｜详情: ${descText}`,
+          read: readList.includes(alertId),
+          expanded: false,
+          path: '/teacher/safety-monitoring'
+        })
+      }
+    }
+
+    // 3. Fetch career appointments
+    const careerRes = await request.get(`/api/career/appointments/teacher/${teacherId}`)
+    if (careerRes.data.code === 200) {
+      const pendingAppointments = careerRes.data.data.filter(a => a.status === 'PENDING')
+      for (const app of pendingAppointments) {
+        const alertId = `career-${app.id}`
+        alerts.push({
+          id: alertId,
+          tag: '规划预约',
+          tagStyle: 'bg-purple-100 text-purple-700',
+          time: formatDateTime(app.createTime),
+          title: `${app.studentName} 预约了职业规划申请`,
+          content: `学生: ${app.studentName}（${app.studentId}）｜预约时间: ${app.appointmentTime}｜原因: ${app.reason}`,
+          read: readList.includes(alertId),
+          expanded: false,
+          path: '/teacher/career-appointments'
+        })
+      }
+    }
+
+    systemNotifications.value = alerts
+  } catch (e) { /* ignore polling errors */ }
+}
+
+const fetchAllAlerts = () => {
+  fetchMessageAlerts()
+  fetchSystemAlerts()
+}
+
 let pollTimer = null
 
 const toggleNotif = (n) => {
-  if (!n.read) { n.read = true }
+  if (!n.read) {
+    n.read = true
+    if (!n.id.startsWith('msg-')) {
+      saveReadNotifToStorage(n.id)
+    }
+  }
   if (n.path) {
     router.push(n.path)
     notifOpen.value = false
   }
 }
 const markAllRead = () => {
-  notifications.value.forEach(n => n.read = true)
+  notifications.value.forEach(n => {
+    n.read = true
+    if (!n.id.startsWith('msg-')) {
+      saveReadNotifToStorage(n.id)
+    }
+  })
 }
 const closeNotif = () => { notifOpen.value = false }
 
 onMounted(() => {
   document.addEventListener('click', closeNotif)
-  fetchMessageAlerts()
-  pollTimer = setInterval(fetchMessageAlerts, 10000)
+  loadStaticNotifications()
+  fetchAllAlerts()
+  pollTimer = setInterval(fetchAllAlerts, 10000)
 })
 onUnmounted(() => {
   document.removeEventListener('click', closeNotif)

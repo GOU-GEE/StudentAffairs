@@ -188,8 +188,10 @@ const loadUnreadCounts = async () => {
 
 const selectStudent = async (student) => {
   activeStudentId.value = student.studentId
+  student._unread = 0 // Clear in-memory unread count immediately for smooth UI transition
   quotingMessage.value = null
   await loadMessages(student.studentId)
+  await loadUnreadCounts() // Sync contacts unread counts from backend
   await nextTick()
   setTimeout(() => scrollToBottom(), 300)
   if (chatInputRef.value) chatInputRef.value.focus()
@@ -251,7 +253,8 @@ const getQuotedSender = (quoteId) => {
 }
 
 const getUnreadCount = (studentId) => {
-  return allMessages.value.filter(m => m.senderId === studentId && !m.isRead && !m.isRecalled).length
+  const s = students.value.find(st => st.studentId === studentId)
+  return s ? (s._unread || 0) : 0
 }
 
 const getLastTime = (studentId) => {
