@@ -13,8 +13,10 @@ import com.studentaffairs.backend.entity.StudentApplication;
 import com.studentaffairs.backend.entity.StudentProfile;
 import com.studentaffairs.backend.entity.WorkStudyJob;
 import com.studentaffairs.backend.entity.YouthAward;
+import com.studentaffairs.backend.entity.ActivityEnrollment;
 import com.studentaffairs.backend.repository.AcademicRecordRepository;
 import com.studentaffairs.backend.repository.ActivityRepository;
+import com.studentaffairs.backend.repository.ActivityEnrollmentRepository;
 import com.studentaffairs.backend.repository.AnnouncementRepository;
 import com.studentaffairs.backend.repository.CourseRepository;
 import com.studentaffairs.backend.repository.HonorCandidateRepository;
@@ -55,7 +57,8 @@ public class DataInitializer {
                                       HonorCandidateRepository honorCandidateRepository,
                                       SecondClassroomRecordRepository secondClassroomRecordRepository,
                                       CourseRepository courseRepository,
-                                      FeedbackRepository feedbackRepository) {
+                                      FeedbackRepository feedbackRepository,
+                                      ActivityEnrollmentRepository activityEnrollmentRepository) {
         return args -> {
             // 初始化勤工助学岗位
             if (jobRepository.count() == 0) {
@@ -149,7 +152,7 @@ public class DataInitializer {
                 System.out.println("Initialized default Courses.");
             }
 
-            initYouthData(activityRepository, youthAwardRepository, honorProjectRepository, honorCandidateRepository, secondClassroomRecordRepository);
+            initYouthData(activityRepository, youthAwardRepository, honorProjectRepository, honorCandidateRepository, secondClassroomRecordRepository, activityEnrollmentRepository);
             initFeedbacks(feedbackRepository);
         };
     }
@@ -457,7 +460,8 @@ public class DataInitializer {
                                YouthAwardRepository awardRepo,
                                HonorProjectRepository honorProjectRepo,
                                HonorCandidateRepository honorCandidateRepo,
-                               SecondClassroomRecordRepository secondClassroomRepo) {
+                               SecondClassroomRecordRepository secondClassroomRepo,
+                               ActivityEnrollmentRepository enrollmentRepo) {
         if (activityRepo.count() < 12) {
             activityRepo.deleteAll();
             List<Activity> activities = new ArrayList<>();
@@ -606,8 +610,37 @@ public class DataInitializer {
             act12.setLeaveSupport("不需要"); act12.setCreditType("文艺体育项目学分"); act12.setEnrollLimit("800人");
             activities.add(act12);
 
-            activityRepo.saveAll(activities);
+            List<Activity> saved = activityRepo.saveAll(activities);
             System.out.println("Initialized default Activities (12 elements).");
+
+            enrollmentRepo.deleteAll();
+            List<ActivityEnrollment> enrollments = new ArrayList<>();
+            enrollments.add(createEnrollment("202301042", saved.get(2).getId()));
+            enrollments.add(createEnrollment("202301042", saved.get(3).getId()));
+            enrollments.add(createEnrollment("202301042", saved.get(4).getId()));
+            enrollments.add(createEnrollment("202301042", saved.get(10).getId()));
+
+            enrollments.add(createEnrollment("202301043", saved.get(0).getId()));
+            enrollments.add(createEnrollment("202301043", saved.get(1).getId()));
+            enrollments.add(createEnrollment("202301043", saved.get(2).getId()));
+            enrollments.add(createEnrollment("202301043", saved.get(4).getId()));
+            enrollments.add(createEnrollment("202301043", saved.get(9).getId()));
+            enrollments.add(createEnrollment("202301043", saved.get(10).getId()));
+
+            enrollments.add(createEnrollment("202301044", saved.get(0).getId()));
+            enrollments.add(createEnrollment("202301044", saved.get(2).getId()));
+            enrollments.add(createEnrollment("202301044", saved.get(3).getId()));
+            enrollments.add(createEnrollment("202301044", saved.get(4).getId()));
+            enrollments.add(createEnrollment("202301044", saved.get(11).getId()));
+
+            enrollmentRepo.saveAll(enrollments);
+            System.out.println("Initialized default ActivityEnrollments.");
+
+            for (Activity act : saved) {
+                int count = enrollmentRepo.countByActivityId(act.getId());
+                act.setParticipants(count);
+            }
+            activityRepo.saveAll(saved);
         }
 
         if (awardRepo.count() == 0) {
@@ -775,5 +808,13 @@ public class DataInitializer {
             feedbackRepo.saveAll(list);
             System.out.println("Initialized default Feedbacks.");
         }
+    }
+
+    private ActivityEnrollment createEnrollment(String studentId, Long activityId) {
+        ActivityEnrollment e = new ActivityEnrollment();
+        e.setStudentId(studentId);
+        e.setActivityId(activityId);
+        e.setEnrollTime(LocalDateTime.now().minusDays((long)(Math.random() * 5)));
+        return e;
     }
 }

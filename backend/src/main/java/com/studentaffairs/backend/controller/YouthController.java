@@ -30,6 +30,12 @@ public class YouthController {
     @Autowired
     private SecondClassroomRecordRepository recordRepository;
 
+    @Autowired
+    private ActivityEnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
+
     private Map<String, Object> success(Object data) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", 200);
@@ -98,21 +104,38 @@ public class YouthController {
     }
 
     @PostMapping("/activities/{id}/enroll")
-    public Map<String, Object> enrollActivity(@PathVariable Long id) {
+    public Map<String, Object> enrollActivity(@PathVariable Long id, @RequestParam(required = false) String studentId) {
         Activity activity = activityRepository.findById(id).orElseThrow();
         Map<String, Object> error = new HashMap<>();
         if (!"报名中".equals(activity.getStatus())) {
             error.put("code", 400); error.put("msg", "该活动不在报名阶段");
             return error;
         }
+        
+        String finalStudentId = (studentId == null || studentId.trim().isEmpty()) ? "202301042" : studentId;
+        
+        if (enrollmentRepository.existsByActivityIdAndStudentId(id, finalStudentId)) {
+            error.put("code", 400); error.put("msg", "您已报名该活动");
+            return error;
+        }
+        
         int max = activity.getMaxParticipants() != null ? activity.getMaxParticipants() : 9999;
-        int current = activity.getParticipants() != null ? activity.getParticipants() : 0;
+        int current = enrollmentRepository.countByActivityId(id);
         if (current >= max) {
             error.put("code", 400); error.put("msg", "名额已满");
             return error;
         }
-        activity.setParticipants(current + 1);
+        
+        ActivityEnrollment enrollment = new ActivityEnrollment();
+        enrollment.setActivityId(id);
+        enrollment.setStudentId(finalStudentId);
+        enrollment.setEnrollTime(LocalDateTime.now());
+        enrollmentRepository.save(enrollment);
+        
+        int realParticipants = enrollmentRepository.countByActivityId(id);
+        activity.setParticipants(realParticipants);
         activityRepository.save(activity);
+        
         return success(activity);
     }
 
@@ -193,5 +216,67 @@ public class YouthController {
     public Map<String, Object> grantHours(@RequestBody SecondClassroomRecord record) {
         record.setGrantTime(LocalDateTime.now());
         return success(recordRepository.save(record));
+    }
+
+    @PostMapping("/second-classroom/grant-batch")
+    public Map<String, Object> grantHoursBatch(@RequestBody Map<String, Object> req) {
+        Long activityId = ((Number) req.get("activityId")).longValue();
+        Integer hours = ((Number) req.getOrDefault("hours", 2)).intValue();
+        String reason = (String) req.get("reason");
+        
+        Activity activity = activityRepository.findById(activityId).orElseThrow();
+        List<ActivityEnrollment> enrollments = enrollmentRepository.findByActivityId(activityId);
+        
+        if (enrollments.isEmpty()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("code", 400);
+            error.put("msg", "无人可发放");
+            return error;
+        }
+        
+        int categoryIndex = mapCreditTypeToCategory(activity.getCreditType());
+        
+        for (ActivityEnrollment enrollment : enrollments) {
+            String studentId = enrollment.getStudentId();
+            StudentProfile profile = studentProfileRepository.findByStudentId(studentId).orElse(null);
+            String studentName = profile != null ? profile.getName() : "张小明";
+            String className = profile != null ? profile.getGradeClass() : "2023级2班";
+            
+            String finalReason = (reason == null || reason.isEmpty()) ? "参与活动\"" + activity.getTitle() + "\"获得学时" : reason;
+            
+            boolean alreadyGranted = false;
+            List<SecondClassroomRecord> existing = recordRepository.findByStudentId(studentId);
+            for (SecondClassroomRecord r : existing) {
+                if (finalReason.equals(r.getReason()) && r.getHours().equals(hours) && r.getCategoryIndex().equals(categoryIndex)) {
+                    alreadyGranted = true;
+                    break;
+                }
+            }
+            
+            if (!alreadyGranted) {
+                SecondClassroomRecord record = new SecondClassroomRecord();
+                record.setStudentId(studentId);
+                record.setStudentName(studentName);
+                record.setClassName(className);
+                record.setCategoryIndex(categoryIndex);
+                record.setHours(hours);
+                record.setReason(finalReason);
+                record.setGrantTime(LocalDateTime.now());
+                recordRepository.save(record);
+            }
+        }
+        
+        return success("学时发放成功");
+    }
+
+    private int mapCreditTypeToCategory(String creditType) {
+        if (creditType == null) return 0;
+        if (creditType.contains("志愿服务")) return 0;
+        if (creditType.contains("创新创造") || creditType.contains("创新创业")) return 1;
+        if (creditType.contains("社会实践") || creditType.contains("劳动教育")) return 2;
+        if (creditType.contains("思想素质") || creditType.contains("学术讲座")) return 3;
+        if (creditType.contains("文艺体育") || creditType.contains("文体活动")) return 4;
+        if (creditType.contains("技能特长") || creditType.contains("技能培训")) return 5;
+        return 0;
     }
 }

@@ -521,6 +521,7 @@ import { ArrowRight, ArrowDown, Search, Filter, Clock, Location, ArrowLeft, Time
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
+const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
 const activeTab = ref('all')
 const showCalendarDialog = ref(false)
@@ -684,7 +685,7 @@ const handleActivityAction = async (activity) => {
   if (state.disabled) return
   
   try {
-    const res = await request.post(`${API}/${activity.id}/enroll`)
+    const res = await request.post(`${API}/${activity.id}/enroll?studentId=${STUDENT_ID}`)
     if (res.data.code === 200) {
       ElMessage.success('报名成功！')
       activity.participants = (activity.participants || 0) + 1

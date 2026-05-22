@@ -1,9 +1,9 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 底部主内容：左栏活动列表，右栏活动详情 -->
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 flex-1 min-h-0">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch relative flex-1 min-h-0">
       <!-- 左侧：活动列表 -->
-      <div class="xl:col-span-8 flex flex-col bg-white rounded-3xl px-6 pt-4 pb-6 border border-outline-variant/20 shadow-sm">
+      <div class="xl:col-span-8 flex flex-col bg-white rounded-3xl px-6 pt-4 pb-6 border border-outline-variant/20 shadow-sm relative z-20">
         <!-- 导航 Tabs 与 搜索栏 -->
         <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3 flex-shrink-0">
           <div class="flex items-center gap-2">
@@ -15,7 +15,6 @@
             </button>
           </div>
           <div class="flex items-center gap-4">
-            <span class="text-xs font-bold text-secondary">共 {{ filteredActivities.length }} 条活动</span>
             <div class="relative w-64 flex items-center">
               <span class="absolute left-3 flex items-center text-outline"><el-icon><Search /></el-icon></span>
               <input v-model="searchQuery" type="text" placeholder="搜索活动名称、关键字..." class="w-full pl-9 pr-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-xs font-medium focus:outline-none focus:border-emerald-500 transition-all">
@@ -23,9 +22,9 @@
           </div>
         </div>
 
-        <!-- 活动列表 -->
-        <div class="flex flex-col gap-4 mt-4 overflow-y-auto custom-scrollbar pr-2 flex-1 min-h-0">
-          <div v-for="activity in filteredActivities" :key="activity.id"
+        <!-- 活动列表 (锁定高度刚好展示5条，移除横/纵滚动条，纯靠分页) -->
+        <div class="flex flex-col gap-4 mt-4 h-[694px] overflow-hidden flex-shrink-0 pr-2">
+          <div v-for="activity in paginatedActivities" :key="activity.id"
                @click="selectActivity(activity)"
                class="rounded-2xl p-3 border border-outline-variant/20 hover:shadow-md transition-shadow flex gap-4 cursor-pointer bg-surface-container-lowest"
                :class="selectedActivity?.id === activity.id ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30 group/card'">
@@ -64,14 +63,52 @@
               </button>
             </div>
           </div>
-          <div v-if="filteredActivities.length === 0" class="py-20 text-center text-gray-400 text-sm">
+          <div v-if="paginatedActivities.length === 0" class="py-20 text-center text-gray-400 text-sm">
             暂无活动记录
+          </div>
+        </div>
+
+        <!-- 底部高保真统计及分页底栏 -->
+        <div class="flex items-center justify-between border-t border-outline-variant/15 pt-4 mt-auto flex-shrink-0">
+          <!-- 左下角：统计数量 -->
+          <div class="text-xs font-semibold text-secondary flex items-center gap-1.5">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            共 {{ filteredActivities.length }} 条活动
+          </div>
+          
+          <!-- 右下角：页数按钮 -->
+          <div class="flex items-center gap-1">
+            <button 
+              @click="currentPage > 1 && currentPage--" 
+              :disabled="currentPage === 1"
+              class="w-8 h-8 rounded-lg border border-outline-variant/20 flex items-center justify-center text-secondary hover:text-emerald-500 hover:border-emerald-500/30 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <el-icon><ArrowLeft /></el-icon>
+            </button>
+            
+            <button 
+              v-for="p in totalPages" 
+              :key="p" 
+              @click="currentPage = p"
+              class="w-8 h-8 rounded-lg font-bold text-xs transition-all"
+              :class="currentPage === p ? 'bg-emerald-500 text-white shadow-sm' : 'border border-outline-variant/20 text-secondary hover:text-emerald-500 hover:border-emerald-500/30 bg-transparent'"
+            >
+              {{ p }}
+            </button>
+            
+            <button 
+              @click="currentPage < totalPages && currentPage++" 
+              :disabled="currentPage === totalPages"
+              class="w-8 h-8 rounded-lg border border-outline-variant/20 flex items-center justify-center text-secondary hover:text-emerald-500 hover:border-emerald-500/30 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <el-icon><ArrowRight /></el-icon>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- 右侧区域 -->
-      <div class="xl:col-span-4">
+      <!-- 右侧区域 (固定高度与左侧对齐，带过渡动画) -->
+      <div class="xl:col-span-4 relative h-full">
         <transition name="fade-slide" mode="out-in">
           <!-- 默认占位 -->
           <div v-if="!selectedActivity" class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm p-8 flex flex-col items-center justify-center h-full min-h-[400px]">
@@ -85,7 +122,7 @@
           </div>
 
           <!-- 活动详情 -->
-          <div v-else class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col relative">
+          <div v-else class="bg-white rounded-3xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col h-full relative">
             <!-- 封面图 -->
             <div class="h-[180px] w-full relative bg-surface-container-low">
               <!-- 关闭按钮 -->
@@ -171,9 +208,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Clock, Location, Timer, Close } from '@element-plus/icons-vue'
+import { Search, Clock, Location, Timer, Close, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
@@ -182,6 +219,14 @@ const activeTab = ref('ungranted')
 const searchQuery = ref('')
 const selectedActivity = ref(null)
 const grantedIds = ref([])
+
+const currentPage = ref(1)
+const pageSize = 5
+
+// Watch tab and search query to reset pagination
+watch([activeTab, searchQuery], () => {
+  currentPage.value = 1
+})
 
 const tabs = [
   { label: '未发放', value: 'ungranted' },
@@ -224,6 +269,14 @@ const loadActivities = async () => {
     const res = await request.get(API)
     if (res.data.code === 200) {
       activities.value = res.data.data.map(mapActivity)
+      
+      // Update the selectedActivity details with the latest participants count
+      if (selectedActivity.value) {
+        const found = activities.value.find(act => act.id === selectedActivity.value.id)
+        if (found) {
+          selectedActivity.value = found
+        }
+      }
     }
   } catch (e) { console.error('加载活动失败', e) }
 }
@@ -241,22 +294,44 @@ const filteredActivities = computed(() => {
   })
 })
 
+const totalPages = computed(() => {
+  return Math.ceil(filteredActivities.value.length / pageSize) || 1
+})
+
+const paginatedActivities = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return filteredActivities.value.slice(start, start + pageSize)
+})
+
 const selectActivity = (activity) => {
   selectedActivity.value = activity
 }
 
 const grantHours = async (activity) => {
+  if (activity.participants === 0) {
+    ElMessage.warning('无人可发放')
+    return
+  }
   try {
-    await request.post('/api/youth/second-classroom/grant-batch', {
+    const res = await request.post('/api/youth/second-classroom/grant-batch', {
       activityId: activity.id,
       hours: activity.hours || 2,
       reason: `参与活动"${activity.title}"获得学时`
     })
-  } catch (e) { /* demo: ignore backend errors */ }
-  if (!grantedIds.value.includes(activity.id)) {
-    grantedIds.value.push(activity.id)
+    if (res.data.code === 200) {
+      if (!grantedIds.value.includes(activity.id)) {
+        grantedIds.value.push(activity.id)
+      }
+      ElMessage.success(`已为 ${activity.participants || 0} 名报名学生发放 ${activity.hours || 0} 学时`)
+      loadActivities()
+    } else {
+      ElMessage.warning(res.data.msg || '发放失败')
+    }
+  } catch (e) {
+    console.error('发放学时失败', e)
+    const errorMsg = e.response?.data?.msg || '发放学时失败'
+    ElMessage.error(errorMsg)
   }
-  ElMessage.success(`已为 ${activity.participants || 0} 名报名学生发放 ${activity.hours || 0} 学时`)
 }
 </script>
 
