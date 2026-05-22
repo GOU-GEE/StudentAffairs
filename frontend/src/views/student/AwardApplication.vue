@@ -307,11 +307,11 @@
                 <template v-for="url in (selectedAward.proofUrl || '').split(',')" :key="url">
                   <template v-if="url.trim()">
                     <!-- Image proof -->
-                    <div v-if="isImageUrl(url)" class="w-40 h-40 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center cursor-zoom-in hover:shadow-md transition-all">
-                      <img :src="url" alt="证明材料" class="w-full h-full object-cover" @click="zoomedImageUrl = url">
+                    <div v-if="isImageUrl(url.trim())" class="w-40 h-40 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center cursor-zoom-in hover:shadow-md transition-all">
+                      <img :src="url.trim()" alt="证明材料" class="w-full h-full object-cover" @click="zoomedImageUrl = url.trim()">
                     </div>
                     <!-- PDF proof -->
-                    <a v-else :href="url" target="_blank" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors w-full group">
+                    <a v-else :href="url.trim()" target="_blank" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors w-full group">
                       <el-icon class="text-red-500 text-2xl"><Document /></el-icon>
                       <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-gray-800 truncate">点击查看 PDF 证明材料</p>
@@ -399,8 +399,9 @@ const selectAwardItem = (item) => {
 
 const isImageUrl = (url) => {
   if (!url) return false
-  const ext = url.substring(url.lastIndexOf('.')).toLowerCase()
-  return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(x => ext.startsWith(x))
+  const cleanUrl = url.trim().split('?')[0]
+  const ext = cleanUrl.substring(cleanUrl.lastIndexOf('.')).toLowerCase()
+  return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(x => ext === x)
 }
 
 const loadAwards = async () => {
@@ -419,6 +420,7 @@ const handleUploadSuccess = (response, uploadFile, uploadFiles) => {
   if (response.code === 200) {
     ElMessage.success('材料上传成功')
     uploadFile.url = response.data.url
+    uploadFile.uploadedUrl = response.data.url
   } else {
     ElMessage.error(response.msg || '上传失败')
   }
@@ -436,6 +438,29 @@ const handleRemoveFile = (file) => {
   }
 }
 
+const extractFileUrl = (f) => {
+  if (!f) return ''
+  if (f.uploadedUrl) return f.uploadedUrl
+  if (f.response) {
+    let resp = f.response
+    if (typeof resp === 'string') {
+      try { resp = JSON.parse(resp) } catch (e) {}
+    }
+    if (resp && typeof resp === 'object') {
+      if (resp.code === 200 && resp.data && resp.data.url) return resp.data.url
+      if (resp.data && typeof resp.data === 'string') return resp.data
+      if (resp.url) return resp.url
+      if (resp.data && resp.data.url) return resp.data.url
+    }
+  }
+  if (f.url && !f.url.startsWith('blob:') && !f.url.startsWith('data:')) {
+    if (f.url.includes('/api/uploads/') || f.url.startsWith('http') || f.url.startsWith('/uploads/')) {
+      return f.url
+    }
+  }
+  return ''
+}
+
 const submitAward = async () => {
   if (!form.value.awardName.trim()) { ElMessage.warning('请填写获奖名称'); return }
   if (!form.value.awardTime) { ElMessage.warning('请选择获奖时间'); return }
@@ -444,15 +469,7 @@ const submitAward = async () => {
   
   // Extract and filter uploaded URLs cleanly
   const uploadedUrls = fileList.value
-    .map(f => {
-      if (f.response && f.response.code === 200 && f.response.data && f.response.data.url) {
-        return f.response.data.url
-      }
-      if (f.url && !f.url.startsWith('blob:')) {
-        return f.url
-      }
-      return ''
-    })
+    .map(extractFileUrl)
     .filter(url => url !== '')
 
   if (uploadedUrls.length === 0) {

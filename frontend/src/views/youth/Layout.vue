@@ -139,6 +139,15 @@ const settingsTab = ref('password')
 const pwdForm = ref({ current: '', newPwd: '', confirm: '' })
 const notifOpen = ref(false)
 
+const parseDate = (val) => {
+  if (!val) return new Date()
+  if (Array.isArray(val)) {
+    const [y, m, d = 1, hh = 0, mi = 0, ss = 0] = val
+    return new Date(y, m - 1, d, hh, mi, ss)
+  }
+  return new Date(val)
+}
+
 const notifications = ref([])
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 
@@ -147,8 +156,17 @@ const fetchNotifications = async () => {
     const res = await request.get('/api/communication/notifications?userId=youth')
     if (res.data.code === 200 && Array.isArray(res.data.data)) {
       notifications.value = res.data.data.map(n => {
-        const d = new Date(n.createTime)
-        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        let timeStr = ''
+        try {
+          const d = parseDate(n.createTime)
+          if (isNaN(d.getTime())) {
+            timeStr = '刚刚'
+          } else {
+            timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          }
+        } catch (err) {
+          timeStr = '刚刚'
+        }
         return {
           id: n.id,
           tag: n.tag || '待审核',
@@ -156,7 +174,7 @@ const fetchNotifications = async () => {
           time: timeStr,
           title: n.title,
           content: n.content,
-          read: n.isRead,
+          read: n.isRead !== undefined ? n.isRead : (n.read !== undefined ? n.read : false),
           expanded: false,
           path: n.path
         }

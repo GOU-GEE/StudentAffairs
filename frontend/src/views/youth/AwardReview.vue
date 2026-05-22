@@ -103,11 +103,11 @@
                 <template v-for="url in (selectedApp.proofUrl || '').split(',')" :key="url">
                   <template v-if="url.trim()">
                     <!-- Image thumbnail -->
-                    <div v-if="isImageUrl(url)" class="w-40 h-40 rounded-xl overflow-hidden border border-outline-variant/30 bg-surface-container-lowest/50 flex items-center justify-center cursor-zoom-in hover:shadow-md transition-all">
-                      <img :src="url" alt="证明材料" class="w-full h-full object-cover" @click="zoomedImageUrl = url">
+                    <div v-if="isImageUrl(url.trim())" class="w-40 h-40 rounded-xl overflow-hidden border border-outline-variant/30 bg-surface-container-lowest/50 flex items-center justify-center cursor-zoom-in hover:shadow-md transition-all">
+                      <img :src="url.trim()" alt="证明材料" class="w-full h-full object-cover" @click="zoomedImageUrl = url.trim()">
                     </div>
                     <!-- PDF link -->
-                    <a v-else :href="url" target="_blank" class="flex items-center gap-3 p-3 border border-outline-variant/30 rounded-xl hover:bg-surface-container-low transition-colors w-full group">
+                    <a v-else :href="url.trim()" target="_blank" class="flex items-center gap-3 p-3 border border-outline-variant/30 rounded-xl hover:bg-surface-container-low transition-colors w-full group">
                       <el-icon class="text-red-500 text-2xl"><Document /></el-icon>
                       <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-gray-800 truncate">证明材料.pdf</p>
@@ -237,8 +237,9 @@ const onCommentInput = (val) => {
 
 const isImageUrl = (url) => {
   if (!url) return false
-  const ext = url.substring(url.lastIndexOf('.')).toLowerCase()
-  return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(x => ext.startsWith(x))
+  const cleanUrl = url.trim().split('?')[0]
+  const ext = cleanUrl.substring(cleanUrl.lastIndexOf('.')).toLowerCase()
+  return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(x => ext === x)
 }
 
 const loadAwards = async () => {

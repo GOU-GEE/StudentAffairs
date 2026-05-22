@@ -532,6 +532,25 @@ const copyPhone = (phone) => {
   })
 }
 
+const parseDate = (val) => {
+  if (!val) return new Date()
+  if (Array.isArray(val)) {
+    const [y, m, d = 1, hh = 0, mi = 0, ss = 0] = val
+    return new Date(y, m - 1, d, hh, mi, ss)
+  }
+  return new Date(val)
+}
+
+const formatDate = (val) => {
+  try {
+    const d = parseDate(val)
+    if (isNaN(d.getTime())) return '刚刚'
+    return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  } catch (err) {
+    return '刚刚'
+  }
+}
+
 const notifications = ref([])
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
 
@@ -544,8 +563,7 @@ const fetchNotifications = async () => {
     const resNotif = await request.get(`/api/communication/notifications?userId=${STUDENT_ID}`)
     if (resNotif.data.code === 200 && Array.isArray(resNotif.data.data)) {
       resNotif.data.data.forEach(n => {
-        const d = new Date(n.createTime)
-        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        const timeStr = formatDate(n.createTime)
         list.push({
           id: `sys-${n.id}`,
           sysId: n.id,
@@ -554,7 +572,7 @@ const fetchNotifications = async () => {
           time: timeStr,
           title: n.title,
           content: n.content,
-          read: n.isRead,
+          read: n.isRead !== undefined ? n.isRead : (n.read !== undefined ? n.read : false),
           expanded: false,
           publishTime: n.createTime,
           isMessage: false,
@@ -572,8 +590,7 @@ const fetchNotifications = async () => {
     const resAnn = await request.get('/api/communication/announcements')
     if (resAnn.data.code === 200 && Array.isArray(resAnn.data.data)) {
       resAnn.data.data.forEach(a => {
-        const d = new Date(a.publishTime)
-        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        const timeStr = formatDate(a.publishTime)
         const isCounselor = a.publisherId === 'T001'
         list.push({
           id: a.id,
@@ -602,8 +619,7 @@ const fetchNotifications = async () => {
       // 过滤李老师发给学生的未读消息
       const unreadMsgs = resMsg.data.data.filter(m => m.senderId === 'T001' && !m.isRead && !m.isRecalled)
       unreadMsgs.forEach(m => {
-        const d = new Date(m.sentTime)
-        const timeStr = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        const timeStr = formatDate(m.sentTime)
         list.push({
           id: `msg-${m.id}`,
           messageId: m.id,
@@ -626,7 +642,7 @@ const fetchNotifications = async () => {
   }
 
   // 按发布时间降序排序
-  list.sort((a, b) => new Date(b.publishTime || 0) - new Date(a.publishTime || 0))
+  list.sort((a, b) => parseDate(b.publishTime || 0) - parseDate(a.publishTime || 0))
   notifications.value = list
 }
 
