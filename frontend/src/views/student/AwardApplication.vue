@@ -127,15 +127,47 @@
             <el-upload
               action="/api/upload"
               :headers="uploadHeaders"
+              v-model:file-list="fileList"
               list-type="picture-card"
               :limit="5"
               :on-exceed="handleExceed"
               :on-success="handleUploadSuccess"
               :on-remove="handleRemove"
-              :file-list="fileList"
               accept="image/*,.pdf"
             >
               <el-icon><Plus /></el-icon>
+              <template #file="{ file }">
+                <div class="relative w-full h-full flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl overflow-hidden group">
+                  <!-- Check if it is a PDF file -->
+                  <template v-if="file.name.toLowerCase().endsWith('.pdf') || (file.url && file.url.toLowerCase().split('?')[0].endsWith('.pdf'))">
+                    <div class="flex flex-col items-center justify-center p-2 text-center h-full w-full bg-red-50/10">
+                      <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500 mb-1.5 shadow-sm">
+                        <el-icon :size="22"><Document /></el-icon>
+                      </div>
+                      <span class="text-[10px] text-gray-500 font-bold px-1 truncate w-full" :title="file.name">{{ file.name }}</span>
+                    </div>
+                  </template>
+                  <!-- Otherwise, treat as an image -->
+                  <template v-else>
+                    <img class="w-full h-full object-cover" :src="file.url" alt="证明材料" />
+                  </template>
+                  
+                  <!-- Hover Action Mask Overlay -->
+                  <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-4 transition-opacity duration-200 z-10">
+                    <!-- Zoom button for images only -->
+                    <span v-if="!file.name.toLowerCase().endsWith('.pdf') && !(file.url && file.url.toLowerCase().split('?')[0].endsWith('.pdf'))" 
+                          class="text-white text-lg cursor-pointer hover:text-blue-400 transition-colors" 
+                          @click="zoomedImageUrl = file.url">
+                      <el-icon><ZoomIn /></el-icon>
+                    </span>
+                    <!-- Delete button -->
+                    <span class="text-white text-lg cursor-pointer hover:text-red-400 transition-colors" 
+                          @click="handleRemoveFile(file)">
+                      <el-icon><Delete /></el-icon>
+                    </span>
+                  </div>
+                </div>
+              </template>
             </el-upload>
             <p class="text-[11px] text-gray-400 mt-3 flex items-center gap-1.5">
               <el-icon><InfoFilled /></el-icon>
@@ -333,7 +365,8 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   Document, Medal, Calendar, ArrowDown, OfficeBuilding,
-  Plus, InfoFilled, Clock, CollectionTag, Close, Download
+  Plus, InfoFilled, Clock, CollectionTag, Close, Download,
+  Delete, ZoomIn
 } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
@@ -373,7 +406,10 @@ const isImageUrl = (url) => {
 const loadAwards = async () => {
   try {
     const res = await request.get(`${API}/awards?studentId=${STUDENT_ID}`)
-    if (res.data.code === 200) history.value = res.data.data
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      // Sort by id descending so the latest submissions are at the top
+      history.value = res.data.data.sort((a, b) => b.id - a.id)
+    }
   } catch (e) { console.error(e) }
 }
 
@@ -381,21 +417,23 @@ const handleExceed = () => ElMessage.warning('最多只能上传 5 份材料')
 
 const handleUploadSuccess = (response, uploadFile, uploadFiles) => {
   if (response.code === 200) {
+    ElMessage.success('材料上传成功')
     uploadFile.url = response.data.url
-    fileList.value = uploadFiles.map(file => ({
-      name: file.name,
-      url: file.response ? file.response.data.url : file.url,
-      uid: file.uid
-    }))
+  } else {
+    ElMessage.error(response.msg || '上传失败')
   }
 }
 
 const handleRemove = (uploadFile, uploadFiles) => {
-  fileList.value = uploadFiles.map(file => ({
-    name: file.name,
-    url: file.url,
-    uid: file.uid
-  }))
+  ElMessage.info('已移除一份材料')
+}
+
+const handleRemoveFile = (file) => {
+  const index = fileList.value.findIndex(f => f.uid === file.uid)
+  if (index !== -1) {
+    fileList.value.splice(index, 1)
+    ElMessage.info('已移除一份材料')
+  }
 }
 
 const submitAward = async () => {
@@ -403,10 +441,27 @@ const submitAward = async () => {
   if (!form.value.awardTime) { ElMessage.warning('请选择获奖时间'); return }
   if (!form.value.level) { ElMessage.warning('请选择获奖级别'); return }
   if (!form.value.category) { ElMessage.warning('请选择获奖类别'); return }
-  if (fileList.value.length === 0) { ElMessage.warning('请上传获奖证明材料'); return }
+  
+  // Extract and filter uploaded URLs cleanly
+  const uploadedUrls = fileList.value
+    .map(f => {
+      if (f.response && f.response.code === 200 && f.response.data && f.response.data.url) {
+        return f.response.data.url
+      }
+      if (f.url && !f.url.startsWith('blob:')) {
+        return f.url
+      }
+      return ''
+    })
+    .filter(url => url !== '')
+
+  if (uploadedUrls.length === 0) {
+    ElMessage.warning('请上传并等待证明材料上传完成')
+    return
+  }
 
   submitting.value = true
-  const proofUrl = fileList.value.map(f => f.url).join(',')
+  const proofUrl = uploadedUrls.join(',')
   try {
     const res = await request.post(`${API}/awards`, {
       studentId: STUDENT_ID,

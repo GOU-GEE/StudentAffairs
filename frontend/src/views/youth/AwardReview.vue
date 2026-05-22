@@ -245,7 +245,7 @@ const loadAwards = async () => {
   try {
     const res = await request.get('/api/youth/awards')
     if (res.data.code === 200 && Array.isArray(res.data.data)) {
-      applications.value = res.data.data
+      applications.value = res.data.data.sort((a, b) => b.id - a.id)
     }
   } catch (e) {
     console.error('Failed to load awards', e)
