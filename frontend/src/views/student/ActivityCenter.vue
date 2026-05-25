@@ -603,16 +603,16 @@ const imageErrors = ref(new Set())
 // Persistent enrolled activities
 const loadEnrolledActivities = async () => {
   try {
-    const res = await request.get(`${API}/enrolled`, { params: { studentId: STUDENT_ID } })
+    const res = await request.get(`${API}/enrolled?studentId=${STUDENT_ID}`)
     if (res.data.code === 200 && Array.isArray(res.data.data)) {
-      enrolledActivityIds.value = new Set(res.data.data)
+      enrolledActivityIds.value = new Set(res.data.data.map(Number))
       saveEnrolledActivities()
     }
   } catch (e) {
     console.error('加载已报名活动失败，从本地存储回退', e)
     const stored = localStorage.getItem('enrolled_activities_' + STUDENT_ID)
     if (stored) {
-      enrolledActivityIds.value = new Set(JSON.parse(stored))
+      enrolledActivityIds.value = new Set(JSON.parse(stored).map(Number))
     } else {
       // Pre-seed some default enrolled IDs for demonstration (3, 4, 5, 11)
       const initial = [3, 4, 5, 11]
@@ -747,6 +747,7 @@ const handleActivityAction = async (activity) => {
       ElMessage.success('报名成功！')
       activity.participants = (activity.participants || 0) + 1
       enrolledActivityIds.value.add(activity.id)
+      enrolledActivityIds.value = new Set(enrolledActivityIds.value) // Trigger Vue reactivity!
       saveEnrolledActivities()
     } else {
       ElMessage.warning(res.data.msg || '报名失败')
