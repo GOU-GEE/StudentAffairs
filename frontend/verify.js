@@ -21,7 +21,7 @@ import { chromium } from 'playwright';
   
   await page.waitForTimeout(2000);
   
-  const screenshotPath = '/Users/goulijun/.gemini/antigravity/brain/8eaa7423-aa2a-4c85-94ae-a1fda804e804/academic-secondclass-final-v3.png';
+  const screenshotPath = '/Users/goulijun/.gemini/antigravity/brain/8eaa7423-aa2a-4c85-94ae-a1fda804e804/academic-secondclass-final-v4.png';
   console.log(`Taking screenshot and saving to: ${screenshotPath}`);
   await page.screenshot({ path: screenshotPath });
   

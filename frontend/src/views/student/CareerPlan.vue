@@ -168,7 +168,7 @@
     </el-dialog>
 
     <!-- 问卷答题弹窗 -->
-    <el-dialog v-model="quizVisible" :title="currentQuizTitle" width="700px" destroy-on-close :close-on-click-modal="false">
+    <el-dialog v-model="quizVisible" :title="currentQuizTitle" width="700px" destroy-on-close :close-on-click-modal="false" modal-class="custom-quiz-overlay" class="custom-quiz-dialog">
       <div class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
         <div v-for="(q, idx) in currentQuestions" :key="idx" class="p-3 rounded-xl bg-gray-50">
           <p class="text-sm font-medium mb-2">{{ idx + 1 }}. {{ q.text }}</p>
@@ -415,4 +415,17 @@ onMounted(()=>{
 .custom-calendar-dialog .el-dialog__headerbtn{top:22px;right:25px;z-index:100}
 .custom-calendar-dialog .el-dialog__header{padding:0!important;margin:0!important;height:0}
 .custom-calendar-dialog .el-dialog__body{flex:1;min-height:0;padding:0!important}
+
+@media (min-width: 768px) {
+  .custom-quiz-overlay {
+    left: 256px !important;
+    width: calc(100% - 256px) !important;
+  }
+}
+
+.custom-quiz-dialog {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important;
+}
 </style>

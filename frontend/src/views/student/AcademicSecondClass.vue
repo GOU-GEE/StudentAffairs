@@ -87,7 +87,7 @@
           <span class="text-sm text-gray-500">共 {{ tableData.length }} 条</span>
           <el-pagination
             v-model:current-page="currentPage"
-            :page-size="11"
+            :page-size="13"
             :total="tableData.length"
             layout="prev, pager, next"
             small
@@ -296,7 +296,7 @@ const tableData = computed(() => {
 })
 
 const currentPage = ref(1)
-const pageSize = 11
+const pageSize = 13
 const paginatedTableData = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const end = start + pageSize
