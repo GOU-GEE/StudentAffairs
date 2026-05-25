@@ -319,7 +319,7 @@
           <div v-for="d in 35" :key="d" class="p-2 border-b border-r border-outline-variant/20 flex flex-col relative overflow-hidden transition-colors group" :class="getCalendarDayBg(d)">
             
             <!-- 水印日期数字 -->
-            <div class="absolute bottom-1 right-2 text-[80px] leading-none font-black z-0 pointer-events-none select-none tracking-tighter" :class="calendarCells[d-1]?.dateStr === '2026-05-21' ? 'text-primary/10' : 'text-outline/10'">
+            <div class="absolute bottom-1 right-2 text-[80px] leading-none font-black z-0 pointer-events-none select-none tracking-tighter" :class="calendarCells[d-1]?.dateStr === todayStr ? 'text-primary/10' : 'text-outline/10'">
               {{ getCalendarDayText(d) }}
             </div>
 
@@ -329,7 +329,7 @@
                 class="text-[11px] px-1 py-0.5 leading-tight text-on-surface/90 font-medium flex items-start" 
                 :class="getCalendarDayActivities(d).length === 1 ? 'whitespace-normal break-words' : 'truncate'"
                 :title="act">
-                <span class="inline-block flex-shrink-0 w-1.5 h-1.5 rounded-full mr-1.5 mt-1" :class="calendarCells[d-1]?.dateStr > '2026-05-21' ? 'bg-yellow-500' : (calendarCells[d-1]?.dateStr === '2026-05-21' ? 'bg-blue-500' : 'bg-gray-400')"></span>
+                <span class="inline-block flex-shrink-0 w-1.5 h-1.5 rounded-full mr-1.5 mt-1" :class="calendarCells[d-1]?.dateStr > todayStr ? 'bg-yellow-500' : (calendarCells[d-1]?.dateStr === todayStr ? 'bg-blue-500' : 'bg-gray-400')"></span>
                 <span :class="getCalendarDayActivities(d).length === 1 ? '' : 'truncate'">{{ act }}</span>
               </div>
             </div>
@@ -523,6 +523,15 @@ import request from '@/utils/request'
 const API = '/api/youth/activities'
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
 
+const getTodayStr = () => {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const r = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${r}`
+}
+const todayStr = getTodayStr()
+
 const activeTab = ref('all')
 const showCalendarDialog = ref(false)
 const showMyActivitiesDialog = ref(false)
@@ -540,7 +549,7 @@ watch([activeTab, searchQuery], () => {
 const filteredEvents = computed(() => {
   const list = events.value.filter(activity => {
     const isEnrolled = enrolledActivityIds.value.has(activity.id)
-    const isPast = activity.date < '2026-05-21'
+    const isPast = activity.date < todayStr
     
     let notStarted = false
     let enrollmentEnded = false
@@ -548,10 +557,10 @@ const filteredEvents = computed(() => {
       const parts = activity.enrollTime.split(' ~ ')
       const startPart = parts[0] ? parts[0].substring(0, 10) : ''
       const endPart = parts[1] ? parts[1].substring(0, 10) : ''
-      if (startPart && startPart > '2026-05-21') {
+      if (startPart && startPart > todayStr) {
         notStarted = true
       }
-      if (endPart && endPart < '2026-05-21') {
+      if (endPart && endPart < todayStr) {
         enrollmentEnded = true
       }
     }
@@ -636,7 +645,7 @@ const getActivityState = (activity) => {
   }
   
   const isEnrolled = enrolledActivityIds.value.has(activity.id)
-  const isPast = activity.date < '2026-05-21'
+  const isPast = activity.date < todayStr
   
   let notStarted = false
   let enrollmentEnded = false
@@ -644,10 +653,10 @@ const getActivityState = (activity) => {
     const parts = activity.enrollTime.split(' ~ ')
     const startPart = parts[0] ? parts[0].substring(0, 10) : ''
     const endPart = parts[1] ? parts[1].substring(0, 10) : ''
-    if (startPart && startPart > '2026-05-21') {
+    if (startPart && startPart > todayStr) {
       notStarted = true
     }
-    if (endPart && endPart < '2026-05-21') {
+    if (endPart && endPart < todayStr) {
       enrollmentEnded = true
     }
   }
@@ -892,7 +901,7 @@ const getCalendarDayClass = (d) => {
   const cell = calendarCells.value[d - 1]
   if (!cell) return ''
   if (!cell.isCurrentMonth) return 'text-outline bg-transparent'
-  if (cell.dateStr === '2026-05-21') return 'bg-blue-600 text-white'
+  if (cell.dateStr === todayStr) return 'bg-blue-600 text-white'
   return 'text-on-surface bg-transparent'
 }
 
@@ -913,11 +922,11 @@ const getCalendarDayBg = (d) => {
   if (!cell) return 'bg-transparent'
   if (!cell.isCurrentMonth) return 'bg-surface-container-lowest/50'
   
-  if (cell.dateStr === '2026-05-21') return 'bg-blue-50/30'
+  if (cell.dateStr === todayStr) return 'bg-blue-50/30'
   
   const count = getCalendarActivityCount(d)
   if (count > 0) {
-    if (cell.dateStr > '2026-05-21') {
+    if (cell.dateStr > todayStr) {
       return 'bg-yellow-100/60'
     } else {
       return 'bg-surface-container/60'
