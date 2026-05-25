@@ -1,8 +1,10 @@
 <template>
   <div class="h-full flex flex-col">
     <div class="flex items-center gap-3 mb-4">
-      <button @click="runEngine" class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md">
-        <el-icon :size="14"><VideoPlay /></el-icon>运行预警引擎
+      <button @click="runEngine" :disabled="runningEngine" class="bg-purple-500 text-white hover:bg-purple-600 transition-colors rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold flex items-center gap-1 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+        <el-icon v-if="runningEngine" class="is-loading"><Loading /></el-icon>
+        <el-icon v-else :size="14"><VideoPlay /></el-icon>
+        <span>{{ runningEngine ? '正在分析...' : '运行预警引擎' }}</span>
       </button>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -42,7 +44,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { VideoPlay, Search } from '@element-plus/icons-vue'
+import { VideoPlay, Search, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/academic'
@@ -50,6 +52,7 @@ const API = '/api/academic'
 const searchQuery = ref('')
 const warnings = ref([])
 const config = ref({ failThreshold: 2, gpaThreshold: 2.0, declineSemesters: 2, autoNotify: true, autoEmail: false })
+const runningEngine = ref(false)
 
 const loadWarnings = async () => {
   try {
@@ -103,6 +106,8 @@ const statList = computed(() => [
 ])
 
 const runEngine = async () => {
+  if (runningEngine.value) return
+  runningEngine.value = true
   try {
     const res = await request.post(`${API}/warnings/run-engine`)
     if (res.data.code === 200) {
@@ -110,6 +115,9 @@ const runEngine = async () => {
       loadWarnings()
     }
   } catch (e) { ElMessage.error('预警引擎运行失败') }
+  finally {
+    runningEngine.value = false
+  }
 }
 
 const saveConfig = () => { ElMessage.success('预警配置已保存') }

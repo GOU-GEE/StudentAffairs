@@ -64,9 +64,10 @@
         </div>
 
         <div class="flex justify-end mt-5 pt-3 border-t border-outline-variant/10 flex-shrink-0">
-          <button @click="saveJob"
-                  class="px-8 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-md hover:shadow-lg">
-            <el-icon><Check /></el-icon>
+          <button @click="saveJob" :disabled="submitting"
+                  class="px-8 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <el-icon v-if="submitting" class="is-loading"><Loading /></el-icon>
+            <el-icon v-else><Check /></el-icon>
             {{ editingJob ? '确认保存' : '立即发布' }}
           </button>
         </div>
@@ -193,13 +194,15 @@
           <el-table-column label="审核操作" min-width="140" fixed="right">
             <template #default="{ row }">
               <div v-if="row.status === 'PENDING'" class="flex gap-2">
-                <button @click="handleApprove(row)" 
-                        class="text-xs font-bold text-green-600 hover:text-green-800 transition-colors flex items-center gap-0.5">
-                  <el-icon><Check /></el-icon>录用
+                <button @click="handleApprove(row)" :disabled="reviewingAppId !== null"
+                        class="text-xs font-bold text-green-600 hover:text-green-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-0.5">
+                  <el-icon v-if="reviewingAppId === row.id && reviewingType === 'APPROVE'" class="is-loading"><Loading /></el-icon>
+                  <el-icon v-else><Check /></el-icon>录用
                 </button>
-                <button @click="handleReject(row)" 
-                        class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors flex items-center gap-0.5">
-                  <el-icon><Close /></el-icon>不录用
+                <button @click="handleReject(row)" :disabled="reviewingAppId !== null"
+                        class="text-xs font-bold text-red-500 hover:text-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-0.5">
+                  <el-icon v-if="reviewingAppId === row.id && reviewingType === 'REJECT'" class="is-loading"><Loading /></el-icon>
+                  <el-icon v-else><Close /></el-icon>不录用
                 </button>
               </div>
               <span v-else class="text-xs text-outline">—</span>
@@ -218,7 +221,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Check, Edit, Refresh, User, Close, Folder } from '@element-plus/icons-vue'
+import { Check, Edit, Refresh, User, Close, Folder, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/financial-aid'
@@ -226,6 +229,9 @@ const API = '/api/financial-aid'
 const jobs = ref([])
 const jobApplications = ref([])
 const editingJob = ref(null)
+const submitting = ref(false)
+const reviewingAppId = ref(null)
+const reviewingType = ref('')
 
 const jobForm = ref({
   title: '',
@@ -312,10 +318,12 @@ const cancelEdit = () => {
 }
 
 const saveJob = async () => {
+  if (submitting.value) return
   if (!jobForm.value.title || !jobForm.value.department) {
     ElMessage.warning('岗位名称和用人部门为必填')
     return
   }
+  submitting.value = true
   try {
     const payload = {
       ...jobForm.value,
@@ -349,6 +357,8 @@ const saveJob = async () => {
       ElMessage.success('新岗位发布成功 (演示模式)')
     }
     cancelEdit()
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -402,6 +412,9 @@ const getStudentName = (studentId) => {
 }
 
 const handleApprove = async (app) => {
+  if (reviewingAppId.value !== null) return
+  reviewingAppId.value = app.id
+  reviewingType.value = 'APPROVE'
   try {
     const res = await request.put(`${API}/applications/${app.id}/review`, { status: 'APPROVED' })
     if (res.data.code === 200) {
@@ -412,10 +425,16 @@ const handleApprove = async (app) => {
   } catch {
     app.status = 'APPROVED'
     ElMessage.success(`已录用 ${getStudentName(app.studentId)} (演示模式)`)
+  } finally {
+    reviewingAppId.value = null
+    reviewingType.value = ''
   }
 }
 
 const handleReject = async (app) => {
+  if (reviewingAppId.value !== null) return
+  reviewingAppId.value = app.id
+  reviewingType.value = 'REJECT'
   try {
     const res = await request.put(`${API}/applications/${app.id}/review`, { status: 'REJECTED' })
     if (res.data.code === 200) {
@@ -426,6 +445,9 @@ const handleReject = async (app) => {
   } catch {
     app.status = 'REJECTED'
     ElMessage.success('已拒绝录用该学生 (演示模式)')
+  } finally {
+    reviewingAppId.value = null
+    reviewingType.value = ''
   }
 }
 

@@ -144,13 +144,15 @@
 
             <!-- 通过 / 驳回 -->
             <div v-if="selectedApp?.status === 'PENDING'" class="flex justify-end gap-2">
-              <button @click="handleReview('REJECTED')"
-                class="px-4 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
-                驳回
+              <button @click="handleReview('REJECTED')" :disabled="submitting"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                <el-icon v-if="submitting && submittingType === 'REJECTED'" class="is-loading"><Loading /></el-icon>
+                <span>驳回</span>
               </button>
-              <button @click="handleReview('APPROVED')"
-                class="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-sm">
-                通过
+              <button @click="handleReview('APPROVED')" :disabled="submitting"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                <el-icon v-if="submitting && submittingType === 'APPROVED'" class="is-loading"><Loading /></el-icon>
+                <span>通过</span>
               </button>
             </div>
           </div>
@@ -179,7 +181,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Medal, Document, Download, Close } from '@element-plus/icons-vue'
+import { Search, Medal, Document, Download, Close, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const applications = ref([])
@@ -188,6 +190,8 @@ const selectedId = ref(null)
 const activeFilter = ref('all')
 const reviewComment = ref('')
 const zoomedImageUrl = ref(null)
+const submitting = ref(false)
+const submittingType = ref('')
 
 const statusTabs = computed(() => [
   { key: 'all', label: '全部', count: applications.value.length },
@@ -254,8 +258,11 @@ const loadAwards = async () => {
 }
 
 const handleReview = async (status) => {
+  if (submitting.value) return
   if (!selectedId.value) return
   const comment = reviewComment.value || (status === 'APPROVED' ? '审核通过。' : '材料不符合要求，请重新提交。')
+  submitting.value = true
+  submittingType.value = status
   try {
     const res = await request.put(`/api/youth/awards/${selectedId.value}/review`, {
       status: status,
@@ -273,6 +280,9 @@ const handleReview = async (status) => {
     }
   } catch (e) {
     ElMessage.error('审核提交失败')
+  } finally {
+    submitting.value = false
+    submittingType.value = ''
   }
 }
 

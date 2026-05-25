@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="flex justify-end">
-            <el-button type="primary" class="!px-10 !py-6 !rounded-2xl shadow-lg shadow-blue-100 font-bold" @click="publishJob">确认发布岗位</el-button>
+            <el-button type="primary" :loading="submitting" class="!px-10 !py-6 !rounded-2xl shadow-lg shadow-blue-100 font-bold" @click="publishJob">确认发布岗位</el-button>
           </div>
         </div>
       </div>
@@ -94,8 +94,8 @@
             </span>
           </div>
           <div v-if="selectedApp?.id === app.id && app.status === 'PENDING'" class="animate-in fade-in duration-200 flex gap-2 mt-3">
-            <el-button type="primary" size="small" class="flex-1 !rounded-lg" @click.stop="review(app, 'APPROVED')">通过</el-button>
-            <el-button type="danger" size="small" plain class="flex-1 !rounded-lg" @click.stop="review(app, 'REJECTED')">驳回</el-button>
+            <el-button type="primary" :loading="reviewingAppId === app.id && reviewingType === 'APPROVED'" :disabled="reviewingAppId !== null" size="small" class="flex-1 !rounded-lg" @click.stop="review(app, 'APPROVED')">通过</el-button>
+            <el-button type="danger" :loading="reviewingAppId === app.id && reviewingType === 'REJECTED'" :disabled="reviewingAppId !== null" size="small" plain class="flex-1 !rounded-lg" @click.stop="review(app, 'REJECTED')">驳回</el-button>
           </div>
         </div>
         <div v-if="applications.length === 0" class="py-10 text-center text-gray-400 text-sm">
@@ -117,6 +117,9 @@ const jobForm = ref({ title: '', department: '', quota: 5 })
 const jobs = ref([])
 const applications = ref([])
 const selectedApp = ref(null)
+const submitting = ref(false)
+const reviewingAppId = ref(null)
+const reviewingType = ref('')
 
 const runningCount = computed(() => jobs.value.filter(j => j.status === 'ACTIVE').length)
 const fullCount = computed(() => jobs.value.filter(j => j.status === 'FULL').length)
@@ -133,25 +136,35 @@ const loadData = async () => {
 }
 
 const publishJob = async () => {
+  if (submitting.value) return
   if (!jobForm.value.title || !jobForm.value.department) {
-    ElMessage.warning('请填写岗位名称和部门')
+    ElMessage.warning('请填写岗位名称 and 部门')
     return
   }
+  submitting.value = true
   try {
     await request.post(`${API}/jobs`, jobForm.value)
     ElMessage.success('岗位发布成功')
     jobForm.value = { title: '', department: '', quota: 5 }
     await loadData()
   } catch (e) { ElMessage.error('发布失败') }
+  finally { submitting.value = false }
 }
 
 const review = async (app, status) => {
+  if (reviewingAppId.value !== null) return
+  reviewingAppId.value = app.id
+  reviewingType.value = status
   try {
     await request.put(`${API}/applications/${app.id}/review`, { status })
     ElMessage.success(status === 'APPROVED' ? '已通过' : '已驳回')
     selectedApp.value = null
     await loadData()
   } catch (e) { ElMessage.error('操作失败') }
+  finally {
+    reviewingAppId.value = null
+    reviewingType.value = ''
+  }
 }
 
 onMounted(loadData)

@@ -487,6 +487,7 @@ const checkIn = async (id) => {
 }
 
 const submitLeave = async () => {
+  if (submitting.value) return
   if (!leaveForm.value.startDate || !leaveForm.value.endDate) {
     ElMessage.warning('请选择请假时间'); return
   }

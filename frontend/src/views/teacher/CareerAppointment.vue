@@ -33,8 +33,14 @@
             <p class="text-xs text-secondary mt-0.5">学号：{{ active.studentId }} · {{ active.appointmentTime }}</p>
           </div>
           <div class="flex items-center gap-2">
-            <button v-if="active.status === 'PENDING'" @click="handleAccept" class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-bold hover:bg-green-600 transition-colors">接受预约</button>
-            <button v-if="active.status === 'PENDING'" @click="handleReject" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">拒绝</button>
+            <button v-if="active.status === 'PENDING'" @click="handleAccept" :disabled="submitting" class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-bold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5">
+              <el-icon v-if="submitting && submittingType === 'ACCEPT'" class="is-loading"><Loading /></el-icon>
+              <span>接受预约</span>
+            </button>
+            <button v-if="active.status === 'PENDING'" @click="handleReject" :disabled="submitting" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5">
+              <el-icon v-if="submitting && submittingType === 'REJECT'" class="is-loading"><Loading /></el-icon>
+              <span>拒绝</span>
+            </button>
             <span v-if="active.status === 'ACCEPTED'" class="text-sm font-bold text-green-600">已接受</span>
             <span v-if="active.status === 'REJECTED'" class="text-sm font-bold text-red-500">已拒绝</span>
           </div>
@@ -67,7 +73,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Calendar } from '@element-plus/icons-vue'
+import { Calendar, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/career'
@@ -76,6 +82,8 @@ const TEACHER_ID = sessionStorage.getItem('userId') || 'T001'
 const filterStatus = ref('')
 const activeId = ref(null)
 const appointments = ref([])
+const submitting = ref(false)
+const submittingType = ref('')
 
 const loadAppointments = async () => {
   try {
@@ -94,17 +102,31 @@ const active = computed(() => appointments.value.find(a => a.id === activeId.val
 const selectAppointment = (a) => { activeId.value = a.id }
 
 const handleAccept = async () => {
+  if (submitting.value) return
+  submitting.value = true
+  submittingType.value = 'ACCEPT'
   try {
     const res = await request.put(`${API}/appointments/${activeId.value}/accept`)
     if (res.data.code === 200) { ElMessage.success('已接受预约'); loadAppointments() }
   } catch (e) { ElMessage.error('操作失败') }
+  finally {
+    submitting.value = false
+    submittingType.value = ''
+  }
 }
 
 const handleReject = async () => {
+  if (submitting.value) return
+  submitting.value = true
+  submittingType.value = 'REJECT'
   try {
     const res = await request.put(`${API}/appointments/${activeId.value}/reject`)
     if (res.data.code === 200) { ElMessage.success('已拒绝预约'); loadAppointments() }
   } catch (e) { ElMessage.error('操作失败') }
+  finally {
+    submitting.value = false
+    submittingType.value = ''
+  }
 }
 
 const formatTime = (s) => {

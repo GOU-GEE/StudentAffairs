@@ -379,6 +379,7 @@ const loadAppointments = async () => {
   try { const res=await request.get(`${API}/appointments?studentId=${STUDENT_ID}`); if(res.data.code===200) appointments.value=res.data.data; updateStats() } catch(e){}
 }
 const submitAppointment = async () => {
+  if (submittingAppt.value) return
   if(!apptForm.value.appointmentTime||!apptForm.value.reason){ ElMessage.warning('请填写预约时间和咨询原因'); return }
   submittingAppt.value=true
   try {

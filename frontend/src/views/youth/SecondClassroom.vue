@@ -62,9 +62,10 @@
                 class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-gray-100 text-gray-400 cursor-not-allowed">
                 未结束
               </button>
-              <button v-else @click.stop="grantHours(activity)"
-                class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-emerald-500 text-white hover:bg-emerald-600">
-                发放学时
+              <button v-else @click.stop="grantHours(activity)" :disabled="submittingActivityId !== null"
+                class="w-full py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1">
+                <el-icon v-if="submittingActivityId === activity.id" class="is-loading"><Loading /></el-icon>
+                <span>发放学时</span>
               </button>
             </div>
           </div>
@@ -204,9 +205,10 @@
                 class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-gray-200 text-gray-400 cursor-not-allowed">
                 活动未结束
               </button>
-              <button v-else @click="grantHours(selectedActivity)"
-                class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-emerald-500 text-white hover:bg-emerald-600">
-                立即发放学时
+              <button v-else @click="grantHours(selectedActivity)" :disabled="submittingActivityId !== null"
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl font-bold text-[14px] shadow-sm transition-all bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed gap-1.5">
+                <el-icon v-if="submittingActivityId === selectedActivity.id" class="is-loading"><Loading /></el-icon>
+                <span>立即发放学时</span>
               </button>
             </div>
           </div>
@@ -220,7 +222,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Clock, Location, Timer, Close, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { Search, Clock, Location, Timer, Close, ArrowLeft, ArrowRight, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/youth/activities'
@@ -229,6 +231,7 @@ const activeTab = ref('ungranted')
 const searchQuery = ref('')
 const selectedActivity = ref(null)
 const grantedIds = ref([])
+const submittingActivityId = ref(null)
 
 const currentPage = ref(1)
 const pageSize = 5
@@ -318,6 +321,7 @@ const selectActivity = (activity) => {
 }
 
 const grantHours = async (activity) => {
+  if (submittingActivityId.value !== null) return
   if (activity.status !== 'completed') {
     ElMessage.warning('活动未结束，无法发放学时')
     return
@@ -326,6 +330,7 @@ const grantHours = async (activity) => {
     ElMessage.warning('无人可发放')
     return
   }
+  submittingActivityId.value = activity.id
   try {
     const res = await request.post('/api/youth/second-classroom/grant-batch', {
       activityId: activity.id,
@@ -345,6 +350,8 @@ const grantHours = async (activity) => {
     console.error('发放学时失败', e)
     const errorMsg = e.response?.data?.msg || '发放学时失败'
     ElMessage.error(errorMsg)
+  } finally {
+    submittingActivityId.value = null
   }
 }
 </script>

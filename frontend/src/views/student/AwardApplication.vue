@@ -462,6 +462,7 @@ const extractFileUrl = (f) => {
 }
 
 const submitAward = async () => {
+  if (submitting.value) return
   if (!form.value.awardName.trim()) { ElMessage.warning('请填写获奖名称'); return }
   if (!form.value.awardTime) { ElMessage.warning('请选择获奖时间'); return }
   if (!form.value.level) { ElMessage.warning('请选择获奖级别'); return }

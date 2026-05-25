@@ -54,7 +54,10 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-bold px-2 py-0.5 rounded-full" :class="c.status === '已入选' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'">{{ c.status }}</span>
-              <button v-if="c.status === '候选'" @click="selectCandidate(c)" class="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">入选</button>
+              <button v-if="c.status === '候选'" @click="selectCandidate(c)" :disabled="selectingCandidateId !== null" class="text-xs font-semibold text-emerald-600 hover:text-emerald-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                <el-icon v-if="selectingCandidateId === c.id" class="is-loading"><Loading /></el-icon>
+                <span>入选</span>
+              </button>
             </div>
           </div>
         </div>
@@ -84,7 +87,10 @@
       </el-form>
       <template #footer>
         <button @click="dialogVisible = false" class="px-4 py-2 text-secondary hover:text-on-surface transition-colors text-sm mr-3">取消</button>
-        <button @click="saveProject" class="px-6 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">创建</button>
+        <button @click="saveProject" :disabled="submitting" class="px-6 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5">
+          <el-icon v-if="submitting" class="is-loading"><Loading /></el-icon>
+          <span>创建</span>
+        </button>
       </template>
     </el-dialog>
   </div>
@@ -93,7 +99,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Loading } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const API = '/api/youth/honors'
@@ -104,6 +110,8 @@ const form = ref({ name: '', description: '', quota: 10, deadline: '' })
 
 const projects = ref([])
 const candidates = ref([])
+const submitting = ref(false)
+const selectingCandidateId = ref(null)
 
 const fetchProjects = async () => {
   try {
@@ -144,12 +152,14 @@ const openAddDialog = () => {
 }
 
 const saveProject = async () => {
+  if (submitting.value) return
   if (!form.value.name) { ElMessage.warning('项目名称为必填'); return }
   
   if (form.value.deadline instanceof Date) {
     form.value.deadline = form.value.deadline.toISOString().substring(0, 10)
   }
   
+  submitting.value = true
   try {
     await request.post(`${API}/projects`, form.value)
     ElMessage.success('评优项目已创建')
@@ -157,6 +167,8 @@ const saveProject = async () => {
     fetchProjects()
   } catch (e) {
     ElMessage.error('操作失败')
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -166,12 +178,16 @@ const viewCandidates = (project) => {
 }
 
 const selectCandidate = async (candidate) => {
+  if (selectingCandidateId.value !== null) return
+  selectingCandidateId.value = candidate.id
   try {
     await request.put(`${API}/candidates/${candidate.id}/select`)
     ElMessage.success(`${candidate.studentName} 已入选`)
     fetchCandidates(selectedProject.value.id)
   } catch (e) {
     ElMessage.error('操作失败')
+  } finally {
+    selectingCandidateId.value = null
   }
 }
 

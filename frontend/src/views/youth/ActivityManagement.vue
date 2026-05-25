@@ -125,9 +125,10 @@
                   class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl font-bold text-sm transition-colors">
             取消编辑
           </button>
-          <button @click="publishActivity"
-                  class="px-8 py-2.5 bg-emerald-400 text-white rounded-xl font-bold text-sm hover:bg-emerald-500 transition-colors flex items-center gap-2 shadow-md">
-            <el-icon><Check /></el-icon>
+          <button @click="publishActivity" :disabled="submitting"
+                  class="px-8 py-2.5 bg-emerald-400 text-white rounded-xl font-bold text-sm hover:bg-emerald-500 transition-colors flex items-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            <el-icon v-if="submitting" class="is-loading"><Loading /></el-icon>
+            <el-icon v-else><Check /></el-icon>
             {{ isEditing ? '保存修改' : '发布' }}
           </button>
         </div>
@@ -172,7 +173,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { Check, Calendar, Upload } from '@element-plus/icons-vue'
+import { Check, Calendar, Upload, Loading } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
@@ -182,6 +183,7 @@ const uploadHeaders = { Authorization: 'Bearer ' + sessionStorage.getItem('token
 const activities = ref([])
 const isEditing = ref(false)
 const editingId = ref(null)
+const submitting = ref(false)
 
 const defaultForm = () => ({
   coverImage: '',
@@ -233,6 +235,7 @@ const loadActivities = async () => {
 }
 
 const publishActivity = async () => {
+  if (submitting.value) return
   if (!form.value.title) {
     ElMessage.warning('活动标题为必填')
     return
@@ -259,6 +262,7 @@ const publishActivity = async () => {
   }
   form.value.status = '报名中'
 
+  submitting.value = true
   try {
     let res
     if (isEditing.value) {
@@ -276,6 +280,8 @@ const publishActivity = async () => {
     }
   } catch (e) {
     ElMessage.error(isEditing.value ? '修改失败' : '发布失败')
+  } finally {
+    submitting.value = false
   }
 }
 

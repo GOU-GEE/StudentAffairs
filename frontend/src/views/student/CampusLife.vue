@@ -136,7 +136,10 @@
               <div class="flex items-center gap-2 pb-0.5 pr-1">
                 <button @click="ElMessage.info('图片发送功能开发中')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Picture /></el-icon></button>
                 <button @click="ElMessage.info('文件发送功能开发中')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary transition-colors"><el-icon><Paperclip /></el-icon></button>
-                <button @click="sendChat" class="px-4 py-1.5 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!chatInput.trim()">发送</button>
+                <button @click="sendChat" class="px-4 py-1.5 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1" :disabled="!chatInput.trim() || sendingChat">
+                  <el-icon v-if="sendingChat" class="is-loading"><Loading /></el-icon>
+                  <span>发送</span>
+                </button>
               </div>
             </div>
           </div>
@@ -205,7 +208,10 @@
           <div class="p-4 border-t border-outline-variant/15 bg-white/40">
             <div class="flex gap-3">
               <textarea v-model="feedbackInput" rows="1" class="flex-1 resize-none outline-none text-sm p-3 bg-white rounded-xl border border-outline-variant/30 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all custom-scrollbar max-h-32 min-h-[44px]" placeholder="在此输入您的意见或建议..."></textarea>
-              <button @click="submitFeedback" class="px-6 py-2 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center h-[44px]" :disabled="!feedbackInput.trim()">提交</button>
+              <button @click="submitFeedback" :disabled="!feedbackInput.trim() || submittingFeedback" class="px-6 py-2 bg-primary text-on-primary-fixed font-bold text-sm rounded-xl hover:bg-primary-fixed transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 h-[44px]">
+                <el-icon v-if="submittingFeedback" class="is-loading"><Loading /></el-icon>
+                <span>提交</span>
+              </button>
             </div>
           </div>
         </div>
@@ -238,7 +244,7 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChatDotRound, ChatLineSquare, EditPen, Close, User, Clock, Picture, Paperclip, RefreshLeft } from '@element-plus/icons-vue'
+import { ChatDotRound, ChatLineSquare, EditPen, Close, User, Clock, Picture, Paperclip, RefreshLeft, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
@@ -259,6 +265,8 @@ const chatInput = ref('')
 const feedbackInput = ref('')
 const chatScrollContainer = ref(null)
 const chatInputRef = ref(null)
+const submittingFeedback = ref(false)
+const sendingChat = ref(false)
 
 // 聊天消息（从后端加载）
 const chatMessages = ref([])
@@ -356,7 +364,9 @@ const openFeedback = () => {
 }
 
 const submitFeedback = async () => {
+  if (submittingFeedback.value) return
   if (!feedbackInput.value.trim()) return
+  submittingFeedback.value = true
   try {
     const res = await request.post(`${API}/feedbacks`, {
       studentId,
@@ -372,10 +382,13 @@ const submitFeedback = async () => {
     }
   } catch (e) {
     ElMessage.error('提交失败，请稍后重试')
+  } finally {
+    submittingFeedback.value = false
   }
 }
 
 const sendChat = async () => {
+  if (sendingChat.value) return
   if (!chatInput.value.trim()) return
   const msg = {
     senderId: studentId,
@@ -384,6 +397,7 @@ const sendChat = async () => {
     content: chatInput.value.trim(),
     quoteId: quotingMessage.value?.id || null
   }
+  sendingChat.value = true
   try {
     const res = await request.post(`${API}/messages`, msg)
     if (res.data.code === 200) {
@@ -396,6 +410,9 @@ const sendChat = async () => {
       }
     }
   } catch (e) { ElMessage.error('发送失败') }
+  finally {
+    sendingChat.value = false
+  }
 }
 
 const canRecall = (msg) => {
