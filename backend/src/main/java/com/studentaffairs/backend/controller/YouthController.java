@@ -54,6 +54,13 @@ public class YouthController {
         return success(activityRepository.findAll());
     }
 
+    @GetMapping("/activities/enrolled")
+    public Map<String, Object> getEnrolledActivities(@RequestParam String studentId) {
+        List<ActivityEnrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
+        List<Long> ids = enrollments.stream().map(ActivityEnrollment::getActivityId).toList();
+        return success(ids);
+    }
+
     @PostMapping("/activities")
     public Map<String, Object> createActivity(@RequestBody Activity activity) {
         activity.setParticipants(0);

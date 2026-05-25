@@ -592,20 +592,29 @@ const enrolledActivityIds = ref(new Set())
 const imageErrors = ref(new Set())
 
 // Persistent enrolled activities
-const loadEnrolledActivities = () => {
-  const stored = localStorage.getItem('enrolled_activities_202301042')
-  if (stored) {
-    enrolledActivityIds.value = new Set(JSON.parse(stored))
-  } else {
-    // Pre-seed some default enrolled IDs for demonstration (3, 4, 5, 11)
-    const initial = [3, 4, 5, 11]
-    enrolledActivityIds.value = new Set(initial)
-    localStorage.setItem('enrolled_activities_202301042', JSON.stringify(initial))
+const loadEnrolledActivities = async () => {
+  try {
+    const res = await request.get(`${API}/enrolled`, { params: { studentId: STUDENT_ID } })
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      enrolledActivityIds.value = new Set(res.data.data)
+      saveEnrolledActivities()
+    }
+  } catch (e) {
+    console.error('加载已报名活动失败，从本地存储回退', e)
+    const stored = localStorage.getItem('enrolled_activities_' + STUDENT_ID)
+    if (stored) {
+      enrolledActivityIds.value = new Set(JSON.parse(stored))
+    } else {
+      // Pre-seed some default enrolled IDs for demonstration (3, 4, 5, 11)
+      const initial = [3, 4, 5, 11]
+      enrolledActivityIds.value = new Set(initial)
+      localStorage.setItem('enrolled_activities_' + STUDENT_ID, JSON.stringify(initial))
+    }
   }
 }
 
 const saveEnrolledActivities = () => {
-  localStorage.setItem('enrolled_activities_202301042', JSON.stringify(Array.from(enrolledActivityIds.value)))
+  localStorage.setItem('enrolled_activities_' + STUDENT_ID, JSON.stringify(Array.from(enrolledActivityIds.value)))
 }
 
 const handleImageError = (id) => {
