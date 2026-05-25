@@ -417,7 +417,8 @@ onMounted(()=>{
 .custom-calendar-dialog .el-dialog__body{flex:1;min-height:0;padding:0!important}
 
 @media (min-width: 768px) {
-  .custom-quiz-overlay {
+  .custom-quiz-overlay,
+  .custom-quiz-overlay .el-overlay-dialog {
     left: 256px !important;
     width: calc(100% - 256px) !important;
   }

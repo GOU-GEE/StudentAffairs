@@ -30,7 +30,7 @@ import { chromium } from 'playwright';
   await page.waitForSelector('.custom-quiz-dialog', { timeout: 10000 });
   await page.waitForTimeout(1500); // Wait for open transition
   
-  const screenshotPath = '/Users/goulijun/.gemini/antigravity/brain/8eaa7423-aa2a-4c85-94ae-a1fda804e804/career-quiz-modal.png';
+  const screenshotPath = '/Users/goulijun/.gemini/antigravity/brain/8eaa7423-aa2a-4c85-94ae-a1fda804e804/career-quiz-modal-v5.png';
   console.log(`Taking screenshot and saving to: ${screenshotPath}`);
   await page.screenshot({ path: screenshotPath });
   
