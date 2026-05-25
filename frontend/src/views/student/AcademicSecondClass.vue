@@ -67,7 +67,7 @@
       <!-- Left: Course Grade Details -->
       <div class="lg:col-span-6 bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-full">
         <h3 class="text-base font-bold text-gray-800 mb-4">课程成绩明细</h3>
-        <el-table :data="tableData" style="width:100%" max-height="576" :header-cell-style="{background:'#F9FAFB', color:'#4B5563', fontWeight:'normal'}" :row-style="{height:'48px'}">
+        <el-table :data="paginatedTableData" style="width:100%" :header-cell-style="{background:'#F9FAFB', color:'#4B5563', fontWeight:'normal', height:'40px', padding:'4px 0'}" :row-style="{height:'40px'}" :cell-style="{padding:'4px 0'}">
           <el-table-column prop="name" label="课程名称" show-overflow-tooltip>
              <template #default="scope">
                 <span class="font-medium text-gray-800">{{ scope.row.name }}</span>
@@ -85,6 +85,14 @@
         </el-table>
         <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
           <span class="text-sm text-gray-500">共 {{ tableData.length }} 条</span>
+          <el-pagination
+            v-model:current-page="currentPage"
+            :page-size="11"
+            :total="tableData.length"
+            layout="prev, pager, next"
+            small
+            background
+          />
         </div>
       </div>
 
@@ -285,6 +293,14 @@ const tableData = computed(() => {
     semester: r.semester,
     status: r.score >= 90 ? '优秀' : r.score >= 80 ? '良好' : r.score >= 70 ? '中等' : r.score >= 60 ? '及格' : '不及格'
   }))
+})
+
+const currentPage = ref(1)
+const pageSize = 11
+const paginatedTableData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  const end = start + pageSize
+  return tableData.value.slice(start, end)
 })
 
 const initCharts = () => {
