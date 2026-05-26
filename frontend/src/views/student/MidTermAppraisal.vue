@@ -60,47 +60,20 @@
             </div>
           </div>
 
-          <!-- 3. 附件上传区 -->
-          <div class="space-y-6">
-            <div class="flex items-center gap-3 mb-4">
-              <h3 class="text-xl font-bold tracking-tight">附件支撑材料</h3>
+          <!-- Action Buttons (Bottom Bar) -->
+          <div class="absolute bottom-8 left-8 right-8 flex items-center justify-between">
+            <div>
+              <el-button v-if="isSubmitted" type="warning" size="large" round class="px-8" @click="enableEdit">重新填写</el-button>
             </div>
-            
-            <el-upload
-              action="/api/upload"
-              :headers="uploadHeaders"
-              v-model:file-list="fileList"
-              multiple
-              :limit="5"
-              :on-exceed="handleExceed"
-              :on-success="handleUploadSuccess"
-              :disabled="isSubmitted"
-              class="midterm-uploader"
-            >
-              <div class="border-2 border-dashed border-outline-variant/30 rounded-2xl p-10 flex flex-col items-center justify-center gap-3 hover:border-primary/50 transition-colors cursor-pointer bg-surface/50">
-                <el-icon class="text-4xl text-outline-variant"><UploadFilled /></el-icon>
-                <div class="text-center">
-                  <p class="text-sm font-bold">点击或拖拽文件上传</p>
-                  <p class="text-xs text-outline mt-1">支持成绩单、获奖证书、支撑材料 (最多5个)</p>
-                </div>
+            <div class="flex items-center gap-4">
+              <template v-if="!isSubmitted">
+                <el-button size="large" round class="px-8" @click="saveDraft">保存草稿</el-button>
+                <el-button type="primary" size="large" round class="px-10 shadow-lg shadow-[#409eff]/20 !bg-[#409eff] !border-[#409eff]" @click="submitForm">正式提交</el-button>
+              </template>
+              <div v-else class="flex items-center gap-2 text-green-600 font-bold bg-green-50 px-6 py-2.5 rounded-full border border-green-100 h-[40px] text-sm box-border flex-shrink-0">
+                <el-icon><CircleCheckFilled /></el-icon> 已提交
               </div>
-            </el-upload>
-          </div>
-
-          <!-- Action Buttons (Positioned bottom-right) -->
-          <div class="absolute bottom-8 right-8 flex items-center gap-4">
-            <template v-if="!isSubmitted">
-              <el-button size="large" round class="px-8" @click="saveDraft">保存草稿</el-button>
-              <el-button type="primary" size="large" round class="px-10 shadow-lg shadow-[#409eff]/20 !bg-[#409eff] !border-[#409eff]" @click="submitForm">正式提交</el-button>
-            </template>
-            <div v-else class="flex items-center gap-2 text-green-600 font-bold bg-green-50 px-6 py-2 rounded-full border border-green-100">
-              <el-icon><CircleCheckFilled /></el-icon> 已提交
             </div>
-          </div>
-
-          <!-- Left-bottom "重新填写" button -->
-          <div v-if="isSubmitted" class="absolute bottom-8 left-8">
-            <el-button type="warning" size="large" round class="px-8" @click="enableEdit">重新填写</el-button>
           </div>
         </section>
       </div>
