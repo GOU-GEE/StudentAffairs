@@ -4,9 +4,11 @@ import com.studentaffairs.backend.controller.YouthController;
 import com.studentaffairs.backend.entity.Activity;
 import com.studentaffairs.backend.entity.ActivityEnrollment;
 import com.studentaffairs.backend.entity.SecondClassroomRecord;
+import com.studentaffairs.backend.entity.YouthAward;
 import com.studentaffairs.backend.repository.ActivityEnrollmentRepository;
 import com.studentaffairs.backend.repository.ActivityRepository;
 import com.studentaffairs.backend.repository.SecondClassroomRecordRepository;
+import com.studentaffairs.backend.repository.YouthAwardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class YouthControllerIntegrationTest {
 
     @Autowired
     private SecondClassroomRecordRepository recordRepository;
+
+    @Autowired
+    private YouthAwardRepository awardRepository;
 
     private Activity testActivity;
 
@@ -152,5 +157,54 @@ public class YouthControllerIntegrationTest {
 
         // Total records should STILL be 2, not 4
         assertEquals(2, recordRepository.count());
+    }
+
+    @Test
+    public void testReviewAwardAndGrantSecondClassroomCredits() {
+        // Clean database
+        awardRepository.deleteAll();
+        recordRepository.deleteAll();
+
+        // 1. Create and submit a pending YouthAward
+        YouthAward award = new YouthAward();
+        award.setStudentId("202301042");
+        award.setStudentName("张小明");
+        award.setAwardName("全国智能车竞赛一等奖");
+        award.setLevel("国家级");
+        award.setCategory("学科竞赛");
+        award.setAwardTime("2026-05");
+        award.setStatus("PENDING");
+        YouthAward savedAward = awardRepository.save(award);
+
+        // 2. Review and approve the award via controller
+        Map<String, String> reviewReq = new HashMap<>();
+        reviewReq.put("status", "APPROVED");
+        reviewReq.put("reviewComment", "优秀！准予认定");
+
+        Map<String, Object> reviewResult = youthController.reviewAward(savedAward.getId(), reviewReq);
+        assertEquals(200, reviewResult.get("code"));
+
+        // Verify status in DB is updated
+        YouthAward updatedAward = awardRepository.findById(savedAward.getId()).orElseThrow();
+        assertEquals("APPROVED", updatedAward.getStatus());
+        assertEquals("优秀！准予认定", updatedAward.getReviewComment());
+
+        // 3. Verify automatic SecondClassroomRecord creation
+        List<SecondClassroomRecord> records = recordRepository.findByStudentId("202301042");
+        assertEquals(1, records.size());
+
+        SecondClassroomRecord r = records.get(0);
+        assertEquals(1, r.getCategoryIndex()); // 学科竞赛 -> 1 (创新创造)
+        assertEquals(8, r.getHours()); // 国家级 -> 8
+        assertEquals("《全国智能车竞赛一等奖》获奖认定(国家级)", r.getReason());
+        assertEquals("张小明", r.getStudentName());
+        assertEquals("2023级2班", r.getClassName()); // Resolved from profile
+
+        // 4. Test idempotency: call reviewAward again with APPROVED
+        Map<String, Object> reviewResult2 = youthController.reviewAward(savedAward.getId(), reviewReq);
+        assertEquals(200, reviewResult2.get("code"));
+
+        // Count should STILL be 1, not 2
+        assertEquals(1, recordRepository.count());
     }
 }

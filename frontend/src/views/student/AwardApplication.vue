@@ -3,19 +3,12 @@
     <!-- 左侧：录入表单 -->
     <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
       <!-- 头部标题 -->
-      <div class="px-6 pt-6 pb-5 border-b border-gray-100 flex-shrink-0">
-        <div>
-          <h3 class="text-base font-bold text-gray-900">获奖情况录入</h3>
-          <p class="text-xs text-gray-400 mt-0.5">上传您的获奖证明材料，提交至辅导员审核后将计入个人档案</p>
-        </div>
+      <div class="px-6 pt-6 pb-5 border-b border-gray-100 flex-shrink-0 flex items-center gap-2">
+        <el-icon class="text-blue-500" :size="18"><Document /></el-icon>
+        <h3 class="text-base font-bold text-gray-900">获奖基本信息</h3>
       </div>
 
       <div class="flex-1 overflow-y-auto px-6 py-5">
-        <!-- 获奖基本信息 -->
-        <div class="flex items-center gap-2 mb-4">
-          <el-icon class="text-gray-400" :size="15"><Document /></el-icon>
-          <span class="text-sm font-bold text-gray-700">获奖基本信息</span>
-        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
           <!-- 获奖名称 -->
@@ -277,25 +270,29 @@
               <div class="text-gray-400 text-xs font-semibold">获奖名称：</div>
               <div class="text-gray-800 mt-1 font-bold text-base leading-snug">{{ selectedAward.awardName }}</div>
             </div>
-            <div>
-              <div class="text-gray-400 text-xs font-semibold">获奖时间：</div>
-              <div class="text-gray-800 mt-1 font-medium">{{ selectedAward.awardTime }}</div>
-            </div>
-            <div>
-              <div class="text-gray-400 text-xs font-semibold">获奖级别：</div>
-              <div class="text-gray-800 mt-1 font-medium">
-                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-semibold border border-blue-100/50">{{ selectedAward.level }}</span>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-gray-400 text-xs font-semibold">获奖时间：</div>
+                <div class="text-gray-800 mt-1 font-medium">{{ selectedAward.awardTime }}</div>
+              </div>
+              <div>
+                <div class="text-gray-400 text-xs font-semibold">获奖级别：</div>
+                <div class="text-gray-800 mt-1 font-medium">
+                  <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-semibold border border-blue-100/50">{{ selectedAward.level }}</span>
+                </div>
               </div>
             </div>
-            <div>
-              <div class="text-gray-400 text-xs font-semibold">获奖类别：</div>
-              <div class="text-gray-800 mt-1 font-medium">
-                <span class="px-2.5 py-0.5 bg-purple-50 text-purple-600 rounded-full text-xs font-semibold border border-purple-100/50">{{ selectedAward.category }}</span>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="text-gray-400 text-xs font-semibold">获奖类别：</div>
+                <div class="text-gray-800 mt-1 font-medium">
+                  <span class="px-2.5 py-0.5 bg-purple-50 text-purple-600 rounded-full text-xs font-semibold border border-purple-100/50">{{ selectedAward.category }}</span>
+                </div>
               </div>
-            </div>
-            <div>
-              <div class="text-gray-400 text-xs font-semibold">颁奖单位：</div>
-              <div class="text-gray-800 mt-1 font-medium">{{ selectedAward.issuer || '暂无颁奖单位' }}</div>
+              <div>
+                <div class="text-gray-400 text-xs font-semibold">颁奖单位：</div>
+                <div class="text-gray-800 mt-1 font-medium">{{ selectedAward.issuer || '暂无颁奖单位' }}</div>
+              </div>
             </div>
             <div>
               <div class="text-gray-400 text-xs font-semibold">获奖简述：</div>

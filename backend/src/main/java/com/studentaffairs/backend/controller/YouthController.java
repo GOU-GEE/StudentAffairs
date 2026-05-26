@@ -209,16 +209,85 @@ public class YouthController {
             + (comment != null && !comment.trim().isEmpty() ? " 审核意见：" + comment : ""));
         notif.setTag(statusZh);
         if ("APPROVED".equals(status)) {
-            notif.setTagStyle("bg-green-50 text-green-600 border-green-100");
+            notif.setTagStyle("bg-green-50 text-green-600 border-green-100/50");
         } else {
-            notif.setTagStyle("bg-red-50 text-red-600 border-red-100");
+            notif.setTagStyle("bg-red-50 text-red-600 border-red-100/50");
         }
         notif.setPath("/student/applications/awards");
         notif.setIsRead(false);
         notif.setCreateTime(LocalDateTime.now());
         notificationRepository.save(notif);
 
+        // Automatically grant Second Classroom credits/hours if approved
+        if ("APPROVED".equals(status)) {
+            StudentProfile profile = studentProfileRepository.findByStudentId(saved.getStudentId()).orElse(null);
+            String className = profile != null ? profile.getGradeClass() : "2023级2班";
+            String studentName = profile != null ? profile.getName() : saved.getStudentName();
+
+            int categoryIndex = mapAwardCategoryToCategoryIndex(saved.getCategory());
+            int hours = mapAwardLevelToHours(saved.getLevel());
+            String reason = "《" + saved.getAwardName() + "》获奖认定(" + saved.getLevel() + ")";
+
+            // Check if already exists to prevent duplicate addition
+            boolean alreadyExists = false;
+            List<SecondClassroomRecord> existing = recordRepository.findByStudentId(saved.getStudentId());
+            for (SecondClassroomRecord r : existing) {
+                if (reason.equals(r.getReason()) && r.getHours().equals(hours) && r.getCategoryIndex().equals(categoryIndex)) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists) {
+                SecondClassroomRecord record = new SecondClassroomRecord();
+                record.setStudentId(saved.getStudentId());
+                record.setStudentName(studentName);
+                record.setClassName(className);
+                record.setCategoryIndex(categoryIndex);
+                record.setHours(hours);
+                record.setReason(reason);
+                record.setGrantTime(LocalDateTime.now());
+                recordRepository.save(record);
+            }
+        }
+
         return success(saved);
+    }
+
+    private int mapAwardCategoryToCategoryIndex(String category) {
+        if (category == null) return 5; // Default to 技能特长 (index 5)
+        switch (category) {
+            case "学科竞赛":
+            case "学术科研":
+                return 1; // 创新创造
+            case "社会实践":
+                return 2; // 社会实践/劳动教育
+            case "荣誉称号":
+                return 3; // 思想素质
+            case "文体活动":
+                return 4; // 文艺体育
+            case "其他":
+            default:
+                return 5; // 技能特长
+        }
+    }
+
+    private int mapAwardLevelToHours(String level) {
+        if (level == null) return 2;
+        switch (level) {
+            case "国家级":
+                return 8;
+            case "省级":
+            case "省部级":
+                return 6;
+            case "市级":
+                return 4;
+            case "校级":
+                return 3;
+            case "院级":
+            default:
+                return 2;
+        }
     }
 
     // ================= Honors Projects =================
