@@ -27,17 +27,16 @@
                class="p-3 rounded-xl cursor-pointer transition-all border"
                :class="selectedStudent?.id === stu.id ? 'border-blue-200 bg-blue-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'">
             <div class="flex items-center gap-2.5">
-              <img :src="stu.avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+              <img v-if="stu.avatar" :src="stu.avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+              <div v-else class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ stu.name.charAt(0) }}</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-1">
                   <span class="text-sm font-bold text-gray-900 truncate">{{ stu.name }}</span>
                   <span class="text-xs font-bold flex-shrink-0" :class="statusColor(stu.status)">{{ stu.status }}</span>
                 </div>
-                <p class="text-xs text-gray-400 truncate">学号：{{ stu.studentId }}</p>
-                <p class="text-xs text-gray-400 truncate">{{ stu.className }}</p>
+                <p class="text-xs text-gray-400 truncate">{{ stu.studentId }} · {{ stu.className }}</p>
               </div>
             </div>
-            <p class="text-xs text-gray-400 mt-1.5">提交：{{ stu.submitTime }}</p>
           </div>
           <div v-if="filteredStudents.length === 0" class="py-10 text-center text-gray-400 text-xs">暂无数据</div>
         </div>
@@ -193,6 +192,18 @@ const students = ref(BATCH_DATA['国家励志奖学金'])
 
 const loadStudentsData = async () => {
   try {
+    const avatarMap = {}
+    try {
+      const profilesRes = await request.get('/api/admin/students')
+      if (profilesRes.data.code === 200 && Array.isArray(profilesRes.data.data)) {
+        profilesRes.data.data.forEach(p => {
+          avatarMap[p.studentId] = p.avatar
+        })
+      }
+    } catch (err) {
+      console.error('Failed to load student profiles for avatar mapping', err)
+    }
+
     const res = await request.get('/api/applications/all')
     if (res.data.code === 200 && Array.isArray(res.data.data)) {
       const rawList = res.data.data.filter(item => item.type === 'SCHOLARSHIP')
@@ -236,7 +247,7 @@ const loadStudentsData = async () => {
           name: item.studentName,
           studentId: item.studentId,
           className: detail.classGrade || '软工2班',
-          avatar: `https://i.pravatar.cc/150?u=${item.studentId}`,
+          avatar: avatarMap[item.studentId] || "",
           status: uiStatus,
           rawStatus: item.status,
           typeLabel: getScholarshipTypeLabel(detail.scholarType) || item.title,

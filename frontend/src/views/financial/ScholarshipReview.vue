@@ -26,7 +26,8 @@
             class="p-3 rounded-xl cursor-pointer transition-all border"
             :class="selectedStudent?.id === stu.id ? 'border-blue-200 bg-blue-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'">
             <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ stu.name.charAt(0) }}</div>
+              <img v-if="stu.avatar" :src="stu.avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+              <div v-else class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ stu.name.charAt(0) }}</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-1">
                   <span class="text-sm font-bold text-gray-900 truncate">{{ stu.name }}</span>
@@ -272,6 +273,18 @@ const getScholarshipTypeLabel = (type) => {
 
 const loadCenterData = async () => {
   try {
+    const avatarMap = {}
+    try {
+      const profilesRes = await request.get('/api/admin/students')
+      if (profilesRes.data.code === 200 && Array.isArray(profilesRes.data.data)) {
+        profilesRes.data.data.forEach(p => {
+          avatarMap[p.studentId] = p.avatar
+        })
+      }
+    } catch (err) {
+      console.error('Failed to load student profiles for avatar mapping', err)
+    }
+
     const res = await request.get('/api/applications/all')
     if (res.data.code === 200 && Array.isArray(res.data.data)) {
       const rawList = res.data.data.filter(item => 
@@ -313,6 +326,7 @@ const loadCenterData = async () => {
           status: uiStatus,
           rawStatus: item.status,
           reviewComment: item.reviewComment,
+          avatar: avatarMap[item.studentId] || "",
           rawItem: item
         }
       })
