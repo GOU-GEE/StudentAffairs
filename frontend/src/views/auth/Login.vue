@@ -52,8 +52,6 @@
             <span v-else>登 录</span>
           </button>
         </form>
-
-        <p class="text-xs text-outline text-center mt-4">系统将根据账号自动识别角色并跳转至对应工作台</p>
       </div>
     </div>
   </div>
