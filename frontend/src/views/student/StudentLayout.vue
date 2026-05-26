@@ -90,8 +90,8 @@
           </button>
           <!-- 头像 -->
           <div class="flex items-center gap-2 cursor-pointer group">
-            <img src="/avatar-placeholder.png" class="w-8 h-8 rounded-full border border-outline-variant/30">
-            <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">张小明</span>
+            <img :src="profileForm.avatar || '/avatar-placeholder.png'" class="w-8 h-8 rounded-full border border-outline-variant/30 object-cover">
+            <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">{{ profileForm.name }}</span>
           </div>
         </div>
       </header>
@@ -105,8 +105,15 @@
             <div class="bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 p-6 shadow-sm hover:bg-white/50 transition-all">
               <div class="flex gap-5 items-center">
                 <!-- 最左列：头像 + 在读标签，上下居中 -->
-                <div class="flex flex-col items-center justify-center gap-2 flex-shrink-0 w-[6.5rem]">
-                  <img src="/avatar-placeholder.png" class="w-24 h-24 rounded-full object-cover shadow-md ring-2 ring-white">
+                <div class="flex flex-col items-center justify-center gap-2 flex-shrink-0 w-[6.5rem] relative group/avatar">
+                  <div class="relative w-24 h-24 rounded-full overflow-hidden shadow-md ring-2 ring-white cursor-pointer" @click="triggerAvatarUpload">
+                    <img :src="profileForm.avatar || '/avatar-placeholder.png'" class="w-full h-full object-cover">
+                    <div v-if="isEditingProfile" class="absolute inset-0 bg-black/45 flex flex-col items-center justify-center text-white opacity-0 hover:opacity-100 transition-opacity">
+                      <el-icon :size="20"><Camera /></el-icon>
+                      <span class="text-[0.6rem] mt-0.5 font-bold">更换头像</span>
+                    </div>
+                  </div>
+                  <input v-if="isEditingProfile" type="file" ref="avatarInput" class="hidden" accept="image/*" @change="handleAvatarChange">
                   <span class="px-2.5 py-0.5 bg-green-50 text-green-700 text-[0.65rem] font-bold rounded-full border border-green-100">在读</span>
                 </div>
 
@@ -119,7 +126,7 @@
                       <button @click="showPrivacy = !showPrivacy" class="px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-1.5">
                         <el-icon><View v-if="!showPrivacy" /><Hide v-else /></el-icon>{{ showPrivacy ? '隐藏私密信息' : '展示私密信息' }}
                       </button>
-                      <button @click="isEditingProfile = !isEditingProfile" :class="isEditingProfile ? 'bg-primary text-on-primary-fixed border-primary' : 'border-outline-variant/30 text-secondary hover:bg-surface-container-low'" class="px-3 py-1.5 border rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+                      <button @click="handleEditToggle" :class="isEditingProfile ? 'bg-primary text-on-primary-fixed border-primary' : 'border-outline-variant/30 text-secondary hover:bg-surface-container-low'" class="px-3 py-1.5 border rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
                         <el-icon><EditPen /></el-icon>{{ isEditingProfile ? '保存信息' : '编辑信息' }}
                       </button>
                       <button @click="showPdfPreview = true" class="px-3 py-1.5 border border-outline-variant/30 rounded-lg text-xs font-semibold text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-1.5">
@@ -461,10 +468,10 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation, Medal } from '@element-plus/icons-vue'
+import { UserFilled, Reading, Document, Guide, School, Bell, Setting, Close, Lock, SwitchButton, ArrowRightBold, Phone, CircleCheck, EditPen, ArrowDown, User, Postcard, Message, Location, House, CollectionTag, MapLocation, Download, Hide, View, Printer, LocationInformation, Medal, Camera } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
@@ -491,6 +498,18 @@ const showPdfPreview = ref(false)
 
 const handlePrint = () => {
   window.print()
+}
+
+const maskIdCard = (val) => {
+  if (!val) return ''
+  if (val.length < 8) return val
+  return val.substring(0, 3) + '*'.repeat(val.length - 7) + val.substring(val.length - 4)
+}
+
+const maskPhone = (val) => {
+  if (!val) return ''
+  if (val.length < 7) return val
+  return val.substring(0, 3) + ' **** ' + val.substring(val.length - 4)
 }
 
 const profileForm = ref({
@@ -523,6 +542,136 @@ const profileForm = ref({
   emerg2Phone: '15012347777',
   emerg2PhoneMasked: '150 **** 7777',
 })
+
+const avatarInput = ref(null)
+
+const triggerAvatarUpload = () => {
+  if (!isEditingProfile.value) return
+  if (avatarInput.value) {
+    avatarInput.value.click()
+  }
+}
+
+const handleAvatarChange = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  const formData = new FormData()
+  formData.append('file', file)
+  try {
+    const res = await request.post('/api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    if (res.data.code === 200 && res.data.data.url) {
+      profileForm.value.avatar = res.data.data.url
+      ElMessage.success('头像上传成功')
+    } else {
+      ElMessage.error(res.data.msg || '头像上传失败')
+    }
+  } catch (err) {
+    console.error(err)
+    ElMessage.error('头像上传失败')
+  }
+}
+
+const fetchProfile = async () => {
+  try {
+    const res = await request.get(`/api/admin/students/profile/${STUDENT_ID}`)
+    if (res.data.code === 200 && res.data.data) {
+      const data = res.data.data
+      const extra = data.extraInfo || {}
+      
+      profileForm.value = {
+        name: data.name || '',
+        studentId: data.studentId || STUDENT_ID,
+        idCard: data.idCard || '',
+        idCardMasked: maskIdCard(data.idCard || ''),
+        college: data.college || '',
+        major: data.major || '',
+        classGrade: data.gradeClass || '',
+        campus: extra.campus || '南校区',
+        avatar: data.avatar || '',
+        phone: extra.phone || '',
+        phoneMasked: maskPhone(extra.phone || ''),
+        email: extra.email || '',
+        dorm: extra.dorm || '',
+        offCampus: extra.offCampus || '',
+        medical: extra.medical || '',
+        blood: extra.bloodType || extra.blood || '',
+        hobbies: Array.isArray(extra.hobbies) ? extra.hobbies.join(', ') : (extra.hobbies || ''),
+        personality: extra.personality || '',
+        goal: extra.careerGoal || extra.goal || '',
+        fatherPhone: extra.fatherPhone || '',
+        fatherPhoneMasked: maskPhone(extra.fatherPhone || ''),
+        motherPhone: extra.motherPhone || '',
+        motherPhoneMasked: maskPhone(extra.motherPhone || ''),
+        emerg1Name: extra.emerg1Name || extra.emergencyContact1 || '',
+        emerg1Phone: extra.emerg1Phone || '',
+        emerg1PhoneMasked: maskPhone(extra.emerg1Phone || ''),
+        emerg2Name: extra.emerg2Name || extra.emergencyContact2 || '',
+        emerg2Phone: extra.emerg2Phone || '',
+        emerg2PhoneMasked: maskPhone(extra.emerg2Phone || ''),
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load student profile', err)
+  }
+}
+
+const saveProfile = async () => {
+  try {
+    const payload = {
+      studentId: STUDENT_ID,
+      name: profileForm.value.name,
+      avatar: profileForm.value.avatar,
+      college: profileForm.value.college,
+      major: profileForm.value.major,
+      gradeClass: profileForm.value.classGrade,
+      idCard: profileForm.value.idCard,
+      extraInfo: {
+        phone: profileForm.value.phone,
+        email: profileForm.value.email,
+        campus: profileForm.value.campus,
+        dorm: profileForm.value.dorm,
+        offCampus: profileForm.value.offCampus,
+        medical: profileForm.value.medical,
+        bloodType: profileForm.value.blood,
+        hobbies: profileForm.value.hobbies ? profileForm.value.hobbies.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [],
+        personality: profileForm.value.personality,
+        careerGoal: profileForm.value.goal,
+        fatherPhone: profileForm.value.fatherPhone,
+        motherPhone: profileForm.value.motherPhone,
+        emerg1Name: profileForm.value.emerg1Name,
+        emerg1Phone: profileForm.value.emerg1Phone,
+        emerg2Name: profileForm.value.emerg2Name,
+        emerg2Phone: profileForm.value.emerg2Phone,
+      }
+    }
+
+    const res = await request.put(`/api/admin/students/profile/${STUDENT_ID}`, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('个人资料保存成功')
+      await fetchProfile()
+      isEditingProfile.value = false
+    } else {
+      ElMessage.error(res.data.msg || '保存失败')
+    }
+  } catch (err) {
+    console.error('Failed to save profile', err)
+    ElMessage.error('保存个人资料异常')
+  }
+}
+
+const handleEditToggle = () => {
+  if (isEditingProfile.value) {
+    saveProfile()
+  } else {
+    isEditingProfile.value = true
+  }
+}
+
+provide('studentProfile', profileForm)
 
 const copyPhone = (phone) => {
   navigator.clipboard.writeText(phone).then(() => {
@@ -717,6 +866,7 @@ const closeNotif = () => { notifOpen.value = false }
 let pollTimer = null
 onMounted(() => {
   document.addEventListener('click', closeNotif)
+  fetchProfile()
   fetchNotifications()
   // Poll for new notifications
   pollTimer = setInterval(fetchNotifications, 5000)

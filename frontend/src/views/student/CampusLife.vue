@@ -242,7 +242,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, watch, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChatDotRound, ChatLineSquare, EditPen, Close, User, Clock, Picture, Paperclip, RefreshLeft, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -257,7 +257,9 @@ const studentName = sessionStorage.getItem('userName') || '张小明'
 const teacherId = 'T001'
 const teacherName = '李老师'
 const teacherAvatar = '/avatar-placeholder.png'
-const studentAvatar = '/avatar-placeholder.png'
+
+const profile = inject('studentProfile')
+const studentAvatar = computed(() => profile?.value?.avatar || '/avatar-placeholder.png')
 
 const currentTab = ref('全部')
 const activeId = ref(null)

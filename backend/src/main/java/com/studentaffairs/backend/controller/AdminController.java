@@ -35,6 +35,35 @@ public class AdminController {
         return Result.success(profileRepo.findAll());
     }
 
+    /** 根据学号获取单个学生档案 */
+    @GetMapping("/students/profile/{studentId}")
+    public Result<StudentProfile> getByStudentId(@PathVariable String studentId) {
+        return profileRepo.findByStudentId(studentId)
+                .map(Result::success)
+                .orElse(Result.error(404, "学生档案不存在"));
+    }
+
+    /** 根据学号更新学生档案 */
+    @PutMapping("/students/profile/{studentId}")
+    public Result<StudentProfile> updateByStudentId(@PathVariable String studentId, @RequestBody StudentProfile updated) {
+        return profileRepo.findByStudentId(studentId).map(p -> {
+            if (updated.getName() != null) p.setName(updated.getName());
+            if (updated.getAvatar() != null) p.setAvatar(updated.getAvatar());
+            if (updated.getCollege() != null) p.setCollege(updated.getCollege());
+            if (updated.getMajor() != null) p.setMajor(updated.getMajor());
+            if (updated.getGradeClass() != null) p.setGradeClass(updated.getGradeClass());
+            if (updated.getIdCard() != null) p.setIdCard(updated.getIdCard());
+            if (updated.getExtraInfo() != null) {
+                if (p.getExtraInfo() == null) {
+                    p.setExtraInfo(updated.getExtraInfo());
+                } else {
+                    p.getExtraInfo().putAll(updated.getExtraInfo());
+                }
+            }
+            return Result.success(profileRepo.save(p));
+        }).orElse(Result.error(404, "学生档案不存在"));
+    }
+
     /** 新增学生档案 */
     @PostMapping("/students")
     public Result<StudentProfile> addStudent(@RequestBody StudentProfile profile) {

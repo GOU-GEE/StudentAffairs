@@ -7,22 +7,22 @@
       <div class="md:col-span-5 bg-white/30 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-white/40 flex flex-col justify-between hover:bg-white/50 transition-all">
         <div class="flex gap-6 mb-4">
           <div class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
-            <img src="/avatar-placeholder.png" class="w-full h-full object-cover">
+            <img :src="profile?.avatar || '/avatar-placeholder.png'" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
             <div class="flex justify-between items-center mb-2">
               <div class="flex items-baseline gap-2">
-                <h3 class="text-xl font-bold text-gray-800">张小明</h3>
+                <h3 class="text-xl font-bold text-gray-800">{{ profile?.name || '张小明' }}</h3>
               </div>
               <button @click="openProfile" class="text-blue-500 text-xs flex items-center hover:text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                 查看完整信息 <el-icon class="ml-1"><ArrowRight /></el-icon>
               </button>
             </div>
-            <div class="text-sm text-gray-500 mb-2 font-medium">学号: 202301042</div>
-            <p class="text-sm text-gray-600 mb-3">计算机学院 | 软件工程 | 软工2班</p>
+            <div class="text-sm text-gray-500 mb-2 font-medium">学号: {{ profile?.studentId || STUDENT_ID }}</div>
+            <p class="text-sm text-gray-600 mb-3">{{ profile?.college || '计算机学院' }} | {{ profile?.major || '软件工程' }} | {{ profile?.classGrade || '软工2班' }}</p>
             <div class="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1.5 items-center">
-              <span class="flex items-center gap-1"><el-icon><Location /></el-icon> 兰苑3栋 402</span>
-              <span class="flex items-center gap-1"><el-icon><Phone /></el-icon> 138-xxxx-8888</span>
+              <span class="flex items-center gap-1"><el-icon><Location /></el-icon> {{ profile?.dorm || '兰苑3栋 402' }}</span>
+              <span class="flex items-center gap-1"><el-icon><Phone /></el-icon> {{ profile?.phone ? profile.phone.substring(0, 3) + ' **** ' + profile.phone.substring(profile.phone.length - 4) : '138 **** 8888' }}</span>
             </div>
           </div>
         </div>
@@ -266,6 +266,8 @@ const failCount = ref(0)
 const selectedSemester = ref('大二下学期')
 
 const STUDENT_ID = sessionStorage.getItem('userId') || '202301042'
+
+const profile = inject('studentProfile')
 
 const stats = ref({ gpa: '--', totalCredits: '--', classroomHours: '--', applicationCount: '--', awards: '--' })
 const notifications = ref([])

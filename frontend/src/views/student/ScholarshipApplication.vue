@@ -47,7 +47,7 @@
               学号 <span class="text-red-500">*</span>
             </label>
             <input
-              value="202301042"
+              :value="studentId"
               disabled
               class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
             />
@@ -59,7 +59,7 @@
               姓名 <span class="text-red-500">*</span>
             </label>
             <input
-              value="张小明"
+              :value="studentName"
               disabled
               class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
             />
@@ -71,7 +71,7 @@
               所在班级 <span class="text-red-500">*</span>
             </label>
             <input
-              value="计算机科学2301班"
+              :value="classGrade"
               disabled
               class="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm text-gray-500 bg-gray-50 outline-none"
             />
@@ -291,7 +291,7 @@
           
           <!-- 第三行：所在班级，申请类别 -->
           <div class="grid grid-cols-2 gap-4">
-            <div>班级：计算机科学2301班</div>
+            <div>班级：{{ classGrade }}</div>
             <div>申请类别：{{ getScholarshipTypeLabel(selectedItem.detail.scholarType) || selectedItem.title }}</div>
           </div>
           
@@ -358,7 +358,8 @@ const router = useRouter()
 
 const API = '/api/applications'
 const studentId = sessionStorage.getItem('userId') || '202301042'
-const studentName = '张小明'
+const studentName = ref('张小明')
+const classGrade = ref('计算机科学2301班')
 import {
   Document, ArrowDown, ArrowRight, InfoFilled, Clock, Calendar, Close
 } from '@element-plus/icons-vue'
@@ -439,8 +440,51 @@ const loadHistory = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadHistory()
+  try {
+    const res = await request.get(`/api/admin/students/profile/${studentId}`)
+    if (res.data.code === 200 && res.data.data) {
+      const data = res.data.data
+      studentName.value = data.name || '张小明'
+      classGrade.value = data.gradeClass || '计算机科学2301班'
+      
+      const extra = data.extraInfo || {}
+      if (extra.familyIncome) {
+        form.value.familyIncome = extra.familyIncome
+      }
+      
+      if (extra.povertyLevel) {
+        const lvl = extra.povertyLevel
+        if (lvl === '困难生' || lvl === 'B' || lvl.includes('困难')) {
+          form.value.povertyLevel = 'B'
+        } else if (lvl === '特困' || lvl === 'A') {
+          form.value.povertyLevel = 'A'
+        } else if (lvl === '一般困难' || lvl === 'C') {
+          form.value.povertyLevel = 'C'
+        } else {
+          form.value.povertyLevel = 'none'
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load profile for pre-filling scholarship application', e)
+  }
+
+  try {
+    const resAcademic = await request.get(`/api/academic/student-records?studentId=${studentId}`)
+    if (resAcademic.data.code === 200 && Array.isArray(resAcademic.data.data)) {
+      const records = resAcademic.data.data
+      const totalCredit = records.reduce((s, r) => s + (r.credit || 0), 0)
+      const weightedSum = records.reduce((s, r) => s + ((r.score || 0) * (r.credit || 0)), 0)
+      const computedGpa = totalCredit > 0 ? (weightedSum / totalCredit).toFixed(2) : ''
+      if (computedGpa) {
+        form.value.gpa = computedGpa
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load academic records for GPA pre-filling', e)
+  }
 })
 
 const submitScholarship = async () => {
@@ -463,7 +507,7 @@ const submitScholarship = async () => {
   try {
     const payload = {
       studentId,
-      studentName,
+      studentName: studentName.value,
       type: 'SCHOLARSHIP',
       title: `${new Date().getFullYear()}–${new Date().getFullYear()+1}学年${typeMap[form.value.scholarType]}申请`,
       reason: JSON.stringify(form.value)
