@@ -36,4 +36,7 @@ public class MidTermAppraisal {
 
     @Column(name = "submit_time")
     private LocalDateTime submitTime;
+
+    @Column(name = "status", length = 20)
+    private String status; // DRAFT, SUBMITTED
 }

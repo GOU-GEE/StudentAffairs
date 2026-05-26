@@ -243,13 +243,40 @@ const loadRefData = async () => {
   }
 }
 
-const saveDraft = () => {
+const saveDraft = async () => {
+  try {
+    const payload = {
+      studentId: STUDENT_ID,
+      studentName: '张小明',
+      className: '软工2班',
+      thoughtPerformance: form.value.thoughtEval,
+      academicPerformance: form.value.academicEval,
+      overallPerformance: form.value.comprehensiveEval,
+      selfAssessment: questions.value.map((q, i) => `【问题 ${i + 1}】${q.title}\n答：${answers.value[i]}`).join('\n\n'),
+      status: 'DRAFT'
+    }
+    if (existingId.value) {
+      payload.id = existingId.value
+    }
+    const res = await request.post(API, payload)
+    if (res.data.code === 200) {
+      ElMessage.success('草稿已成功保存至服务器')
+      if (res.data.data && res.data.data.id) {
+        existingId.value = res.data.data.id
+      }
+    } else {
+      ElMessage.warning('保存至服务器失败：' + res.data.msg)
+    }
+  } catch (e) {
+    console.error('Failed to save draft to server', e)
+    ElMessage.info('已保存至本地缓存')
+  }
+
   localStorage.setItem('midterm_draft', JSON.stringify({
     answers: answers.value,
     form: form.value,
     files: fileList.value.map(f => ({ name: f.name, url: f.url || (f.response && f.response.data && f.response.data.url) }))
   }))
-  ElMessage.success('草稿已保存至本地')
 }
 
 const existingId = ref(null)
@@ -283,6 +310,7 @@ const submitForm = () => {
         academicPerformance: form.value.academicEval,
         overallPerformance: form.value.comprehensiveEval,
         selfAssessment: questions.value.map((q, i) => `【问题 ${i + 1}】${q.title}\n答：${answers.value[i]}`).join('\n\n'),
+        status: 'SUBMITTED'
       }
       if (existingId.value) {
         payload.id = existingId.value
@@ -320,11 +348,11 @@ onMounted(() => {
     try {
       const res = await request.get(`${API}?studentId=${STUDENT_ID}`)
       if (res.data.code === 200 && res.data.data.length > 0) {
-        isSubmitted.value = true
-        localStorage.setItem('midterm_submitted', 'true')
-
         const existingData = res.data.data[0]
         existingId.value = existingData.id
+        isSubmitted.value = (existingData.status === 'SUBMITTED')
+        localStorage.setItem('midterm_submitted', isSubmitted.value ? 'true' : 'false')
+
         form.value.thoughtEval = existingData.thoughtPerformance
         form.value.academicEval = existingData.academicPerformance
         form.value.comprehensiveEval = existingData.overallPerformance
