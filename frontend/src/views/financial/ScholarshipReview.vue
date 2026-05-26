@@ -184,9 +184,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search, User, ArrowDown } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
 // Mock 数据
 const MOCK_STUDENTS = [
@@ -240,7 +241,7 @@ const MOCK_STUDENTS = [
   },
 ]
 
-const students = ref([...MOCK_STUDENTS])
+const students = ref([])
 const selectedStudent = ref(null)
 const searchText = ref('')
 const activeFilter = ref('all')
@@ -254,10 +255,83 @@ const currentBatch = ref({
   dateRange: '2026-03-29 ~ 2026-04-09',
 })
 
+const getScholarshipTypeLabel = (type) => {
+  const typeMap = {
+    nat_scholarship: '国家奖学金',
+    nat_incentive: '国家励志奖学金',
+    nat_aid: '国家助学金',
+    school_scholarship: '学校奖学金',
+    school_aid: '学校助学金'
+  }
+  return typeMap[type] || type
+}
+
+const loadCenterData = async () => {
+  try {
+    const res = await request.get('/api/applications/all')
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      const rawList = res.data.data.filter(item => 
+        item.type === 'SCHOLARSHIP' && 
+        (item.status === 'COUNSELOR_APPROVED' || item.status === 'APPROVED' || item.status === 'REJECTED')
+      )
+      
+      const mappedList = rawList.map(item => {
+        let detail = {}
+        try {
+          detail = JSON.parse(item.reason)
+        } catch (e) {
+          detail = { statement: item.reason, honors: '', povertyLevel: 'none', gpa: '3.0' }
+        }
+        
+        const povertyMap = { none: '无', A: '特别困难', B: '困难', C: '一般困难' }
+        const povLabel = povertyMap[detail.povertyLevel] || detail.povertyLevel || '无困难认定'
+        
+        let uiStatus = 'PENDING'
+        if (item.status === 'APPROVED') {
+          uiStatus = 'APPROVED'
+        } else if (item.status === 'REJECTED') {
+          uiStatus = 'REJECTED'
+        }
+        
+        return {
+          id: item.id,
+          name: item.studentName,
+          studentId: item.studentId,
+          className: detail.classGrade || '软工2班',
+          aidType: getScholarshipTypeLabel(detail.scholarType) || item.title,
+          povertyLevel: povLabel,
+          annualIncome: detail.familyIncome || '未填写',
+          avgScore: detail.gpa || '3.0',
+          rank: detail.rank ? `${detail.rank}/${detail.total || 150}` : '未填写',
+          volunteerHours: detail.volunteer || '未填写',
+          honors: detail.honors || '暂无',
+          statement: detail.statement || item.reason,
+          status: uiStatus,
+          rawStatus: item.status,
+          reviewComment: item.reviewComment,
+          rawItem: item
+        }
+      })
+      
+      students.value = mappedList
+      
+      if (selectedStudent.value) {
+        selectedStudent.value = students.value.find(s => s.id === selectedStudent.value.id) || null
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load center data', e)
+  }
+}
+
+onMounted(() => {
+  loadCenterData()
+})
+
 const batchStats = computed(() => {
-  const total = students.value.length
-  const reviewed = students.value.filter(s => s.status !== 'PENDING').length
-  const pending = students.value.filter(s => s.status === 'PENDING').length
+  const total = filteredStudents.value.length
+  const reviewed = filteredStudents.value.filter(s => s.status !== 'PENDING').length
+  const pending = filteredStudents.value.filter(s => s.status === 'PENDING').length
   return { total, reviewed, pending }
 })
 
@@ -270,6 +344,11 @@ const statusFilters = [
 
 const filteredStudents = computed(() => {
   let list = students.value
+  const batchTitle = currentBatch.value.title
+  
+  // Filter by active batch
+  list = list.filter(s => s.aidType.includes(batchTitle) || s.rawItem.title.includes(batchTitle))
+  
   if (activeFilter.value !== 'all') list = list.filter(s => s.status === activeFilter.value)
   if (searchText.value) {
     const q = searchText.value.toLowerCase()
@@ -293,22 +372,53 @@ const selectStudent = (stu) => {
   reviewComment.value = ''
 }
 
-const handlePass = () => {
+const handlePass = async () => {
   if (!selectedStudent.value) return
-  selectedStudent.value.status = 'APPROVED'
-  ElMessage.success(`已通过 ${selectedStudent.value.name} 的申请`)
-  reviewComment.value = ''
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: 'APPROVED',
+      comment: reviewComment.value || '准予通过，表现优异。',
+      reviewerName: '学院资助管理中心'
+    })
+    
+    if (res.data.code === 200) {
+      ElMessage.success(`已通过 ${selectedStudent.value.name} 的最终审核`)
+      reviewComment.value = ''
+      await loadCenterData()
+    } else {
+      ElMessage.error(res.data.msg || '操作失败')
+    }
+  } catch (e) {
+    ElMessage.error('网络请求异常')
+  }
 }
 
-const handleReject = () => {
+const handleReject = async () => {
   if (!selectedStudent.value) return
-  selectedStudent.value.status = 'REJECTED'
-  ElMessage.warning(`已驳回 ${selectedStudent.value.name} 的申请`)
-  reviewComment.value = ''
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: 'REJECTED',
+      comment: reviewComment.value || '不符合最终资助评定标准。',
+      reviewerName: '学院资助管理中心'
+    })
+    
+    if (res.data.code === 200) {
+      ElMessage.warning(`已驳回 ${selectedStudent.value.name} 的最终申请`)
+      reviewComment.value = ''
+      await loadCenterData()
+    } else {
+      ElMessage.error(res.data.msg || '操作失败')
+    }
+  } catch (e) {
+    ElMessage.error('网络请求异常')
+  }
 }
 
 const handleBatchChange = (cmd) => {
   currentBatch.value.title = cmd
+  selectedStudent.value = null
+  activeFilter.value = 'all'
+  searchText.value = ''
   ElMessage.success(`已切换至${cmd}`)
 }
 </script>

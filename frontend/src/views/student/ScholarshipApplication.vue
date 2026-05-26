@@ -488,16 +488,20 @@ const submitScholarship = async () => {
 }
 
 const statusLabel = (s) => ({
-  PENDING: '审核中',
-  APPROVED: '已通过',
-  REJECTED: '未通过'
+  PENDING: '待审核',
+  COUNSELOR_APPROVED: '辅导员审核通过',
+  COUNSELOR_REJECTED: '辅导员审核未通过',
+  APPROVED: '学院审核通过',
+  REJECTED: '学院审核未通过'
 }[s] || s)
 
 const statusBadgeStyle = (s) => ({
-  PENDING: 'bg-orange-100 text-orange-600',
-  APPROVED: 'bg-green-100 text-green-700',
-  REJECTED: 'bg-red-100 text-red-600'
-}[s] || 'bg-gray-100 text-gray-500')
+  PENDING: 'bg-orange-50 text-orange-600 border border-orange-200',
+  COUNSELOR_APPROVED: 'bg-blue-50 text-blue-600 border border-blue-200',
+  COUNSELOR_REJECTED: 'bg-red-50 text-red-600 border border-red-200',
+  APPROVED: 'bg-green-50 text-green-700 border border-green-200',
+  REJECTED: 'bg-red-50 text-red-600 border border-red-200'
+}[s] || 'bg-gray-100 text-gray-500 border border-gray-200')
 </script>
 
 <style>

@@ -151,9 +151,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search, User, ArrowDown } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
 const searchText = ref('')
 const activeFilter = ref('all')
@@ -189,6 +190,115 @@ const BATCH_DATA = {
 }
 
 const students = ref(BATCH_DATA['国家励志奖学金'])
+
+const loadStudentsData = async () => {
+  try {
+    const res = await request.get('/api/applications/all')
+    if (res.data.code === 200 && Array.isArray(res.data.data)) {
+      const rawList = res.data.data.filter(item => item.type === 'SCHOLARSHIP')
+      
+      const batches = {
+        '国家奖学金': [],
+        '国家励志奖学金': [],
+        '国家助学金': [],
+        '学校奖学金': [],
+        '学校助学金': []
+      }
+      
+      rawList.forEach(item => {
+        let detail = {}
+        try {
+          detail = JSON.parse(item.reason)
+        } catch (e) {
+          detail = { statement: item.reason, honors: '', povertyLevel: 'none', gpa: '3.0' }
+        }
+        
+        let honorsArray = []
+        if (typeof detail.honors === 'string') {
+          const lines = detail.honors.split(/[\n,，]/).filter(line => line.trim().length > 0)
+          honorsArray = lines.map(line => ({ name: line, level: '在校荣誉', date: '' }))
+        } else if (Array.isArray(detail.honors)) {
+          honorsArray = detail.honors
+        }
+        
+        const povertyMap = { none: '无', A: '困难生(A档)', B: '困难生(B档)', C: '困难生(C档)' }
+        const povLabel = povertyMap[detail.povertyLevel] || detail.povertyLevel || '无'
+        
+        let uiStatus = '待审核'
+        if (item.status === 'COUNSELOR_APPROVED' || item.status === 'APPROVED') {
+          uiStatus = '已通过'
+        } else if (item.status === 'COUNSELOR_REJECTED' || item.status === 'REJECTED') {
+          uiStatus = '未通过'
+        }
+        
+        const mappedStu = {
+          id: item.id,
+          name: item.studentName,
+          studentId: item.studentId,
+          className: detail.classGrade || '软工2班',
+          avatar: `https://i.pravatar.cc/150?u=${item.studentId}`,
+          status: uiStatus,
+          rawStatus: item.status,
+          typeLabel: getScholarshipTypeLabel(detail.scholarType) || item.title,
+          gpa: detail.gpa || '3.0',
+          povertyLevel: povLabel,
+          submitTime: item.applyTime ? item.applyTime.replace('T', ' ').substring(0, 16) : '',
+          reason: detail.statement || item.reason,
+          reviewComment: item.reviewComment,
+          reviewerName: item.reviewerName,
+          reviewTime: item.reviewTime ? item.reviewTime.replace('T', ' ').substring(0, 16) : '',
+          honors: honorsArray,
+          rawItem: item
+        }
+        
+        const batchName = getBatchNameFromTitle(item.title)
+        if (batches[batchName]) {
+          batches[batchName].push(mappedStu)
+        } else {
+          for (const key in batches) {
+            if (item.title.includes(key)) {
+              batches[key].push(mappedStu)
+              break
+            }
+          }
+        }
+      })
+      
+      Object.assign(BATCH_DATA, batches)
+      students.value = BATCH_DATA[currentBatch.value] || []
+      
+      if (selectedStudent.value) {
+        selectedStudent.value = students.value.find(s => s.id === selectedStudent.value.id) || null
+      }
+    }
+  } catch (e) {
+    console.error('Failed to fetch scholarship applications', e)
+  }
+}
+
+onMounted(() => {
+  loadStudentsData()
+})
+
+const getScholarshipTypeLabel = (type) => {
+  const typeMap = {
+    nat_scholarship: '国家奖学金',
+    nat_incentive: '国家励志奖学金',
+    nat_aid: '国家助学金',
+    school_scholarship: '学校奖学金',
+    school_aid: '学校助学金'
+  }
+  return typeMap[type] || type
+}
+
+const getBatchNameFromTitle = (title) => {
+  if (title.includes('国家奖学金')) return '国家奖学金'
+  if (title.includes('国家励志奖学金')) return '国家励志奖学金'
+  if (title.includes('国家助学金')) return '国家助学金'
+  if (title.includes('学校奖学金')) return '学校奖学金'
+  if (title.includes('学校助学金')) return '学校助学金'
+  return '国家励志奖学金'
+}
 
 const handleBatchChange = (batch) => {
   currentBatch.value = batch
@@ -242,24 +352,50 @@ const BATCH_TIMES = {
 
 const currentBatchTime = computed(() => BATCH_TIMES[currentBatch.value] || '')
 
-const review = (status) => {
+const review = async (status) => {
   if (!selectedStudent.value) { ElMessage.warning('请先选择学生'); return }
-  selectedStudent.value.status = status === 'APPROVED' ? '已通过' : '未通过'
-  selectedStudent.value.reviewComment = reviewComment.value || (status === 'APPROVED' ? '同意申请' : '不符合条件')
-  selectedStudent.value.reviewerName = sessionStorage.getItem('userName') || '李辅导员'
-  selectedStudent.value.reviewTime = new Date().toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
-  ElMessage.success(status === 'APPROVED' ? '已通过' : '已驳回')
-  reviewComment.value = ''
+  
+  const backendStatus = status === 'APPROVED' ? 'COUNSELOR_APPROVED' : 'COUNSELOR_REJECTED'
+  const comment = reviewComment.value || (status === 'APPROVED' ? '同意申请' : '不符合条件')
+  const reviewerName = sessionStorage.getItem('userName') || '李辅导员'
+  
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: backendStatus,
+      comment: comment,
+      reviewerName: reviewerName
+    })
+    
+    if (res.data.code === 200) {
+      ElMessage.success(status === 'APPROVED' ? '已批准该申请' : '已驳回该申请')
+      reviewComment.value = ''
+      await loadStudentsData()
+    } else {
+      ElMessage.error(res.data.msg || '操作失败')
+    }
+  } catch (e) {
+    ElMessage.error('网络请求异常')
+  }
 }
 
-const reReview = () => {
+const reReview = async () => {
   if (!selectedStudent.value) return
-  selectedStudent.value.status = '待审核'
-  selectedStudent.value.reviewComment = ''
-  selectedStudent.value.reviewerName = ''
-  selectedStudent.value.reviewTime = ''
-  reviewComment.value = ''
-  ElMessage.success('已退回待审核列表')
+  try {
+    const res = await request.put(`/api/applications/${selectedStudent.value.id}/review`, {
+      status: 'PENDING',
+      comment: '',
+      reviewerName: ''
+    })
+    if (res.data.code === 200) {
+      ElMessage.success('已退回待审核列表')
+      reviewComment.value = ''
+      await loadStudentsData()
+    } else {
+      ElMessage.error(res.data.msg || '操作失败')
+    }
+  } catch (e) {
+    ElMessage.error('网络请求异常')
+  }
 }
 
 const statusColor = (s) => ({ '待审核':'text-orange-500', '已通过':'text-green-600', '未通过':'text-red-500' }[s] || 'text-gray-400')
