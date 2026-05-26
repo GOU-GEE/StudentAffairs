@@ -307,24 +307,24 @@
     <!-- ==================== AI 生涯规划浮动小助手 ==================== -->
     <div class="fixed bottom-8 right-8 z-[1050] flex flex-col items-end">
       <!-- Chat Panel -->
-      <transition name="el-zoom-in-bottom">
-        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl shadow-2xl w-[600px] h-[540px] mb-4 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-indigo-500/10 max-w-[calc(100vw-2rem)]">
+      <transition name="ai-chat-drop">
+        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl shadow-2xl w-[600px] h-[calc(100vh-160px)] mb-4 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-indigo-500/10 max-w-[calc(100vw-2rem)]">
           <!-- Chat Header -->
-          <div class="bg-gradient-to-r from-slate-500 via-slate-500 to-slate-600 p-4 text-white flex items-center justify-between shadow-md">
+          <div class="bg-slate-100 border-b border-slate-200/80 p-4 text-slate-800 flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
-                <el-icon :size="20" class="text-white"><Cpu /></el-icon>
+              <div class="w-10 h-10 rounded-full bg-slate-200/60 flex items-center justify-center border border-slate-300/40 text-slate-600 shadow-inner">
+                <el-icon :size="20"><Cpu /></el-icon>
               </div>
               <div>
-                <h4 class="font-bold text-sm">AI 生涯规划导师</h4>
-                <p class="text-[10px] text-white/70">智慧学工 · 生涯规划专属助手</p>
+                <h4 class="font-bold text-sm text-slate-800">AI 生涯规划导师</h4>
+                <p class="text-[10px] text-slate-500">智慧学工 · 生涯规划专属助手</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <el-button circle size="small" class="!bg-white/10 !border-0 !text-white hover:!bg-white/25" @click="resetChat">
+              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="resetChat">
                 <el-icon><Refresh /></el-icon>
               </el-button>
-              <el-button circle size="small" class="!bg-white/10 !border-0 !text-white hover:!bg-white/25" @click="aiChatVisible = false">
+              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="aiChatVisible = false">
                 <el-icon><Close /></el-icon>
               </el-button>
             </div>
@@ -385,7 +385,7 @@
             <el-button 
               type="primary" 
               circle 
-              class="!bg-indigo-600 !border-0 flex items-center justify-center hover:!bg-indigo-700" 
+              class="!bg-sky-500 !border-0 flex items-center justify-center hover:!bg-sky-600 shadow-sm transition-colors" 
               @click="sendChat" 
               :disabled="chatLoading"
               size="default"
@@ -812,6 +812,20 @@ onMounted(()=>{
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
+}
+
+/* ==================== AI 浮动窗口定制过渡动画 ==================== */
+.ai-chat-drop-enter-active {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ai-chat-drop-leave-active {
+  transition: all 0.2s ease;
+}
+.ai-chat-drop-enter-from,
+.ai-chat-drop-leave-to {
+  opacity: 0;
+  transform: translateY(16px) scale(0.95);
+  transform-origin: bottom right;
 }
 </style>
 
