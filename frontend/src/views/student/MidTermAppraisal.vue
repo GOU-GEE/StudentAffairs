@@ -97,6 +97,11 @@
               <el-icon><CircleCheckFilled /></el-icon> 已提交
             </div>
           </div>
+
+          <!-- Left-bottom "重新填写" button -->
+          <div v-if="isSubmitted" class="absolute bottom-8 left-8">
+            <el-button type="warning" size="large" round class="px-8" @click="enableEdit">重新填写</el-button>
+          </div>
         </section>
       </div>
       </div>
@@ -274,6 +279,12 @@ const saveDraft = () => {
   ElMessage.success('草稿已保存至本地')
 }
 
+const existingId = ref(null)
+
+const enableEdit = () => {
+  isSubmitted.value = false
+}
+
 const submitForm = () => {
   if (completedQuestions.value < questions.value.length) {
     ElMessage.error('请填写所有主观题后再提交')
@@ -284,7 +295,7 @@ const submitForm = () => {
     return
   }
 
-  ElMessageBox.confirm('正式提交后将无法修改，是否确认提交？', '提交确认', {
+  ElMessageBox.confirm('确认正式提交中期鉴定报告吗？提交后将在左下角显示“重新填写”按钮，方便您需要时再次修改。', '提交确认', {
     confirmButtonText: '确认提交',
     cancelButtonText: '取消',
     type: 'warning'
@@ -298,7 +309,10 @@ const submitForm = () => {
         thoughtPerformance: form.value.thoughtEval,
         academicPerformance: form.value.academicEval,
         overallPerformance: form.value.comprehensiveEval,
-        selfAssessment: questions.value.map((q, i) => `${q.title}: ${answers.value[i]}`).join('\n\n'),
+        selfAssessment: questions.value.map((q, i) => `【问题 ${i + 1}】${q.title}\n答：${answers.value[i]}`).join('\n\n'),
+      }
+      if (existingId.value) {
+        payload.id = existingId.value
       }
       const res = await request.post(API, payload)
       if (res.data.code === 200) {
@@ -306,6 +320,9 @@ const submitForm = () => {
         isSubmitted.value = true
         localStorage.setItem('midterm_submitted', 'true')
         localStorage.setItem('midterm_submitted_files', JSON.stringify(fileList.value.map(f => ({ name: f.name, url: f.url || (f.response && f.response.data && f.response.data.url) }))))
+        if (res.data.data && res.data.data.id) {
+          existingId.value = res.data.data.id
+        }
       } else {
         ElMessage.error(res.data.msg || '提交失败')
       }
@@ -334,24 +351,39 @@ onMounted(() => {
         localStorage.setItem('midterm_submitted', 'true')
 
         const existingData = res.data.data[0]
+        existingId.value = existingData.id
         form.value.thoughtEval = existingData.thoughtPerformance
         form.value.academicEval = existingData.academicPerformance
         form.value.comprehensiveEval = existingData.overallPerformance
 
         if (existingData.selfAssessment) {
-          const blocks = existingData.selfAssessment.split('\n\n')
-          const answersMap = {}
-          blocks.forEach(block => {
-            const index = block.indexOf(': ')
-            if (index !== -1) {
-              const title = block.substring(0, index).trim()
-              const value = block.substring(index + 2)
-              answersMap[title] = value
-            }
-          })
           questions.value.forEach((q, idx) => {
-            if (answersMap[q.title] !== undefined) {
-              answers.value[idx] = answersMap[q.title]
+            const searchKey = `【问题 ${idx + 1}】${q.title}\n答：`
+            const startIdx = existingData.selfAssessment.indexOf(searchKey)
+            if (startIdx !== -1) {
+              const valStart = startIdx + searchKey.length
+              const nextSearchKey = `【问题 ${idx + 2}】`
+              const endIdx = existingData.selfAssessment.indexOf(nextSearchKey, valStart)
+              let val = ""
+              if (endIdx !== -1) {
+                val = existingData.selfAssessment.substring(valStart, endIdx).trim()
+              } else {
+                val = existingData.selfAssessment.substring(valStart).trim()
+              }
+              answers.value[idx] = val
+            } else {
+              // Backward compatibility for old format with ": "
+              const legacySearchKey = `${q.title}: `
+              const legacyStartIdx = existingData.selfAssessment.indexOf(legacySearchKey)
+              if (legacyStartIdx !== -1) {
+                const valStart = legacyStartIdx + legacySearchKey.length
+                const legacyEndIdx = existingData.selfAssessment.indexOf('\n\n', valStart)
+                if (legacyEndIdx !== -1) {
+                  answers.value[idx] = existingData.selfAssessment.substring(valStart, legacyEndIdx).trim()
+                } else {
+                  answers.value[idx] = existingData.selfAssessment.substring(valStart).trim()
+                }
+              }
             }
           })
         }
