@@ -308,7 +308,7 @@
     <div class="fixed bottom-8 right-8 z-[1050] flex flex-col items-end">
       <!-- Chat Panel -->
       <transition name="ai-chat-drop">
-        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl shadow-2xl w-[600px] h-[calc(100vh-160px)] mb-4 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-indigo-500/10 max-w-[calc(100vw-2rem)]">
+        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl w-[600px] h-[calc(100vh-160px)] mb-4 flex flex-col overflow-hidden transition-all duration-300 max-w-[calc(100vw-2rem)] ai-chat-panel">
           <!-- Chat Header -->
           <div class="bg-slate-100 border-b border-slate-200/80 p-4 text-slate-800 flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3">
@@ -798,15 +798,6 @@ onMounted(()=>{
   height: 3px !important;
   border-radius: 99px;
 }
-.custom-chat-input .el-input__wrapper {
-  border-radius: 9999px !important;
-  box-shadow: 0 0 0 1px var(--el-border-color) inset !important;
-  padding-left: 18px !important;
-  padding-right: 18px !important;
-}
-.custom-chat-input .el-input__wrapper.is-focus {
-  box-shadow: 0 0 0 1px #4f46e5 inset !important;
-}
 .prose h2, .prose h3, .prose h4 {
   font-family: inherit;
 }
@@ -830,6 +821,20 @@ onMounted(()=>{
 </style>
 
 <style>
+/* ==================== AI 职业规划全局样式覆盖 ==================== */
+.custom-chat-input .el-input__wrapper {
+  border-radius: 24px !important;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.custom-chat-input .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1.5px #0ea5e9 inset !important;
+}
+.ai-chat-panel {
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.16), 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+}
+
 .custom-calendar-overlay{background-color:transparent!important}
 .custom-calendar-dialog{position:fixed!important;top:96px!important;bottom:40px!important;left:288px!important;right:32px!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;display:flex;flex-direction:column;border-radius:32px!important;overflow:hidden!important;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25)!important;overscroll-behavior:contain}
 .custom-calendar-dialog .el-dialog__headerbtn{top:22px;right:25px;z-index:100}
