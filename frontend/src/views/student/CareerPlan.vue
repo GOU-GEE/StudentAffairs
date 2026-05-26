@@ -308,15 +308,12 @@
     <div class="fixed bottom-8 right-8 z-[1050] flex flex-col items-end">
       <!-- Chat Panel -->
       <transition name="el-zoom-in-bottom">
-        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl shadow-2xl w-[400px] h-[540px] mb-4 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-indigo-500/10">
+        <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl shadow-2xl w-[600px] h-[540px] mb-4 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-indigo-500/10 max-w-[calc(100vw-2rem)]">
           <!-- Chat Header -->
-          <div class="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 p-4 text-white flex items-center justify-between shadow-md">
+          <div class="bg-gradient-to-r from-slate-500 via-slate-500 to-slate-600 p-4 text-white flex items-center justify-between shadow-md">
             <div class="flex items-center gap-3">
-              <div class="relative">
-                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
-                  <el-icon :size="20" class="text-white"><Cpu /></el-icon>
-                </div>
-                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-white rounded-full animate-pulse"></span>
+              <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
+                <el-icon :size="20" class="text-white"><Cpu /></el-icon>
               </div>
               <div>
                 <h4 class="font-bold text-sm">AI 生涯规划导师</h4>
@@ -336,43 +333,28 @@
           <!-- Chat Messages Container -->
           <div ref="chatScrollContainer" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-50/50">
             <!-- Messages -->
-            <div v-for="(msg, idx) in chatMessages" :key="idx" class="flex" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
-              <div class="flex items-start gap-2 max-w-[90%]">
-                <!-- Bot Avatar -->
-                <div v-if="msg.role !== 'user'" class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow flex-shrink-0 mt-0.5">
-                  <el-icon :size="12"><Cpu /></el-icon>
-                </div>
-                <!-- Message Bubble -->
-                <div 
-                  class="rounded-2xl px-3.5 py-2 text-[13px] shadow-sm leading-relaxed"
-                  :class="msg.role === 'user' 
-                    ? 'bg-indigo-600 text-white rounded-tr-none' 
-                    : 'bg-white text-gray-800 border border-slate-100 rounded-tl-none font-normal'"
-                >
-                  <div v-if="msg.role === 'user'">{{ msg.content }}</div>
-                  <div v-else class="prose max-w-none space-y-2 text-justify" v-html="renderMarkdown(msg.content)"></div>
-                </div>
-                <!-- User Avatar -->
-                <div v-if="msg.role === 'user'" class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow flex-shrink-0 font-bold text-xs mt-0.5">
-                  明
-                </div>
+            <div v-for="(msg, idx) in chatMessages" :key="idx" class="flex w-full" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
+              <!-- Message Bubble -->
+              <div 
+                class="rounded-2xl px-4 py-2.5 text-[13px] shadow-sm leading-relaxed max-w-[85%]"
+                :class="msg.role === 'user' 
+                  ? 'bg-sky-100 text-sky-900 rounded-tr-none border border-sky-200/50' 
+                  : 'bg-white text-gray-800 border border-slate-200/60 rounded-tl-none font-normal'"
+              >
+                <div v-if="msg.role === 'user'">{{ msg.content }}</div>
+                <div v-else class="prose max-w-none space-y-2 text-justify" v-html="renderMarkdown(msg.content)"></div>
               </div>
             </div>
 
             <!-- Typing Loader -->
-            <div v-if="chatLoading" class="flex justify-start">
-              <div class="flex items-start gap-2">
-                <div class="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white shadow flex-shrink-0">
-                  <el-icon :size="12" class="animate-spin"><Loading /></el-icon>
-                </div>
-                <div class="bg-white border border-slate-100 rounded-2xl rounded-tl-none px-3.5 py-2.5 text-xs text-secondary flex items-center gap-1.5 shadow-sm">
-                  <span>AI 导师正在规划中</span>
-                  <span class="flex gap-0.5 mt-0.5">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
-                  </span>
-                </div>
+            <div v-if="chatLoading" class="flex justify-start w-full">
+              <div class="bg-white border border-slate-200/60 rounded-2xl rounded-tl-none px-4 py-2.5 text-xs text-secondary flex items-center gap-1.5 shadow-sm">
+                <span>AI 导师正在规划中</span>
+                <span class="flex gap-0.5 mt-0.5">
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                </span>
               </div>
             </div>
           </div>
@@ -393,11 +375,11 @@
           <!-- Input Area -->
           <div class="p-3 bg-white border-t border-slate-100 flex items-center gap-2 flex-shrink-0">
             <el-input 
+              ref="chatInputRef"
               v-model="chatInput" 
               placeholder="输入生涯问题，如：我如何考取大三的证书？" 
               class="flex-1 custom-chat-input"
               @keyup.enter="sendChat"
-              :disabled="chatLoading"
               size="default"
             />
             <el-button 
@@ -416,10 +398,10 @@
 
       <!-- Floating Ball -->
       <button 
-        class="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 relative group border-2 border-white/20"
+        class="w-14 h-14 rounded-full bg-gradient-to-tr from-sky-400 via-sky-400 to-blue-500 text-white flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 relative group border-2 border-white/20"
         @click="toggleChat"
       >
-        <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 blur-md opacity-30 group-hover:opacity-75 transition-opacity"></div>
+        <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-sky-400 to-blue-400 blur-md opacity-40 group-hover:opacity-80 transition-opacity"></div>
         <el-icon :size="24" class="relative z-10 animate-pulse"><Cpu /></el-icon>
         <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-white z-20 shadow">AI</span>
       </button>
@@ -443,6 +425,7 @@ const aiChatVisible = ref(false)
 const chatInput = ref('')
 const chatMessages = ref([])
 const chatLoading = ref(false)
+const chatInputRef = ref(null)
 const chatScrollContainer = ref(null)
 
 const generatingReport = ref(false)
@@ -700,6 +683,9 @@ const sendChat = async () => {
   chatInput.value = ''
   scrollToBottom()
   
+  // 保持输入框获取焦点
+  chatInputRef.value?.focus()
+  
   chatLoading.value = true
   
   try {
@@ -731,6 +717,9 @@ const sendChat = async () => {
   
   chatLoading.value = false
   scrollToBottom()
+  
+  // 保持输入框获取焦点
+  chatInputRef.value?.focus()
 }
 
 // ==================== AI 报告生成逻辑 ====================
@@ -810,9 +799,10 @@ onMounted(()=>{
   border-radius: 99px;
 }
 .custom-chat-input .el-input__wrapper {
-  border-radius: 99px !important;
+  border-radius: 9999px !important;
   box-shadow: 0 0 0 1px var(--el-border-color) inset !important;
-  padding-left: 16px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
 }
 .custom-chat-input .el-input__wrapper.is-focus {
   box-shadow: 0 0 0 1px #4f46e5 inset !important;
