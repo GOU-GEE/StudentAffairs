@@ -1,54 +1,5 @@
 <template>
   <div class="h-full flex flex-col gap-4 min-h-0">
-    <!-- 顶部合并卡片 -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex items-center gap-6 flex-shrink-0">
-      <div class="flex items-center gap-3 flex-shrink-0">
-        <div class="relative w-14 h-14">
-          <svg class="w-14 h-14 -rotate-90" viewBox="0 0 64 64">
-            <circle cx="32" cy="32" r="26" fill="none" stroke="#f3f4f6" stroke-width="7"/>
-            <circle cx="32" cy="32" r="26" fill="none" stroke="#1d4ed8" stroke-width="7"
-              stroke-dasharray="163.4" :stroke-dashoffset="163.4 * (1 - reviewProgress / 100)"
-              stroke-linecap="round" style="transition: stroke-dashoffset 0.6s ease"/>
-          </svg>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <span class="text-xs font-black text-blue-700">{{ reviewProgress }}%</span>
-          </div>
-        </div>
-        <div>
-          <p class="text-xs text-gray-400">辅导员审核进度</p>
-          <p class="text-sm font-bold text-gray-700">已完成 {{ reviewed }}/{{ total }}</p>
-        </div>
-      </div>
-      <div class="w-px h-10 bg-gray-100 flex-shrink-0"></div>
-      <div class="flex items-center gap-6 flex-shrink-0">
-        <div v-for="stat in stats" :key="stat.label" class="flex flex-col items-center gap-0.5">
-          <span class="text-2xl font-black" :class="stat.color">{{ stat.value }}</span>
-          <span class="text-xs text-gray-400">{{ stat.label }}</span>
-        </div>
-      </div>
-      <div class="w-px h-10 bg-gray-100 flex-shrink-0"></div>
-      <div class="flex items-center gap-4 flex-1 justify-end min-w-0">
-        <div class="flex flex-col items-end min-w-0">
-          <span class="text-sm font-bold text-gray-900 truncate">{{ currentBatch }}</span>
-          <span class="text-xs text-gray-400 mt-0.5">{{ currentBatchTime }}</span>
-        </div>
-        <el-dropdown trigger="click" @command="handleBatchChange" :teleported="false">
-          <button class="flex-shrink-0 px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
-            切换批次 <el-icon><ArrowDown /></el-icon>
-          </button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="国家奖学金">国家奖学金</el-dropdown-item>
-              <el-dropdown-item command="国家励志奖学金">国家励志奖学金</el-dropdown-item>
-              <el-dropdown-item command="国家助学金">国家助学金</el-dropdown-item>
-              <el-dropdown-item divided command="学校奖学金">学校奖学金</el-dropdown-item>
-              <el-dropdown-item command="学校助学金">学校助学金</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-    </div>
-
     <!-- 三栏主区域 -->
     <div class="flex-1 grid grid-cols-12 gap-4 min-h-0">
       <!-- 左栏：学生列表 -->
@@ -144,7 +95,37 @@
 
       <!-- 右栏：审核操作 -->
       <div class="col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
-        <div class="px-4 py-4 border-b border-gray-100 flex-shrink-0">
+        <!-- 顶部切换批次和进度区域 -->
+        <div class="px-4 py-5 border-b border-gray-100 bg-gray-50/50 flex flex-col gap-4 flex-shrink-0">
+          <!-- 批次名称及学期，顶部居中显示 -->
+          <div class="text-center flex flex-col gap-1">
+            <h3 class="text-sm font-black text-gray-900">{{ currentBatch }}</h3>
+            <p class="text-xs text-gray-400 font-medium">{{ currentBatchTime }}</p>
+          </div>
+          <!-- 底部左右布局：左下角显示进度，右下角是切换批次按钮 -->
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-gray-400">
+              进度: <span class="font-bold text-gray-700">{{ reviewed }}/{{ total }}</span>
+            </div>
+            <el-dropdown trigger="click" @command="handleBatchChange" :teleported="false">
+              <button class="px-3 py-1.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-1 shadow-sm">
+                切换批次 <el-icon><ArrowDown /></el-icon>
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="国家奖学金">国家奖学金</el-dropdown-item>
+                  <el-dropdown-item command="国家励志奖学金">国家励志奖学金</el-dropdown-item>
+                  <el-dropdown-item command="国家助学金">国家助学金</el-dropdown-item>
+                  <el-dropdown-item divided command="学校奖学金">学校奖学金</el-dropdown-item>
+                  <el-dropdown-item command="学校助学金">学校助学金</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+
+        <!-- 审核操作标题下移 -->
+        <div class="px-4 py-3.5 border-b border-gray-100 flex-shrink-0">
           <p class="text-sm font-bold text-gray-900">审核操作</p>
         </div>
         <div class="flex-1 overflow-y-auto px-4 py-4">
@@ -252,9 +233,9 @@ const stats = computed(() => [
 ])
 
 const BATCH_TIMES = {
-  '国家奖学金': '2025年秋季学期奖学金评定',
-  '国家励志奖学金': '2025年秋季学期奖学金评定',
-  '国家助学金': '2025年秋季学期助学金评定',
+  '国家奖学金': '2026年春季学期奖学金评定',
+  '国家励志奖学金': '2026年春季学期奖学金评定',
+  '国家助学金': '2026年春季学期助学金评定',
   '学校奖学金': '2026年春季学期奖学金评定',
   '学校助学金': '2026年春季学期助学金评定',
 }
