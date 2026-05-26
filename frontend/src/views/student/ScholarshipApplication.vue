@@ -206,11 +206,12 @@
         <h3 class="text-base font-bold text-gray-900">历史申请记录</h3>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-6 py-5">
+      <div class="flex-1 overflow-y-auto px-6 py-5 custom-scrollbar">
         <div class="space-y-4">
           <div
             v-for="(item, i) in history"
             :key="item.id"
+            @click="openDetail(item)"
             class="border rounded-xl p-4 cursor-pointer hover:shadow-sm transition-all group"
             :class="i === 0 ? 'border-amber-200 bg-amber-50/60' : 'border-gray-100 bg-white hover:border-gray-200'"
           >
@@ -243,12 +244,6 @@
           </div>
         </div>
 
-        <!-- 查看更多 -->
-        <button @click="router.push('/student/applications')" class="mt-4 w-full py-2.5 text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-1">
-          查看更多记录
-          <el-icon :size="12"><ArrowDown /></el-icon>
-        </button>
-
         <!-- 空状态 -->
         <div v-if="history.length === 0" class="py-16 flex flex-col items-center text-gray-400">
           <span class="text-4xl mb-3">📋</span>
@@ -256,6 +251,100 @@
         </div>
       </div>
     </div>
+
+    <!-- 局部暗色遮罩层，仅覆盖内容区，避免导航栏变灰 -->
+    <div v-if="showDetailDialog" class="fixed top-[56px] left-[256px] right-0 bottom-0 bg-black/45 z-[1000] transition-opacity duration-300" @click="showDetailDialog = false"></div>
+
+    <!-- 奖学金详情滑出抽屉 (el-dialog) -->
+    <el-dialog
+      v-model="showDetailDialog"
+      title=""
+      modal-class="custom-leave-overlay"
+      class="custom-leave-detail-dialog"
+      :show-close="false"
+      :modal="false"
+      append-to-body
+      lock-scroll
+      destroy-on-close
+    >
+      <div v-if="selectedItem" class="flex flex-col h-full bg-white relative">
+        <!-- 抽屉头部 -->
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+          <span class="text-base font-bold text-gray-900">详情信息</span>
+          <button @click="showDetailDialog = false" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 flex items-center justify-center transition-colors focus:outline-none">
+            <el-icon :size="16"><Close /></el-icon>
+          </button>
+        </div>
+
+        <!-- 滚动内容区 -->
+        <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 custom-scrollbar text-sm text-gray-700 leading-relaxed bg-white">
+          <!-- 第一行：一整行标题，字体加粗 -->
+          <div class="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 mb-3">
+            {{ selectedItem.title }}
+          </div>
+
+          <!-- 第二行：第一列姓名，第二列学号 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>姓名：{{ studentName }}</div>
+            <div>学号：{{ studentId }}</div>
+          </div>
+          
+          <!-- 第三行：所在班级，申请类别 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>班级：计算机科学2301班</div>
+            <div>申请类别：{{ getScholarshipTypeLabel(selectedItem.detail.scholarType) || selectedItem.title }}</div>
+          </div>
+          
+          <!-- 第四行：加权平均成绩，专业排名 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>平均成绩：{{ selectedItem.detail.gpa || '未填写' }}</div>
+            <div>专业排名：{{ selectedItem.detail.rank ? `第 ${selectedItem.detail.rank} 名 / 共 ${selectedItem.detail.total} 人` : '未填写' }}</div>
+          </div>
+
+          <!-- 第五行：家庭年收入，困难等级 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>家庭年收入：{{ selectedItem.detail.familyIncome ? `${selectedItem.detail.familyIncome} 元` : '未填写' }}</div>
+            <div>困难认定：{{ getPovertyLabel(selectedItem.detail.povertyLevel) }}</div>
+          </div>
+
+          <!-- 第六行：志愿服务时长 -->
+          <div>
+            <div class="text-gray-400 text-xs font-semibold">志愿服务情况：</div>
+            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.detail.volunteer || '未填写' }}</div>
+          </div>
+
+          <!-- 第七行：在校获得荣誉 -->
+          <div>
+            <div class="text-gray-400 text-xs font-semibold">在校获得荣誉：</div>
+            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.detail.honors || '未填写' }}</div>
+          </div>
+
+          <!-- 第八行：个人申请陈述 -->
+          <div>
+            <div class="text-gray-400 text-xs font-semibold">个人申请陈述：</div>
+            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.detail.statement || '未填写' }}</div>
+          </div>
+          
+          <!-- 第九行：审批状态 -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-gray-400 text-xs font-semibold">审批状态：</span>
+            <span class="font-bold text-sm" :class="{
+              PENDING: 'text-orange-500',
+              APPROVED: 'text-green-500',
+              REJECTED: 'text-red-500'
+            }[selectedItem.status] || 'text-gray-500'">
+              {{ statusLabel(selectedItem.status) }}
+            </span>
+          </div>
+
+          <!-- 第十行：意见 -->
+          <div>
+            <div class="text-gray-400 text-xs font-semibold">辅导员意见：</div>
+            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.reviewComment || '暂无辅导员意见' }}</div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -271,7 +360,7 @@ const API = '/api/applications'
 const studentId = sessionStorage.getItem('userId') || '202301042'
 const studentName = '张小明'
 import {
-  Document, ArrowDown, ArrowRight, InfoFilled, Clock, Calendar
+  Document, ArrowDown, ArrowRight, InfoFilled, Clock, Calendar, Close
 } from '@element-plus/icons-vue'
 
 // 表单数据
@@ -290,6 +379,34 @@ const form = ref({
 const submitting = ref(false)
 
 const history = ref([])
+const showDetailDialog = ref(false)
+const selectedItem = ref(null)
+
+const openDetail = (item) => {
+  selectedItem.value = item
+  showDetailDialog.value = true
+}
+
+const getScholarshipTypeLabel = (type) => {
+  const typeMap = {
+    nat_scholarship: '国家奖学金',
+    nat_incentive: '国家励志奖学金',
+    nat_aid: '国家助学金',
+    school_scholarship: '学校奖学金',
+    school_aid: '学校助学金'
+  }
+  return typeMap[type] || type
+}
+
+const getPovertyLabel = (lvl) => {
+  const povertyMap = {
+    none: '无困难认定',
+    A: 'A 档（特困）',
+    B: 'B 档（困难）',
+    C: 'C 档（一般困难）'
+  }
+  return povertyMap[lvl] || lvl || '无困难认定'
+}
 
 const loadHistory = async () => {
   try {
@@ -299,13 +416,21 @@ const loadHistory = async () => {
         .filter(item => item.type === 'SCHOLARSHIP')
         .map(item => {
           let detail = {}
-          try { detail = JSON.parse(item.reason) } catch (e) {}
+          try {
+            detail = JSON.parse(item.reason)
+          } catch (e) {
+            detail = { statement: item.reason }
+          }
           return {
             id: item.id,
             title: item.title,
             status: item.status,
             applyTime: item.applyTime ? item.applyTime.replace('T', ' ').substring(0, 19) : '',
-            summary: detail.statement || item.reason
+            summary: detail.statement || item.reason,
+            reviewComment: item.reviewComment,
+            reviewerName: item.reviewerName,
+            reviewTime: item.reviewTime,
+            detail: detail
           }
         })
     }
@@ -374,3 +499,56 @@ const statusBadgeStyle = (s) => ({
   REJECTED: 'bg-red-100 text-red-600'
 }[s] || 'bg-gray-100 text-gray-500')
 </script>
+
+<style>
+/* 全局样式：用于被 Element Plus 渲染并挂载到 body 下的请假详情对话框 */
+.custom-leave-overlay {
+  background-color: transparent !important;
+  z-index: 1001 !important; /* 保证其低于顶层状态栏 z-[9999]，避免覆盖状态栏 */
+}
+
+.custom-leave-detail-dialog {
+  position: fixed !important;
+  top: 96px !important;
+  bottom: 40px !important;
+  width: 520px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  border-radius: 32px !important; /* 看板圆角处理 */
+  overflow: hidden !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  overscroll-behavior: contain;
+  z-index: 1001 !important;
+}
+
+@media (min-width: 768px) {
+  .custom-leave-detail-dialog {
+    left: calc(50% + 128px) !important; /* 除去左边 256px 导航栏后，在剩下的页面中左右居中 */
+    transform: translateX(-50%) !important;
+    right: auto !important;
+  }
+}
+@media (max-width: 767px) {
+  .custom-leave-detail-dialog {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    width: calc(100vw - 32px) !important;
+  }
+}
+.custom-leave-detail-dialog .el-dialog__header {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 0;
+}
+.custom-leave-detail-dialog .el-dialog__body {
+  flex: 1;
+  min-height: 0;
+  padding: 0 !important;
+}
+.custom-leave-detail-dialog .el-dialog__headerbtn {
+  display: none !important; /* 隐藏默认关闭按钮 */
+}
+</style>
