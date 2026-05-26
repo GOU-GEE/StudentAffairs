@@ -63,7 +63,24 @@ public class ApplicationController {
             }
             app.setStatus(newStatus);
             if (body.containsKey("comment")) {
-                app.setReviewComment(body.get("comment"));
+                String commentText = body.get("comment");
+                if ("APPROVED".equals(newStatus) || "REJECTED".equals(newStatus)) {
+                    String prevComment = app.getReviewComment();
+                    if (prevComment != null && !prevComment.isEmpty()) {
+                        // Avoid double prepending if already prepended
+                        if (prevComment.contains("[学院意见]")) {
+                            app.setReviewComment(commentText);
+                        } else {
+                            app.setReviewComment(prevComment + "\n[学院意见]: " + commentText);
+                        }
+                    } else {
+                        app.setReviewComment("[学院意见]: " + commentText);
+                    }
+                } else if ("COUNSELOR_APPROVED".equals(newStatus) || "COUNSELOR_REJECTED".equals(newStatus)) {
+                    app.setReviewComment("[辅导员意见]: " + commentText);
+                } else {
+                    app.setReviewComment(commentText);
+                }
             }
             if (body.containsKey("reviewerName")) {
                 app.setReviewerName(body.get("reviewerName"));

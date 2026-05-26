@@ -339,8 +339,8 @@
 
           <!-- 第十行：意见 -->
           <div>
-            <div class="text-gray-400 text-xs font-semibold">辅导员意见：</div>
-            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.reviewComment || '暂无辅导员意见' }}</div>
+            <div class="text-gray-400 text-xs font-semibold">审批意见：</div>
+            <div class="text-gray-800 mt-1.5 font-medium whitespace-pre-wrap">{{ selectedItem.reviewComment || '暂无审批意见' }}</div>
           </div>
         </div>
       </div>

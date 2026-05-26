@@ -1,31 +1,5 @@
 <template>
   <div class="h-full flex flex-col gap-4 min-h-0">
-    <!-- 顶部：批次信息 -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex items-center gap-6 flex-shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="text-sm font-bold text-gray-900">{{ currentBatch.title }}</div>
-        <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">{{ currentBatch.status }}</span>
-      </div>
-      <div class="flex items-center gap-3 text-xs text-gray-400">
-        <span>{{ currentBatch.dateRange }}</span>
-        <span>共 <b class="text-gray-600">{{ batchStats.total }}</b> 人，已审核 <b class="text-gray-600">{{ batchStats.reviewed }}</b>，待审核 <b class="text-orange-500">{{ batchStats.pending }}</b></span>
-      </div>
-      <div class="flex-1"></div>
-      <el-dropdown trigger="click" @command="handleBatchChange" :teleported="false">
-        <button class="px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1">
-          切换批次 <el-icon><ArrowDown /></el-icon>
-        </button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="国家奖学金">国家奖学金</el-dropdown-item>
-            <el-dropdown-item command="国家励志奖学金">国家励志奖学金</el-dropdown-item>
-            <el-dropdown-item command="国家助学金">国家助学金</el-dropdown-item>
-            <el-dropdown-item command="校级奖学金">校级奖学金</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
-
     <!-- 三栏主区域 -->
     <div class="flex-1 grid grid-cols-12 gap-4 min-h-0">
       <!-- 左栏：学生列表 (3/12) -->
@@ -35,14 +9,14 @@
             <p class="text-sm font-bold text-gray-900">申请学生列表</p>
             <span class="text-xs text-gray-400">共 {{ filteredStudents.length }} 条</span>
           </div>
-          <div class="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 mb-2">
+          <div class="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 mb-2 hover:border-gray-400 focus-within:border-gray-500 transition-colors">
             <el-icon class="text-gray-300 flex-shrink-0" :size="13"><Search /></el-icon>
             <input v-model="searchText" class="flex-1 text-xs outline-none bg-transparent placeholder-gray-300 text-gray-700" placeholder="搜索学号/姓名" />
           </div>
           <div class="flex gap-1 flex-wrap">
             <button v-for="f in statusFilters" :key="f.value" @click="activeFilter = f.value"
               class="px-2.5 py-1 rounded-lg text-xs font-medium transition-all"
-              :class="activeFilter === f.value ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
+              :class="activeFilter === f.value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
             >{{ f.label }}</button>
           </div>
         </div>
@@ -50,9 +24,9 @@
           <div v-for="stu in filteredStudents" :key="stu.id"
             @click="selectStudent(stu)"
             class="p-3 rounded-xl cursor-pointer transition-all border"
-            :class="selectedStudent?.id === stu.id ? 'border-amber-200 bg-amber-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'">
+            :class="selectedStudent?.id === stu.id ? 'border-blue-200 bg-blue-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'">
             <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ stu.name.charAt(0) }}</div>
+              <div class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ stu.name.charAt(0) }}</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-1">
                   <span class="text-sm font-bold text-gray-900 truncate">{{ stu.name }}</span>
@@ -162,8 +136,38 @@
 
       <!-- 右栏：审核操作 (3/12) -->
       <div class="col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
-        <div class="px-4 py-4 border-b border-gray-100 flex-shrink-0">
-          <p class="text-sm font-bold text-gray-900">审核意见</p>
+        <!-- 顶部切换批次和进度区域 -->
+        <div class="px-4 py-5 border-b border-gray-100 bg-gray-50/50 flex flex-col gap-4 flex-shrink-0">
+          <!-- 批次名称及学期，顶部居中显示 -->
+          <div class="text-center flex flex-col gap-1">
+            <h3 class="text-sm font-black text-gray-900">{{ currentBatch.title }}</h3>
+            <p class="text-xs text-gray-400 font-medium">{{ currentBatch.dateRange }}</p>
+          </div>
+          <!-- 底部左右布局：左下角显示进度，右下角是切换批次按钮 -->
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-gray-400">
+              进度: <span class="font-bold text-gray-700">{{ batchStats.reviewed }}/{{ batchStats.total }}</span>
+            </div>
+            <el-dropdown trigger="click" @command="handleBatchChange" :teleported="false">
+              <button class="px-3 py-1.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-1 shadow-sm">
+                切换批次 <el-icon><ArrowDown /></el-icon>
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="国家奖学金">国家奖学金</el-dropdown-item>
+                  <el-dropdown-item command="国家励志奖学金">国家励志奖学金</el-dropdown-item>
+                  <el-dropdown-item command="国家助学金">国家助学金</el-dropdown-item>
+                  <el-dropdown-item divided command="学校奖学金">学校奖学金</el-dropdown-item>
+                  <el-dropdown-item command="学校助学金">学校助学金</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+
+        <!-- 审核操作标题下移 -->
+        <div class="px-4 py-3.5 border-b border-gray-100 flex-shrink-0">
+          <p class="text-sm font-bold text-gray-900">审核操作</p>
         </div>
         <div class="flex-1 overflow-y-auto px-4 py-4">
           <textarea v-model="reviewComment" placeholder="请输入审核意见..." maxlength="500"
@@ -173,7 +177,7 @@
         </div>
         <div class="px-4 py-4 border-t border-gray-100 flex-shrink-0 flex items-center gap-2" v-if="selectedStudent?.status === 'PENDING'">
           <button @click="handleReject" class="flex-1 py-2.5 border-2 border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors">不通过</button>
-          <button @click="handlePass" class="flex-1 py-2.5 bg-amber-500 rounded-xl text-sm font-bold text-white hover:bg-amber-600 transition-colors">通过</button>
+          <button @click="handlePass" class="flex-1 py-2.5 bg-gray-900 rounded-xl text-sm font-bold text-white hover:bg-gray-700 transition-colors">通过</button>
         </div>
         <div v-else-if="selectedStudent" class="px-4 py-4 border-t border-gray-100 flex-shrink-0 text-center text-sm font-bold" :class="selectedStudent.status === 'APPROVED' ? 'text-green-600' : 'text-red-500'">
           {{ selectedStudent.status === 'APPROVED' ? '已通过' : '已驳回' }}
