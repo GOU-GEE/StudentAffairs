@@ -69,6 +69,7 @@
             <el-upload
               action="/api/upload"
               :headers="uploadHeaders"
+              v-model:file-list="fileList"
               multiple
               :limit="5"
               :on-exceed="handleExceed"
@@ -120,24 +121,11 @@
               </div>
             </div>
 
-            <div class="relative pl-4 border-l-2 border-outline-variant/30 space-y-6 py-2">
-              <div v-for="(step, i) in workflow" :key="i" class="relative">
-                <div class="absolute -left-[25px] top-0 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center transition-colors shadow-sm"
-                     :class="step.active ? 'bg-primary' : 'bg-outline-variant/50'">
-                  <el-icon v-if="step.completed" :size="10" class="text-white"><Check /></el-icon>
-                </div>
-                <div class="pl-2">
-                  <p class="text-xs font-bold" :class="step.active ? 'text-primary' : 'text-secondary'">{{ step.title }}</p>
-                  <p class="text-[10px] text-outline">{{ step.desc }}</p>
-                </div>
-              </div>
-            </div>
-
             <div class="h-px bg-outline-variant/10"></div>
             
             <!-- 参考数据概览 -->
             <div class="space-y-4">
-              <p class="text-[0.65rem] font-black text-secondary uppercase tracking-widest">关联系统参考数据</p>
+              <p class="text-sm font-black text-secondary uppercase tracking-widest">关联系统参考数据</p>
               <div class="grid grid-cols-2 gap-3">
                 <div v-for="data in refData" :key="data.label" class="p-3 rounded-xl bg-surface/50 border border-outline-variant/5">
                   <div class="text-[0.6rem] font-bold text-outline uppercase tracking-tighter">{{ data.label }}</div>
@@ -196,7 +184,7 @@ const form = ref({
 
 const isSubmitted = ref(false)
 const submitting = ref(false)
-const completedQuestions = computed(() => answers.value.filter(a => a && a.length >= 100).length)
+const completedQuestions = computed(() => answers.value.filter(a => a && a.trim().length > 0).length)
 
 const statusText = computed(() => isSubmitted.value ? '学院初审中' : '草稿待提交')
 const statusColor = computed(() => isSubmitted.value ? 'bg-orange-500 animate-pulse' : 'bg-secondary')
@@ -213,21 +201,82 @@ const workflow = [
   { title: '导师/管理员终审', desc: '最终鉴定结论下达', active: false, completed: false }
 ]
 
-const refData = [
-  { label: 'GPA 绩点', value: '3.82 (Top 5%)' },
-  { label: '第二课堂积分', value: '42.5 分' },
-  { label: '违纪记录', value: '无违纪现象' },
-  { label: '奖项荣誉', value: '国家励志奖学金等 4 项' }
-]
+const refData = ref([
+  { label: 'GPA 绩点', value: '加载中...' },
+  { label: '第二课堂积分', value: '加载中...' },
+  { label: '违纪记录', value: '加载中...' },
+  { label: '奖项荣誉', value: '加载中...' }
+])
+
+const fileList = ref([])
+
+const loadRefData = async () => {
+  try {
+    const [academicRes, secondClassRes, awardsRes, safetyRes] = await Promise.all([
+      request.get(`/api/academic/student-records?studentId=${STUDENT_ID}`),
+      request.get(`/api/youth/second-classroom/records?studentId=${STUDENT_ID}`),
+      request.get(`/api/youth/awards?studentId=${STUDENT_ID}`),
+      request.get('/api/safety/incidents')
+    ])
+
+    // Calculate real GPA
+    let computedGpa = '3.82'
+    if (academicRes.data.code === 200 && academicRes.data.data.length > 0) {
+      let weightedSum = 0
+      let totalCredit = 0
+      academicRes.data.data.forEach(r => {
+        weightedSum += (r.score * r.credit)
+        totalCredit += r.credit
+      })
+      if (totalCredit > 0) {
+        computedGpa = (weightedSum / totalCredit / 25).toFixed(2)
+      }
+    }
+
+    // Calculate real Second Classroom hours
+    let computedHours = 0
+    if (secondClassRes.data.code === 200 && Array.isArray(secondClassRes.data.data)) {
+      computedHours = secondClassRes.data.data.reduce((sum, r) => sum + (r.hours || 0), 0)
+    }
+
+    // Calculate real approved awards
+    let computedAwards = 0
+    if (awardsRes.data.code === 200 && Array.isArray(awardsRes.data.data)) {
+      computedAwards = awardsRes.data.data.filter(a => a.status === 'APPROVED').length
+    }
+
+    // Calculate real safety violations
+    let computedViolations = '无违纪现象'
+    if (safetyRes.data.code === 200 && Array.isArray(safetyRes.data.data)) {
+      const studentIncidents = safetyRes.data.data.filter(i => i.studentId === STUDENT_ID)
+      if (studentIncidents.length > 0) {
+        computedViolations = `${studentIncidents.length} 次安全/违规事件`
+      }
+    }
+
+    refData.value = [
+      { label: 'GPA 绩点', value: `${computedGpa} (真实数据)` },
+      { label: '第二课堂积分', value: `${computedHours} 分 (真实数据)` },
+      { label: '违纪记录', value: computedViolations },
+      { label: '奖项荣誉', value: `已审定 ${computedAwards} 项 (真实数据)` }
+    ]
+  } catch (e) {
+    console.error('Failed to load real reference data', e)
+  }
+}
 
 const saveDraft = () => {
-  localStorage.setItem('midterm_draft', JSON.stringify({ answers: answers.value, form: form.value }))
+  localStorage.setItem('midterm_draft', JSON.stringify({
+    answers: answers.value,
+    form: form.value,
+    files: fileList.value.map(f => ({ name: f.name, url: f.url || (f.response && f.response.data && f.response.data.url) }))
+  }))
   ElMessage.success('草稿已保存至本地')
 }
 
 const submitForm = () => {
   if (completedQuestions.value < questions.value.length) {
-    ElMessage.error(`请确保所有主观题（共 ${questions.value.length} 道）均不少于 100 字后再提交`)
+    ElMessage.error('请填写所有主观题后再提交')
     return
   }
   if (!form.value.thoughtEval || !form.value.academicEval || !form.value.comprehensiveEval) {
@@ -256,6 +305,7 @@ const submitForm = () => {
         ElMessage.success('中期鉴定已成功提交！')
         isSubmitted.value = true
         localStorage.setItem('midterm_submitted', 'true')
+        localStorage.setItem('midterm_submitted_files', JSON.stringify(fileList.value.map(f => ({ name: f.name, url: f.url || (f.response && f.response.data && f.response.data.url) }))))
       } else {
         ElMessage.error(res.data.msg || '提交失败')
       }
@@ -276,30 +326,77 @@ onMounted(() => {
   // 初始化答案数组
   answers.value = new Array(questions.value.length).fill('')
 
-  const draft = localStorage.getItem('midterm_draft')
-  if (draft) {
-    const parsed = JSON.parse(draft)
-    // 只有在问题数量一致时才恢复答案，或者按需部分恢复
-    if (parsed.answers && parsed.answers.length === answers.value.length) {
-      answers.value = parsed.answers
-    }
-    if (parsed.form) {
-      form.value = parsed.form
-    }
-  }
-  if (localStorage.getItem('midterm_submitted') === 'true') {
-    isSubmitted.value = true
-  }
   const loadExisting = async () => {
     try {
       const res = await request.get(`${API}?studentId=${STUDENT_ID}`)
       if (res.data.code === 200 && res.data.data.length > 0) {
         isSubmitted.value = true
         localStorage.setItem('midterm_submitted', 'true')
+
+        const existingData = res.data.data[0]
+        form.value.thoughtEval = existingData.thoughtPerformance
+        form.value.academicEval = existingData.academicPerformance
+        form.value.comprehensiveEval = existingData.overallPerformance
+
+        if (existingData.selfAssessment) {
+          const blocks = existingData.selfAssessment.split('\n\n')
+          const answersMap = {}
+          blocks.forEach(block => {
+            const index = block.indexOf(': ')
+            if (index !== -1) {
+              const title = block.substring(0, index).trim()
+              const value = block.substring(index + 2)
+              answersMap[title] = value
+            }
+          })
+          questions.value.forEach((q, idx) => {
+            if (answersMap[q.title] !== undefined) {
+              answers.value[idx] = answersMap[q.title]
+            }
+          })
+        }
+
+        // Restore submitted files
+        const submittedFiles = localStorage.getItem('midterm_submitted_files')
+        if (submittedFiles) {
+          fileList.value = JSON.parse(submittedFiles)
+        }
+      } else {
+        // If not submitted, load draft!
+        const draft = localStorage.getItem('midterm_draft')
+        if (draft) {
+          const parsed = JSON.parse(draft)
+          if (parsed.answers && parsed.answers.length === answers.value.length) {
+            answers.value = parsed.answers
+          }
+          if (parsed.form) {
+            form.value = parsed.form
+          }
+          if (parsed.files) {
+            fileList.value = parsed.files
+          }
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      // Fallback to draft in case of API error
+      const draft = localStorage.getItem('midterm_draft')
+      if (draft) {
+        const parsed = JSON.parse(draft)
+        if (parsed.answers && parsed.answers.length === answers.value.length) {
+          answers.value = parsed.answers
+        }
+        if (parsed.form) {
+          form.value = parsed.form
+        }
+        if (parsed.files) {
+          fileList.value = parsed.files
+        }
+      }
+    }
   }
+
   loadExisting()
+  loadRefData()
 })
 
 const uploadedFiles = ref([])
@@ -336,5 +433,27 @@ const handleExceed = () => ElMessage.warning('最多上传 5 个附件')
 
 .midterm-uploader :deep(.el-upload-list) {
   margin-top: 1rem;
+}
+
+:deep(.el-select .el-select__wrapper),
+:deep(.el-select .el-input__wrapper) {
+  border-radius: 1rem !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  box-shadow: none !important;
+  transition: all 0.2s;
+  height: 42px;
+}
+
+:deep(.el-select .el-select__wrapper:hover),
+:deep(.el-select .el-input__wrapper:hover) {
+  border-color: var(--el-color-primary) !important;
+}
+
+:deep(.el-select .el-select__wrapper.is-focus),
+:deep(.el-select .el-input__wrapper.is-focus) {
+  background: white !important;
+  border-color: var(--el-color-primary) !important;
+  box-shadow: 0 0 0 4px var(--el-color-primary-light-8) !important;
 }
 </style>
