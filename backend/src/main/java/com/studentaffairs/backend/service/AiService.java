@@ -20,6 +20,9 @@ public class AiService {
     @Value("${ai.model:qwen2.5:latest}")
     private String model;
 
+    @Value("${ai.api-key:}")
+    private String apiKey;
+
     private final RestTemplate restTemplate;
 
     // MBTI 解释对照表
@@ -61,6 +64,50 @@ public class AiService {
         this.restTemplate = new RestTemplate();
     }
 
+    private HttpHeaders buildHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        if (apiKey != null && !apiKey.trim().isEmpty() && !apiKey.startsWith("${")) {
+            headers.set("Authorization", "Bearer " + apiKey);
+        }
+        return headers;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String parseAiResponse(Map<String, Object> body) {
+        if (body == null) return null;
+        
+        // 1. OpenAI / SiliconFlow / Zhipu 格式: choices[0].message.content
+        if (body.containsKey("choices")) {
+            try {
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
+                if (choices != null && !choices.isEmpty()) {
+                    Map<String, Object> choice = choices.get(0);
+                    Map<String, Object> messageObj = (Map<String, Object>) choice.get("message");
+                    if (messageObj != null && messageObj.containsKey("content")) {
+                        return (String) messageObj.get("content");
+                    }
+                }
+            } catch (Exception e) {
+                // 忽略异常，尝试下一种格式
+            }
+        }
+        
+        // 2. Ollama 格式: message.content
+        if (body.containsKey("message")) {
+            try {
+                Map<String, Object> messageObj = (Map<String, Object>) body.get("message");
+                if (messageObj != null && messageObj.containsKey("content")) {
+                    return (String) messageObj.get("content");
+                }
+            } catch (Exception e) {
+                // 忽略
+            }
+        }
+        
+        return null;
+    }
+
     // ==================== 兼容原有接口 ====================
     public String generateAdvice(String prompt) {
         Map<String, Object> requestBody = new HashMap<>();
@@ -81,17 +128,15 @@ public class AiService {
         requestBody.put("messages", List.of(systemMessage, userMessage));
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
+            HttpHeaders headers = buildHeaders();
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, Map.class);
-            Map<String, Object> body = response.getBody();
-            if (body != null && body.containsKey("message")) {
-                Map<String, Object> message = (Map<String, Object>) body.get("message");
-                return (String) message.get("content");
+            String content = parseAiResponse(response.getBody());
+            if (content != null) {
+                return content;
             }
-            return "AI 响应解析失败，请检查 Ollama 服务状态。";
+            return "AI 响应解析失败，请检查模型服务状态。";
         } catch (Exception e) {
             return "AI 服务调用失败，启用智能兜底。";
         }
@@ -143,15 +188,13 @@ public class AiService {
             messages.add(Map.of("role", "user", "content", message));
             requestBody.put("messages", messages);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
+            HttpHeaders headers = buildHeaders();
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, Map.class);
-            Map<String, Object> body = response.getBody();
-            if (body != null && body.containsKey("message")) {
-                Map<String, Object> resMsg = (Map<String, Object>) body.get("message");
-                return (String) resMsg.get("content");
+            String content = parseAiResponse(response.getBody());
+            if (content != null) {
+                return content;
             }
         } catch (Exception e) {
             // 出现网络拒绝或异常，转入 Fallback 兜底生成器
@@ -200,15 +243,13 @@ public class AiService {
 
             requestBody.put("messages", List.of(sysMsg, userMsg));
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
+            HttpHeaders headers = buildHeaders();
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, Map.class);
-            Map<String, Object> body = response.getBody();
-            if (body != null && body.containsKey("message")) {
-                Map<String, Object> resMsg = (Map<String, Object>) body.get("message");
-                return (String) resMsg.get("content");
+            String content = parseAiResponse(response.getBody());
+            if (content != null) {
+                return content;
             }
         } catch (Exception e) {
             // Ollama 异常，自动降级启用智能本地模板引擎，生成一份极高水准的深度报告
