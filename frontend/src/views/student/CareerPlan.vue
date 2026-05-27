@@ -141,25 +141,15 @@
     <!-- 详细测评结果弹窗 -->
     <el-dialog v-model="showAssessmentDialog" title="" modal-class="custom-calendar-overlay" class="custom-calendar-dialog" :show-close="true" append-to-body lock-scroll destroy-on-close>
       <div class="flex flex-col h-full bg-surface-container-lowest overflow-hidden p-8">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-2">
           <h3 class="text-2xl font-bold text-on-surface flex items-center gap-3">
             <el-icon class="text-primary"><Document /></el-icon>
             生涯详细测评结果
           </h3>
-          <!-- Top generator banner -->
-          <el-button 
-            v-if="activeReportTab === 'raw' && hasAllAssessments && !reportContent"
-            type="primary" 
-            size="small"
-            class="!rounded-xl !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0 font-bold px-4 shadow shadow-indigo-500/10 animate-pulse animate-duration-1000" 
-            @click="generateAiReport"
-          >
-            🤖 生成 AI 深度生涯报告
-          </el-button>
         </div>
         
         <el-tabs v-model="activeReportTab" class="flex-1 flex flex-col min-h-0 custom-report-tabs">
-          <el-tab-pane label="📊 维度得分与测评原图" name="raw" class="h-full flex flex-col min-h-0 pt-2">
+          <el-tab-pane label="维度得分与测评原图" name="raw" class="h-full flex flex-col min-h-0 pt-2">
             <div class="flex-1 grid grid-cols-2 grid-rows-2 min-h-0 bg-white rounded-3xl border border-outline-variant/30 shadow-sm overflow-hidden">
               <div v-for="(tool, idx) in assessmentTools" :key="idx" class="p-8 flex flex-col relative transition-all hover:bg-surface-container-lowest/50"
                    :class="{
@@ -185,7 +175,7 @@
             </div>
           </el-tab-pane>
           
-          <el-tab-pane label="🤖 AI 个人深度生涯报告" name="ai" class="h-full flex flex-col min-h-0 pt-2">
+          <el-tab-pane label="AI 个人深度生涯报告" name="ai" class="h-full flex flex-col min-h-0 pt-2">
             <div class="flex-1 flex flex-col h-full bg-white rounded-3xl border border-outline-variant/30 shadow-sm overflow-hidden p-6">
               
               <!-- Loading Skeleton -->
@@ -212,11 +202,11 @@
                 <el-button 
                   type="primary" 
                   size="large"
-                  class="!rounded-2xl !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0 font-bold px-8 shadow-lg shadow-indigo-500/20" 
+                  class="!rounded-2xl !bg-sky-500 hover:!bg-sky-600 !border-0 font-bold px-8 shadow-lg shadow-sky-500/20 text-white" 
                   @click="generateAiReport"
                   :disabled="!hasAllAssessments"
                 >
-                  🤖 一键生成 AI 生涯报告
+                  一键生成 AI 生涯报告
                 </el-button>
                 <p v-if="!hasAllAssessments" class="text-xs text-red-500 mt-4 font-semibold">
                   * 请先在主页面右侧“生涯测评工具”中完成全部四项测评后再生成
@@ -310,7 +300,7 @@
       <transition name="ai-chat-drop">
         <div v-if="aiChatVisible" class="bg-white border border-outline-variant/30 rounded-3xl w-[600px] h-[calc(100vh-160px)] mb-4 flex flex-col overflow-hidden transition-all duration-300 max-w-[calc(100vw-2rem)] ai-chat-panel">
           <!-- Chat Header -->
-          <div class="bg-slate-100 border-b border-slate-200/80 p-4 text-slate-800 flex items-center justify-between shadow-sm">
+          <div style="background-color: #4a89e247;" class="border-b border-slate-200/80 p-4 text-slate-800 flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-slate-200/60 flex items-center justify-center border border-slate-300/40 text-slate-600 shadow-inner">
                 <el-icon :size="20"><Cpu /></el-icon>
@@ -782,7 +772,7 @@ onMounted(()=>{
 
 /* ==================== AI 职业规划定制样式 ==================== */
 .custom-report-tabs .el-tabs__header {
-  margin-bottom: 12px !important;
+  margin-bottom: 4px !important;
 }
 .custom-report-tabs .el-tabs__item {
   font-size: 14px !important;
