@@ -18,13 +18,13 @@ request.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Response interceptor - handle 401
+// Response interceptor - handle 401/403
 request.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       sessionStorage.clear()
-      ElMessage.error('登录已过期，请重新登录')
+      ElMessage.error('登录已过期或无权访问，请重新登录')
       window.location.href = '/login'
     }
     return Promise.reject(error)
