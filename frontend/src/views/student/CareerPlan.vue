@@ -694,6 +694,8 @@ const sendChat = async () => {
       valueScores: r.values ? VDS.map(d => r.values[d]) : null,
       skillScores: r.skills ? SDS.map(d => r.skills[d]) : null,
       matchedJobs: matchedJobsList.length > 0 ? matchedJobsList : null
+    }, {
+      timeout: 60000
     })
 
     if (res.data.code === 200) {
@@ -728,6 +730,8 @@ const generateAiReport = async () => {
       valueScores: r.values ? VDS.map(d => r.values[d]) : null,
       skillScores: r.skills ? SDS.map(d => r.skills[d]) : null,
       matchedJobs: matchedJobsList.length > 0 ? matchedJobsList : null
+    }, {
+      timeout: 120000
     })
 
     if (res.data.code === 200) {

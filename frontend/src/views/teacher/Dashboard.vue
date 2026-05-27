@@ -567,7 +567,9 @@ const sendMessage = async () => {
   scrollToBottom()
   
   try {
-    const response = await request.post('/api/ai/chat', { message: text })
+    const response = await request.post('/api/ai/chat', { message: text }, {
+      timeout: 60000
+    })
     if (response.data.code === 200) {
       chatMessages.value.push({ text: response.data.data, isUser: false })
     } else {
