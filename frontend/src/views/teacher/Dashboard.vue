@@ -394,31 +394,30 @@
               <h3 class="text-[1rem] font-bold text-gray-800 tracking-tight">AI 辅导员助手</h3>
             </div>
             
-            <!-- Sleek SVG 3D AI Robot -->
-            <div class="relative w-12 h-12 flex-shrink-0">
-              <div class="absolute inset-0 bg-indigo-400/15 rounded-full blur-sm animate-pulse"></div>
-              <svg class="w-full h-full relative" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="22" fill="#EEF2FF"/>
-                <rect x="20" y="24" width="24" height="15" rx="4" fill="#312E81"/>
-                <circle cx="27" cy="31" r="2.5" fill="#38BDF8"/>
-                <circle cx="37" cy="31" r="2.5" fill="#38BDF8"/>
-                <path d="M28 35H36" stroke="#EEF2FF" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M14 32C14 22.0589 22.0589 14 32 14C41.9411 14 50 22.0589 50 32" stroke="#6366F1" stroke-width="3" stroke-linecap="round"/>
-                <rect x="10" y="28" width="5" height="8" rx="2.5" fill="#6366F1"/>
-                <rect x="49" y="28" width="5" height="8" rx="2.5" fill="#6366F1"/>
-              </svg>
+            <!-- Controls instead of Robot Icon -->
+            <div class="flex items-center gap-1.5 z-10">
+              <el-tooltip content="历史对话" placement="top">
+                <el-button circle size="small" class="!bg-indigo-50 hover:!bg-indigo-100 !border-0 !text-indigo-600 flex items-center justify-center" @click="toggleHistory">
+                  <el-icon><Clock /></el-icon>
+                </el-button>
+              </el-tooltip>
+              <el-tooltip content="展开窗口" placement="top">
+                <el-button circle size="small" class="!bg-indigo-50 hover:!bg-indigo-100 !border-0 !text-indigo-600 flex items-center justify-center" @click="openLargeChat">
+                  <el-icon><FullScreen /></el-icon>
+                </el-button>
+              </el-tooltip>
             </div>
           </div>
 
           <!-- Welcome Screen (Mutually Exclusive with Chat Stream) -->
-          <div v-if="showWelcome" class="space-y-4 relative z-10">
+          <div v-if="showWelcome && !showHistory" class="space-y-4 relative z-10">
             <div class="space-y-1">
               <h4 class="font-extrabold text-[0.875rem] text-gray-800">您好，我是您的 AI 助手</h4>
               <p class="text-[0.75rem] text-gray-400 leading-relaxed">
                 我可以帮助分析学生数据、生成工作建议、解答业务问题，让您的工作更高效~
               </p>
             </div>
-
+ 
             <!-- Pre-filled prompt cards grid -->
             <div class="grid grid-cols-1 gap-2.5 max-h-[290px] overflow-y-auto pr-1.5 custom-scrollbar">
               <div v-for="(p, idx) in quickPrompts" :key="idx" 
@@ -435,6 +434,46 @@
                 <el-icon class="text-indigo-400 group-hover/card:translate-x-0.5 group-hover/card:text-indigo-600 transition-all" :size="12"><ArrowRight /></el-icon>
               </div>
             </div>
+          </div>
+ 
+          <!-- History List Container -->
+          <div v-else-if="showWelcome && showHistory" class="space-y-3 relative z-10">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-[0.875rem] text-gray-800 flex items-center gap-1.5">
+                <el-icon class="text-indigo-600"><Clock /></el-icon>
+                历史对话记录
+              </h4>
+              <button 
+                v-if="historyList.length > 0"
+                @click="clearHistory" 
+                class="text-[10px] text-rose-500 hover:text-rose-600 hover:underline font-medium"
+              >
+                清空记录
+              </button>
+            </div>
+            
+            <!-- History Items list -->
+            <div class="grid grid-cols-1 gap-2 max-h-[290px] overflow-y-auto pr-1.5 custom-scrollbar">
+              <div v-if="historyList.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400 text-xs">
+                <el-icon :size="28" class="mb-2"><Clock /></el-icon>
+                <span>暂无历史对话记录</span>
+              </div>
+              <div v-else v-for="h in historyList" :key="h.id" 
+                   @click="selectHistoryItem(h)"
+                   class="bg-white/80 hover:bg-indigo-50/20 border border-gray-100 hover:border-indigo-100 rounded-xl p-3 cursor-pointer transition-all duration-300 flex items-center justify-between group shadow-[0_2px_10px_rgba(0,0,0,0.005)]"
+              >
+                <div class="flex-1 min-w-0 pr-2">
+                  <h5 class="font-bold text-[0.75rem] text-gray-700 truncate group-hover:text-indigo-600 transition-colors">{{ h.title }}</h5>
+                  <p class="text-[9px] text-gray-400 mt-0.5">{{ h.time }}</p>
+                </div>
+                <el-icon class="text-indigo-400 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition-all" :size="12"><ArrowRight /></el-icon>
+              </div>
+            </div>
+            
+            <button @click="showHistory = false" class="w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 mt-2 flex items-center justify-center gap-1 group">
+              返回快捷发送
+              <el-icon class="group-hover:-translate-x-0.5 transition-transform rotate-180"><ArrowRight /></el-icon>
+            </button>
           </div>
 
           <!-- Chat Console State -->
@@ -498,7 +537,7 @@
               <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="resetChat">
                 <el-icon><Refresh /></el-icon>
               </el-button>
-              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="aiChatVisible = false">
+              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="closeLargeChat">
                 <el-icon><Close /></el-icon>
               </el-button>
             </div>
@@ -565,7 +604,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Calendar, ArrowRight, Promotion, Close, Refresh } from '@element-plus/icons-vue'
+import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Calendar, ArrowRight, Promotion, Close, Refresh, Clock, FullScreen } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import request from '@/utils/request'
 
@@ -619,6 +658,81 @@ const aiChatVisible = ref(false)
 const largeChatScrollContainer = ref(null)
 const largeChatInputRef = ref(null)
 
+const currentConversationId = ref(null)
+const showHistory = ref(false)
+const historyList = ref([])
+
+const updateHistoryList = () => {
+  try {
+    const s = localStorage.getItem('teacher_ai_chat_history')
+    if (s) {
+      historyList.value = JSON.parse(s)
+    } else {
+      historyList.value = []
+    }
+  } catch(e) {
+    historyList.value = []
+  }
+}
+
+const toggleHistory = () => {
+  if (!showHistory.value) {
+    updateHistoryList()
+  }
+  showHistory.value = !showHistory.value
+}
+
+const clearHistory = () => {
+  localStorage.removeItem('teacher_ai_chat_history')
+  historyList.value = []
+  ElMessage.success('历史记录已清空')
+}
+
+const selectHistoryItem = (h) => {
+  currentConversationId.value = h.id
+  chatMessages.value = JSON.parse(JSON.stringify(h.messages))
+  showWelcome.value = false
+  showHistory.value = false
+  aiChatVisible.value = true
+  scrollLargeChatToBottom()
+  nextTick(() => {
+    largeChatInputRef.value?.focus()
+  })
+}
+
+const saveCurrentConversationToHistory = () => {
+  if (chatMessages.value.length <= 1) return
+  if (!currentConversationId.value) {
+    currentConversationId.value = Date.now().toString()
+  }
+  
+  let history = []
+  try {
+    const s = localStorage.getItem('teacher_ai_chat_history')
+    if (s) history = JSON.parse(s)
+  } catch(e) {}
+  
+  const existingIdx = history.findIndex(h => h.id === currentConversationId.value)
+  const firstUserMsg = chatMessages.value.find(m => m.isUser)?.text || '新对话'
+  const title = firstUserMsg.length > 18 ? firstUserMsg.substring(0, 18) + '...' : firstUserMsg
+  const timeStr = new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+  
+  const entry = {
+    id: currentConversationId.value,
+    title,
+    time: timeStr,
+    messages: JSON.parse(JSON.stringify(chatMessages.value))
+  }
+  
+  if (existingIdx !== -1) {
+    history[existingIdx] = entry
+  } else {
+    history.unshift(entry)
+    if (history.length > 10) history.pop()
+  }
+  localStorage.setItem('teacher_ai_chat_history', JSON.stringify(history))
+}
+
 // ==================== AI Markdown 渲染器 ====================
 const renderMarkdown = (text) => {
   if (!text) return ''
@@ -661,11 +775,22 @@ const openLargeChat = () => {
 }
 
 const resetChat = () => {
+  saveCurrentConversationToHistory()
   chatMessages.value = [
     { text: '您好，我是您的 AI 助理。我可以帮您分析本班学生特征、生成学业干预方案、或者为您草拟谈心谈话指南。您可以在左侧快捷菜单点选，或在此直接输入您的问题。', isUser: false }
   ]
-  showWelcome.value = true
+  currentConversationId.value = null
+}
+
+const closeLargeChat = () => {
+  saveCurrentConversationToHistory()
   aiChatVisible.value = false
+  showWelcome.value = true
+  showHistory.value = false
+  currentConversationId.value = null
+  chatMessages.value = [
+    { text: '您好，我是您的 AI 助理。我可以帮您分析本班学生特征、生成学业干预方案、或者为您草拟谈心谈话指南。您可以在左侧快捷菜单点选，或在此直接输入您的问题。', isUser: false }
+  ]
 }
 
 // Chart DOM refs
@@ -707,6 +832,11 @@ const sendMessage = async () => {
   const text = userInput.value
   showWelcome.value = false
   aiChatVisible.value = true
+  
+  if (!currentConversationId.value) {
+    currentConversationId.value = Date.now().toString()
+  }
+  
   chatMessages.value.push({ text, isUser: true })
   userInput.value = ''
   isTyping.value = true
@@ -719,6 +849,7 @@ const sendMessage = async () => {
     })
     if (response.data.code === 200) {
       chatMessages.value.push({ text: response.data.data, isUser: false })
+      saveCurrentConversationToHistory()
     } else {
       chatMessages.value.push({ text: 'AI 服务遇到问题：' + response.data.msg, isUser: false })
     }
