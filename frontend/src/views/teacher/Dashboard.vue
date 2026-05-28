@@ -372,6 +372,18 @@
         <!-- Glow top corner decorator -->
         <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
 
+        <!-- Overlay when expanded -->
+        <div v-if="aiChatVisible" class="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 shadow-sm border border-indigo-100/40 animate-bounce" style="animation-duration: 3s;">
+            <el-icon :size="24"><MagicStick /></el-icon>
+          </div>
+          <h4 class="font-bold text-gray-800 text-sm mb-1">AI 助手已在大窗口展开</h4>
+          <p class="text-xs text-gray-400 max-w-[200px] mb-4">为了提供更舒适的阅读与操作空间，对话已为您展开为大窗口模式。</p>
+          <el-button type="primary" size="small" round class="!bg-indigo-600 !border-0 hover:!bg-indigo-700" @click="openLargeChat">
+            打开对话窗口
+          </el-button>
+        </div>
+
         <div>
           <!-- Header and Custom AI Avatar -->
           <div class="flex items-start justify-between mb-4 relative z-10">
@@ -467,6 +479,85 @@
 
     </div>
 
+    <!-- ==================== AI 辅导员浮动大助手 ==================== -->
+    <div class="fixed bottom-8 right-8 z-[1050] flex flex-col items-end">
+      <transition name="ai-chat-drop">
+        <div v-if="aiChatVisible" class="bg-white border border-slate-200/80 rounded-3xl w-[600px] h-[calc(100vh-160px)] mb-4 flex flex-col overflow-hidden transition-all duration-300 max-w-[calc(100vw-2rem)] shadow-[0_10px_50px_rgba(0,0,0,0.12)]">
+          <!-- Chat Header -->
+          <div style="background-color: #4a89e247;" class="border-b border-slate-200/80 p-4 text-slate-800 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-slate-200/60 flex items-center justify-center border border-slate-300/40 text-slate-600 shadow-inner">
+                <el-icon :size="20"><MagicStick /></el-icon>
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-slate-800">AI 辅导员小助手</h4>
+                <p class="text-[10px] text-slate-500">智慧学工 · 辅导员专属助手</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="resetChat">
+                <el-icon><Refresh /></el-icon>
+              </el-button>
+              <el-button circle size="small" class="!bg-slate-200/50 !border-0 !text-slate-600 hover:!bg-slate-200/80 hover:!text-slate-800" @click="aiChatVisible = false">
+                <el-icon><Close /></el-icon>
+              </el-button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div ref="largeChatScrollContainer" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-50/50">
+            <!-- Messages -->
+            <div v-for="(msg, idx) in chatMessages" :key="idx" class="flex w-full" :class="msg.isUser ? 'justify-end' : 'justify-start'">
+              <!-- Message Bubble -->
+              <div 
+                class="rounded-2xl px-4 py-2.5 text-[13px] shadow-sm leading-relaxed max-w-[85%]"
+                :class="msg.isUser 
+                  ? 'bg-sky-100 text-sky-900 rounded-tr-none border border-sky-200/50' 
+                  : 'bg-white text-gray-800 border border-slate-200/60 rounded-tl-none font-normal'"
+              >
+                <div v-if="msg.isUser">{{ msg.text }}</div>
+                <div v-else class="prose max-w-none space-y-2 text-justify" v-html="renderMarkdown(msg.text)"></div>
+              </div>
+            </div>
+
+            <!-- Typing Loader -->
+            <div v-if="isTyping" class="flex justify-start w-full">
+              <div class="bg-white border border-slate-200/60 rounded-2xl rounded-tl-none px-4 py-2.5 text-xs text-secondary flex items-center gap-1.5 shadow-sm">
+                <span>AI 助手正在为您分析并生成建议</span>
+                <span class="flex gap-0.5 mt-0.5">
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Area -->
+          <div class="p-3 bg-white border-t border-slate-100 flex items-center gap-2 flex-shrink-0">
+            <el-input 
+              ref="largeChatInputRef"
+              v-model="userInput" 
+              placeholder="输入您的指令或提问..." 
+              class="flex-1 custom-chat-input"
+              @keyup.enter="sendMessage"
+              size="default"
+            />
+            <el-button 
+              type="primary" 
+              circle 
+              class="!bg-sky-500 !border-0 flex items-center justify-center hover:!bg-sky-600 shadow-sm transition-colors" 
+              @click="sendMessage" 
+              :disabled="isTyping"
+              size="default"
+            >
+              <el-icon><Promotion /></el-icon>
+            </el-button>
+          </div>
+        </div>
+      </transition>
+    </div>
+
   </div>
 </template>
 
@@ -474,7 +565,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Calendar, ArrowRight, Promotion } from '@element-plus/icons-vue'
+import { User, Document, Warning, Trophy, Download, UploadFilled, MagicStick, Loading, Position, Calendar, ArrowRight, Promotion, Close, Refresh } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import request from '@/utils/request'
 
@@ -524,6 +615,59 @@ const chatMessages = ref([
   { text: '您好，我是您的 AI 助理。我可以帮您分析本班学生特征、生成学业干预方案、或者为您草拟谈心谈话指南。您可以在左侧快捷菜单点选，或在此直接输入您的问题。', isUser: false }
 ])
 
+const aiChatVisible = ref(false)
+const largeChatScrollContainer = ref(null)
+const largeChatInputRef = ref(null)
+
+// ==================== AI Markdown 渲染器 ====================
+const renderMarkdown = (text) => {
+  if (!text) return ''
+  let html = text
+  // 基础转义转 HTML 展现以获得专业格式
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  
+  // H2-H4 格式化
+  html = html.replace(/^#\s+(.*?)$/gm, '<h2 class="text-base font-bold text-indigo-700 mt-4 mb-2 border-b border-indigo-100 pb-1.5 flex items-center">$1</h2>')
+  html = html.replace(/^##\s+(.*?)$/gm, '<h3 class="text-sm font-bold text-indigo-600 mt-3 mb-1.5 pb-0.5 border-b border-slate-100 flex items-center">$1</h3>')
+  html = html.replace(/^###\s+(.*?)$/gm, '<h4 class="text-xs font-bold text-gray-800 mt-2.5 mb-1 flex items-center">$1</h4>')
+  
+  // 加粗
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-indigo-900">$1</strong>')
+  
+  // 无序列表与有序列表格式化
+  html = html.replace(/^(?:\*|-)\s+(.*?)$/gm, '<div class="flex items-start gap-1.5 my-1 text-[13px] text-gray-600"><span class="text-indigo-500 mt-0.5">•</span><span>$1</span></div>')
+  html = html.replace(/^\d+\.\s+(.*?)$/gm, '<div class="flex items-start gap-1.5 my-1 text-[13px] text-gray-600"><span class="text-indigo-500 font-bold text-xs mt-0.5">$0</span><span>$1</span></div>')
+  // 修复上一个替换中 $0 包含数字点字符的问题，这里直接给个清爽的行
+  html = html.replace(/<span class="text-indigo-500 font-bold text-xs mt-0.5">\d+\.\s+<\/span>/g, '<span class="text-indigo-500 font-bold text-[11px] mt-0.5">▷</span>')
+  
+  // 段落空行
+  html = html.replace(/\n/g, '<br/>')
+  return html
+}
+
+const scrollLargeChatToBottom = async () => {
+  await nextTick()
+  if (largeChatScrollContainer.value) {
+    largeChatScrollContainer.value.scrollTop = largeChatScrollContainer.value.scrollHeight
+  }
+}
+
+const openLargeChat = () => {
+  aiChatVisible.value = true
+  scrollLargeChatToBottom()
+  nextTick(() => {
+    largeChatInputRef.value?.focus()
+  })
+}
+
+const resetChat = () => {
+  chatMessages.value = [
+    { text: '您好，我是您的 AI 助理。我可以帮您分析本班学生特征、生成学业干预方案、或者为您草拟谈心谈话指南。您可以在左侧快捷菜单点选，或在此直接输入您的问题。', isUser: false }
+  ]
+  showWelcome.value = true
+  aiChatVisible.value = false
+}
+
 // Chart DOM refs
 const statusChartRef = ref(null)
 const progressChartRef = ref(null)
@@ -540,6 +684,7 @@ const navigateTo = (path) => {
 const selectPrompt = (promptText) => {
   userInput.value = promptText
   showWelcome.value = false
+  aiChatVisible.value = true
   sendMessage()
 }
 
@@ -561,10 +706,12 @@ const sendMessage = async () => {
   
   const text = userInput.value
   showWelcome.value = false
+  aiChatVisible.value = true
   chatMessages.value.push({ text, isUser: true })
   userInput.value = ''
   isTyping.value = true
   scrollToBottom()
+  scrollLargeChatToBottom()
   
   try {
     const response = await request.post('/api/ai/chat', { message: text }, {
@@ -580,6 +727,10 @@ const sendMessage = async () => {
   } finally {
     isTyping.value = false
     scrollToBottom()
+    scrollLargeChatToBottom()
+    nextTick(() => {
+      largeChatInputRef.value?.focus()
+    })
   }
 }
 
@@ -711,5 +862,31 @@ onBeforeUnmount(() => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.3);
+}
+</style>
+
+<style>
+/* ==================== AI 浮动大窗口定制过渡动画与全局覆盖 ==================== */
+.ai-chat-drop-enter-active {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ai-chat-drop-leave-active {
+  transition: all 0.2s ease;
+}
+.ai-chat-drop-enter-from,
+.ai-chat-drop-leave-to {
+  opacity: 0;
+  transform: translateY(16px) scale(0.95);
+  transform-origin: bottom right;
+}
+
+.custom-chat-input .el-input__wrapper {
+  border-radius: 24px !important;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.custom-chat-input .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px #38BDF8 inset !important;
 }
 </style>
