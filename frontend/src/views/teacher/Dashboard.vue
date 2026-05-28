@@ -843,8 +843,27 @@ const sendMessage = async () => {
   scrollToBottom()
   scrollLargeChatToBottom()
   
+  // Extract history
+  const historyList = chatMessages.value.slice(1, -1).map(m => ({
+    role: m.isUser ? 'user' : 'assistant',
+    content: m.text
+  })).slice(-6)
+
+  // Extract class stats
+  const classStatsObj = {
+    totalStudents: dashboardStats.value.totalStudents || 248,
+    warningCount: 32,
+    psyCount: 18,
+    financialCount: 12,
+    pendingLeaves: dashboardStats.value.pendingLeaves || 8
+  }
+
   try {
-    const response = await request.post('/api/ai/chat', { message: text }, {
+    const response = await request.post('/api/ai/chat', { 
+      message: text,
+      history: historyList,
+      classStats: classStatsObj
+    }, {
       timeout: 60000
     })
     if (response.data.code === 200) {

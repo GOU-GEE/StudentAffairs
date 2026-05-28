@@ -19,17 +19,18 @@ public class AiController {
     }
 
     @PostMapping("/chat")
-    public Result<String> chat(@RequestBody Map<String, String> request) {
-        String message = request.get("message");
+    public Result<String> chat(@RequestBody Map<String, Object> body) {
+        String message = (String) body.get("message");
         if (message == null || message.trim().isEmpty()) {
-            return Result.error(400, "Message cannot be empty");
+            return Result.error(400, "消息内容不能为空");
         }
         
-        // 构建提示词上下文，注入辅导员系统设定的 System Prompt
-        String systemPrompt = "你现在是智慧学工系统中的'AI 辅导员分身'。你的任务是根据辅导员的指令，分析学生的学业情况并给出建议。请用专业、简洁的语气回答：\n\n";
-        String fullPrompt = systemPrompt + message;
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> history = (List<Map<String, String>>) body.get("history");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> classStats = (Map<String, Object>) body.get("classStats");
 
-        String response = aiService.generateAdvice(fullPrompt);
+        String response = aiService.generateAdvice(message, history, classStats);
         return Result.success(response);
     }
 
