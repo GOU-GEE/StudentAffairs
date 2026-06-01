@@ -211,7 +211,7 @@
               <!-- 健康与个人信息：压缩时全宽(2/2)，正常时占1列并跨2行 -->
               <div class="bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 p-5 shadow-sm col-span-2 lg:col-span-1 lg:row-span-2 flex flex-col h-full lg:h-[460px] hover:bg-white/50 transition-all">
                 <h4 class="text-sm font-bold text-on-surface mb-4 flex-shrink-0">健康与个人信息</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 lg:grid-rows-[auto_auto_auto_1fr] gap-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
                   <div><span class="text-xs text-secondary block mb-1">病史</span>
                     <input v-if="isEditingProfile" v-model="profileForm.medical" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
                     <span v-else class="text-sm font-bold">{{ profileForm.medical }}</span>
@@ -233,9 +233,9 @@
                       <span v-for="h in profileForm.hobbies.split(/[,，]/)" :key="h" class="px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-semibold">{{ h.trim() }}</span>
                     </div>
                   </div>
-                  <div class="md:col-span-2 lg:col-span-1"><span class="text-xs text-secondary block mb-1">职业目标</span>
-                    <textarea v-if="isEditingProfile" v-model="profileForm.goal" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary min-h-[60px]"></textarea>
-                    <span v-else class="text-sm font-bold leading-relaxed">{{ profileForm.goal }}</span>
+                  <div class="md:col-span-2 lg:col-span-1 flex flex-col h-full"><span class="text-xs text-secondary block mb-1">职业目标</span>
+                    <textarea v-if="isEditingProfile" v-model="profileForm.goal" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary flex-1 min-h-[60px] resize-none"></textarea>
+                    <span v-else class="text-sm font-bold leading-relaxed block flex-1 overflow-y-auto">{{ profileForm.goal }}</span>
                   </div>
                 </div>
               </div>
