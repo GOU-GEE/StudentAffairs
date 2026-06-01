@@ -149,11 +149,14 @@
                         <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0 leading-[1.1]">身份<br>证号</span>
                         <span class="text-sm font-bold">{{ showPrivacy ? profileForm.idCard : profileForm.idCardMasked }}</span>
                       </div>
-                      <div class="flex items-center gap-2 group">
-                        <el-icon @click="copyPhone(profileForm.phone)" class="text-secondary text-sm flex-shrink-0 cursor-pointer hover:text-primary transition-colors" title="点击复制"><Phone /></el-icon>
+                      <div class="flex items-center gap-2 group w-full">
+                        <el-icon class="text-secondary text-sm flex-shrink-0"><Phone /></el-icon>
                         <span class="text-[0.65rem] text-secondary w-10 flex-shrink-0">电话</span>
-                        <input v-if="isEditingProfile" v-model="profileForm.phone" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 flex-1 outline-none focus:border-primary">
-                        <span v-else class="text-sm font-bold">{{ showPrivacy ? profileForm.phone : profileForm.phoneMasked }}</span>
+                        <div class="flex-1 flex items-center justify-between min-w-0">
+                          <input v-if="isEditingProfile" v-model="profileForm.phone" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 flex-1 outline-none focus:border-primary">
+                          <span v-else class="text-sm font-bold">{{ showPrivacy ? profileForm.phone : profileForm.phoneMasked }}</span>
+                          <el-icon v-if="!isEditingProfile" @click="copyPhone(profileForm.phone)" class="text-outline hover:text-primary cursor-pointer transition-colors ml-2" title="点击复制"><Phone /></el-icon>
+                        </div>
                       </div>
                       <div class="flex items-center gap-2">
                         <el-icon class="text-secondary text-sm flex-shrink-0"><Message /></el-icon>
