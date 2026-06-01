@@ -535,7 +535,7 @@ const todayStr = getTodayStr()
 const activeTab = ref('all')
 const showCalendarDialog = ref(false)
 const showMyActivitiesDialog = ref(false)
-const calendarMonth = ref(new Date(2026, 4)) // May 2026
+const calendarMonth = ref(new Date())
 
 const searchQuery = ref('')
 const currentPage = ref(1)

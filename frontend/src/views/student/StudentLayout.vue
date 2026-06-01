@@ -333,7 +333,10 @@
       <div id="pdf-printable-area" class="bg-white p-10 text-black mx-auto max-w-[210mm] min-h-[297mm] shadow-lg border border-gray-200">
         <!-- 头部 -->
         <div class="flex items-center gap-6 mb-8">
-          <div class="w-24 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center text-gray-400">照片</div>
+          <div class="w-24 h-32 bg-gray-100 rounded flex-shrink-0 flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
+            <img v-if="profileForm.avatar" :src="profileForm.avatar" class="w-full h-full object-cover">
+            <span v-else>照片</span>
+          </div>
           <div class="flex-1">
             <h2 class="text-3xl font-bold mb-4">{{ profileForm.name }}</h2>
             <div class="grid grid-cols-1 gap-y-2 text-sm text-gray-800">
