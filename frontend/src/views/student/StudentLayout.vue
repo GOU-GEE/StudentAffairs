@@ -216,13 +216,16 @@
                     <input v-if="isEditingProfile" v-model="profileForm.medical" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
                     <span v-else class="text-sm font-bold">{{ profileForm.medical }}</span>
                   </div>
-                  <div><span class="text-xs text-secondary block mb-1">血型</span>
-                    <input v-if="isEditingProfile" v-model="profileForm.blood" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
-                    <span v-else class="text-sm font-bold">{{ profileForm.blood }}</span>
-                  </div>
-                  <div><span class="text-xs text-secondary block mb-1">性格特点</span>
-                    <input v-if="isEditingProfile" v-model="profileForm.personality" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
-                    <span v-else class="text-sm font-bold">{{ profileForm.personality }}</span>
+                  <!-- 血型 & 性格特点 同一行 -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <div><span class="text-xs text-secondary block mb-1">血型</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.blood" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                      <span v-else class="text-sm font-bold">{{ profileForm.blood }}</span>
+                    </div>
+                    <div><span class="text-xs text-secondary block mb-1">性格特点</span>
+                      <input v-if="isEditingProfile" v-model="profileForm.personality" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
+                      <span v-else class="text-sm font-bold">{{ profileForm.personality }}</span>
+                    </div>
                   </div>
                   <div class="md:col-span-1 lg:col-span-1"><span class="text-xs text-secondary block mb-1">兴趣爱好</span>
                     <input v-if="isEditingProfile" v-model="profileForm.hobbies" placeholder="用逗号分隔" class="text-sm font-bold bg-surface-container-low px-1 rounded border border-outline-variant/30 w-full outline-none focus:border-primary">
@@ -680,11 +683,39 @@ const handleEditToggle = () => {
 provide('studentProfile', profileForm)
 
 const copyPhone = (phone) => {
-  navigator.clipboard.writeText(phone).then(() => {
-    ElMessage.success('复制成功: ' + phone)
-  }).catch(() => {
+  if (!phone) return
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(phone).then(() => {
+      ElMessage.success('复制成功: ' + phone)
+    }).catch(() => {
+      fallbackCopyPhone(phone)
+    })
+  } else {
+    fallbackCopyPhone(phone)
+  }
+}
+
+const fallbackCopyPhone = (phone) => {
+  try {
+    const textArea = document.createElement('textarea')
+    textArea.value = phone
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.position = 'fixed'
+    textArea.style.opacity = '0'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+    if (successful) {
+      ElMessage.success('复制成功: ' + phone)
+    } else {
+      ElMessage.error('复制失败，请手动复制')
+    }
+  } catch (err) {
     ElMessage.error('复制失败，请手动复制')
-  })
+  }
 }
 
 const parseDate = (val) => {
